@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="dsRevisions" targetNamespace="http://tempuri.org/dsRevisions.xsd" xmlns:mstns="http://tempuri.org/dsRevisions.xsd" xmlns="http://tempuri.org/dsRevisions.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:msprop="urn:schemas-microsoft-com:xml-msprop" attributeFormDefault="qualified" elementFormDefault="qualified">
+  <xs:annotation>
+    <xs:appinfo source="urn:schemas-microsoft-com:xml-msdatasource">
+      <DataSource DefaultConnectionIndex="0" FunctionsComponentName="QueriesTableAdapter" Modifier="AutoLayout, AnsiClass, Class, Public" SchemaSerializationMode="IncludeSchema" xmlns="urn:schemas-microsoft-com:xml-msdatasource">
+        <Connections />
+        <Tables />
+        <Sources />
+      </DataSource>
+    </xs:appinfo>
+  </xs:annotation>
+  <xs:element name="dsRevisions" msdata:IsDataSet="true" msdata:UseCurrentLocale="true" msprop:Generator_UserDSName="dsRevisions" msprop:Generator_DataSetName="dsRevisions">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="Revisions" msprop:Generator_UserTableName="Revisions" msprop:Generator_RowDeletedName="RevisionsRowDeleted" msprop:Generator_RowChangedName="RevisionsRowChanged" msprop:Generator_RowClassName="RevisionsRow" msprop:Generator_RowChangingName="RevisionsRowChanging" msprop:Generator_RowEvArgName="RevisionsRowChangeEvent" msprop:Generator_RowEvHandlerName="RevisionsRowChangeEventHandler" msprop:Generator_TableClassName="RevisionsDataTable" msprop:Generator_TableVarName="tableRevisions" msprop:Generator_RowDeletingName="RevisionsRowDeleting" msprop:Generator_TablePropName="Revisions">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Revision_ID" msdata:AutoIncrement="true" msdata:AutoIncrementSeed="1" msprop:Generator_UserColumnName="Revision_ID" msprop:Generator_ColumnPropNameInRow="Revision_ID" msprop:Generator_ColumnVarNameInTable="columnRevision_ID" msprop:Generator_ColumnPropNameInTable="Revision_IDColumn" type="xs:integer" />
+              <xs:element name="Developer_Comments" msprop:Generator_UserColumnName="Developer_Comments" msprop:Generator_ColumnPropNameInRow="Developer_Comments" msprop:Generator_ColumnVarNameInTable="columnDeveloper_Comments" msprop:Generator_ColumnPropNameInTable="Developer_CommentsColumn" type="xs:string" minOccurs="0" />
+              <xs:element name="Developer_Name" msprop:Generator_UserColumnName="Developer_Name" msprop:Generator_ColumnPropNameInRow="Developer_Name" msprop:Generator_ColumnVarNameInTable="columnDeveloper_Name" msprop:Generator_ColumnPropNameInTable="Developer_NameColumn" type="xs:string" minOccurs="0" />
+              <xs:element name="SQL_Statement" msprop:Generator_UserColumnName="SQL_Statement" msprop:Generator_ColumnPropNameInRow="SQL_Statement" msprop:Generator_ColumnVarNameInTable="columnSQL_Statement" msprop:Generator_ColumnPropNameInTable="SQL_StatementColumn" type="xs:string" minOccurs="0" />
+              <xs:element name="RevisionDate" msprop:Generator_UserColumnName="RevisionDate" msprop:Generator_ColumnPropNameInRow="RevisionDate" msprop:Generator_ColumnVarNameInTable="columnRevisionDate" msprop:Generator_ColumnPropNameInTable="RevisionDateColumn" type="xs:dateTime" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="ApplyRevision" msprop:Generator_UserTableName="ApplyRevision" msprop:Generator_RowDeletedName="ApplyRevisionRowDeleted" msprop:Generator_RowChangedName="ApplyRevisionRowChanged" msprop:Generator_RowClassName="ApplyRevisionRow" msprop:Generator_RowChangingName="ApplyRevisionRowChanging" msprop:Generator_RowEvArgName="ApplyRevisionRowChangeEvent" msprop:Generator_RowEvHandlerName="ApplyRevisionRowChangeEventHandler" msprop:Generator_TableClassName="ApplyRevisionDataTable" msprop:Generator_TableVarName="tableApplyRevision" msprop:Generator_RowDeletingName="ApplyRevisionRowDeleting" msprop:Generator_TablePropName="ApplyRevision">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="DBName" msprop:Generator_UserColumnName="DBName" msprop:Generator_ColumnPropNameInRow="DBName" msprop:Generator_ColumnVarNameInTable="columnDBName" msprop:Generator_ColumnPropNameInTable="DBNameColumn" type="xs:string" />
+              <xs:element name="Revision_ID" msprop:Generator_UserColumnName="Revision_ID" msprop:Generator_ColumnPropNameInRow="Revision_ID" msprop:Generator_ColumnVarNameInTable="columnRevision_ID" msprop:Generator_ColumnPropNameInTable="Revision_IDColumn" type="xs:long" />
+              <xs:element name="Developer_Comments" msprop:Generator_UserColumnName="Developer_Comments" msprop:Generator_ColumnPropNameInRow="Developer_Comments" msprop:Generator_ColumnVarNameInTable="columnDeveloper_Comments" msprop:Generator_ColumnPropNameInTable="Developer_CommentsColumn" type="xs:string" minOccurs="0" />
+              <xs:element name="Developer_Name" msprop:Generator_UserColumnName="Developer_Name" msprop:Generator_ColumnPropNameInRow="Developer_Name" msprop:Generator_ColumnVarNameInTable="columnDeveloper_Name" msprop:Generator_ColumnPropNameInTable="Developer_NameColumn" type="xs:string" minOccurs="0" />
+              <xs:element name="SQL_Statement" msprop:Generator_UserColumnName="SQL_Statement" msprop:Generator_ColumnPropNameInRow="SQL_Statement" msprop:Generator_ColumnVarNameInTable="columnSQL_Statement" msprop:Generator_ColumnPropNameInTable="SQL_StatementColumn" type="xs:string" minOccurs="0" />
+              <xs:element name="RevisionDate" msprop:Generator_UserColumnName="RevisionDate" msprop:Generator_ColumnPropNameInRow="RevisionDate" msprop:Generator_ColumnVarNameInTable="columnRevisionDate" msprop:Generator_ColumnPropNameInTable="RevisionDateColumn" type="xs:dateTime" minOccurs="0" />
+              <xs:element name="SequenceToRun" msprop:Generator_UserColumnName="SequenceToRun" msprop:Generator_ColumnPropNameInRow="SequenceToRun" msprop:Generator_ColumnVarNameInTable="columnSequenceToRun" msprop:Generator_ColumnPropNameInTable="SequenceToRunColumn" type="xs:int" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="Revisions_StringDate" msprop:Generator_UserTableName="Revisions_StringDate" msprop:Generator_RowDeletedName="Revisions_StringDateRowDeleted" msprop:Generator_RowChangedName="Revisions_StringDateRowChanged" msprop:Generator_RowClassName="Revisions_StringDateRow" msprop:Generator_RowChangingName="Revisions_StringDateRowChanging" msprop:Generator_RowEvArgName="Revisions_StringDateRowChangeEvent" msprop:Generator_RowEvHandlerName="Revisions_StringDateRowChangeEventHandler" msprop:Generator_TableClassName="Revisions_StringDateDataTable" msprop:Generator_TableVarName="tableRevisions_StringDate" msprop:Generator_RowDeletingName="Revisions_StringDateRowDeleting" msprop:Generator_TablePropName="Revisions_StringDate">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Revision_ID" msdata:AutoIncrement="true" msdata:AutoIncrementSeed="1" msprop:Generator_UserColumnName="Revision_ID" msprop:Generator_ColumnPropNameInRow="Revision_ID" msprop:Generator_ColumnVarNameInTable="columnRevision_ID" msprop:Generator_ColumnPropNameInTable="Revision_IDColumn" type="xs:long" />
+              <xs:element name="Developer_Comments" msprop:Generator_UserColumnName="Developer_Comments" msprop:Generator_ColumnPropNameInRow="Developer_Comments" msprop:Generator_ColumnVarNameInTable="columnDeveloper_Comments" msprop:Generator_ColumnPropNameInTable="Developer_CommentsColumn" type="xs:string" minOccurs="0" />
+              <xs:element name="Developer_Name" msprop:Generator_UserColumnName="Developer_Name" msprop:Generator_ColumnPropNameInRow="Developer_Name" msprop:Generator_ColumnVarNameInTable="columnDeveloper_Name" msprop:Generator_ColumnPropNameInTable="Developer_NameColumn" type="xs:string" minOccurs="0" />
+              <xs:element name="SQL_Statement" msprop:Generator_UserColumnName="SQL_Statement" msprop:Generator_ColumnPropNameInRow="SQL_Statement" msprop:Generator_ColumnVarNameInTable="columnSQL_Statement" msprop:Generator_ColumnPropNameInTable="SQL_StatementColumn" type="xs:string" minOccurs="0" />
+              <xs:element name="RevisionDate" msprop:Generator_UserColumnName="RevisionDate" msprop:Generator_ColumnPropNameInRow="RevisionDate" msprop:Generator_ColumnVarNameInTable="columnRevisionDate" msprop:Generator_ColumnPropNameInTable="RevisionDateColumn" type="xs:string" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:choice>
+    </xs:complexType>
+    <xs:unique name="dsRevisionsKey1" msdata:PrimaryKey="true">
+      <xs:selector xpath=".//mstns:Revisions" />
+      <xs:field xpath="mstns:Revision_ID" />
+    </xs:unique>
+    <xs:unique name="Revisions_StringDate_dsRevisionsKey1" msdata:ConstraintName="dsRevisionsKey1" msdata:PrimaryKey="true">
+      <xs:selector xpath=".//mstns:Revisions_StringDate" />
+      <xs:field xpath="mstns:Revision_ID" />
+    </xs:unique>
+  </xs:element>
+</xs:schema>

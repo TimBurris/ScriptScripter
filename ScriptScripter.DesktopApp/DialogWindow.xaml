@@ -1,0 +1,13 @@
+﻿<metro:MetroWindow x:Class="ScriptScripter.DesktopApp.DialogWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:metro="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ScriptScripter.DesktopApp"
+        mc:Ignorable="d"
+        GlowBrush="{DynamicResource AccentColorBrush}"
+        ResizeMode="CanResizeWithGrip"
+        Title="{Binding ViewTitle}" Height="Auto" Width="Auto" SizeToContent="WidthAndHeight" WindowStartupLocation="CenterOwner">
+    <ContentControl Content="{Binding}" Height="Auto" Width="Auto" Margin="5"  IsTabStop="False" />
+</metro:MetroWindow>

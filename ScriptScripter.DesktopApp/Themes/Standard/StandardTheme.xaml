@@ -1,0 +1,234 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    >
+    <ResourceDictionary.MergedDictionaries>
+        <!-- MahApps.Metro resource dictionaries. Make sure that all file names are Case Sensitive! -->
+        <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Fonts.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Colors.xaml" />
+        <!-- Accent and AppTheme setting -->
+        <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/Steel.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/BaseLight.xaml" />
+        <ResourceDictionary Source="/Resources/Icons.xaml" />
+
+    </ResourceDictionary.MergedDictionaries>
+
+    <LinearGradientBrush x:Key="AccentTagBrush" EndPoint="0.5,1" StartPoint="0.5,0">
+        <GradientStop Color="{StaticResource AccentColorBrush}" Offset="0"/>
+        <GradientStop Color="DarkGray" Offset="1"/>
+    </LinearGradientBrush>
+
+    <LinearGradientBrush x:Key="TagBrush" EndPoint="0.5,1" StartPoint="0.5,0">
+        <GradientStop Color="{StaticResource GrayBrush10}" Offset="0"/>
+        <GradientStop Color="DarkGray" Offset="1"/>
+    </LinearGradientBrush>
+    
+    <SolidColorBrush x:Key="ValidColorBrush" Color="#dff0d8"/>
+    <SolidColorBrush x:Key="ValidDarkColorBrush" Color="#3c763d"/>
+
+    <SolidColorBrush x:Key="InfoColorBrush" Color="#d9edf7"/>
+    <SolidColorBrush x:Key="InfoDarkColorBrush" Color="#31708f"/>
+
+    <SolidColorBrush x:Key="WarningColorBrush" Color="#FEEFB3"/>
+    <SolidColorBrush x:Key="WarningDarkColorBrush" Color="#9F6000"/>
+
+    <SolidColorBrush x:Key="ErrorColorBrush" Color="#FFBABA"/>
+    <SolidColorBrush x:Key="ErrorDarkColorBrush"  Color="#D8000C"/>
+
+    <Style x:Key="MessagePanel" TargetType="{x:Type Border}">
+        <Setter Property="BorderThickness" Value="5"/>
+        <Setter Property="CornerRadius" Value="8"/>
+        <Setter Property="Padding" Value="15"/>
+    </Style>
+
+    <Style x:Key="ValidBox" BasedOn="{StaticResource MessagePanel}" TargetType="{x:Type Border}">
+       <Setter Property="Background" Value="{StaticResource ValidColorBrush}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource ValidDarkColorBrush}"/>
+
+        <Style.Resources>
+            <Style TargetType="{x:Type TextBlock}">
+                <Setter Property="Foreground" Value="{StaticResource ValidDarkColorBrush}" />
+            </Style>
+            <Style TargetType="{x:Type TextBox}">
+                <Setter Property="Foreground" Value="{StaticResource ValidDarkColorBrush}" />
+            </Style>
+            <Style TargetType="{x:Type Label}">
+                <Setter Property="Foreground" Value="{StaticResource ValidDarkColorBrush}" />
+            </Style>
+        </Style.Resources>
+    </Style>
+
+    <Style x:Key="ErrorBox"  BasedOn="{StaticResource MessagePanel}" TargetType="{x:Type Border}">
+        <Setter Property="Background" Value="{StaticResource ErrorColorBrush}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource ErrorDarkColorBrush}"/>
+
+        <Style.Resources>
+            <Style TargetType="{x:Type TextBlock}">
+                <Setter Property="Foreground" Value="{StaticResource ErrorDarkColorBrush}" />
+            </Style>
+            <Style TargetType="{x:Type TextBox}">
+                <Setter Property="Foreground" Value="{StaticResource ErrorDarkColorBrush}" />
+            </Style>
+            <Style TargetType="{x:Type Label}">
+                <Setter Property="Foreground" Value="{StaticResource ErrorDarkColorBrush}" />
+            </Style>
+        </Style.Resources>
+    </Style>
+
+    <Style x:Key="WarningBox"  BasedOn="{StaticResource MessagePanel}" TargetType="{x:Type Border}">
+        <Setter Property="Background" Value="{StaticResource WarningColorBrush}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource WarningDarkColorBrush}"/>
+
+        <Style.Resources>
+            <Style TargetType="{x:Type TextBlock}">
+                <Setter Property="Foreground" Value="{StaticResource WarningDarkColorBrush}" />
+            </Style>
+            <Style TargetType="{x:Type TextBox}">
+                <Setter Property="Foreground" Value="{StaticResource WarningDarkColorBrush}" />
+            </Style>
+            <Style TargetType="{x:Type Label}">
+                <Setter Property="Foreground" Value="{StaticResource WarningDarkColorBrush}" />
+            </Style>
+        </Style.Resources>
+    </Style>
+
+    <Style x:Key="InfoBox" BasedOn="{StaticResource MessagePanel}" TargetType="{x:Type Border}">
+        <Setter Property="Background" Value="{StaticResource InfoColorBrush}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource InfoDarkColorBrush}"/>
+
+        <Style.Resources>
+            <Style TargetType="{x:Type TextBlock}">
+                <Setter Property="Foreground" Value="{StaticResource InfoDarkColorBrush}" />
+            </Style>
+            <Style TargetType="{x:Type TextBox}">
+                <Setter Property="Foreground" Value="{StaticResource InfoDarkColorBrush}" />
+            </Style>
+            <Style TargetType="{x:Type Label}">
+                <Setter Property="Foreground" Value="{StaticResource InfoDarkColorBrush}" />
+            </Style>
+        </Style.Resources>
+    </Style>
+
+    <Style x:Key="NoAccentBox" BasedOn="{StaticResource MessagePanel}" TargetType="{x:Type Border}">
+        <Setter Property="Background" Value="{StaticResource WhiteColorBrush}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource TextBrush}"/>
+
+        <Style.Resources>
+            <Style TargetType="{x:Type TextBlock}">
+                <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
+            </Style>
+            <Style TargetType="{x:Type TextBox}">
+                <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
+            </Style>
+            <Style TargetType="{x:Type Label}">
+                <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
+            </Style>
+        </Style.Resources>
+    </Style>
+    <Style x:Key="AccentBox" BasedOn="{StaticResource MessagePanel}" TargetType="{x:Type Border}">
+        <Setter Property="Background" Value="{StaticResource AccentColorBrush}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource IdealForegroundColorBrush}"/>
+
+        <Style.Resources>
+            <Style TargetType="{x:Type TextBlock}">
+                <Setter Property="Foreground" Value="{StaticResource IdealForegroundColorBrush}" />
+            </Style>
+            <Style TargetType="{x:Type TextBox}">
+                <Setter Property="Foreground" Value="{StaticResource IdealForegroundColorBrush}" />
+            </Style>
+            <Style TargetType="{x:Type Label}">
+                <Setter Property="Foreground" Value="{StaticResource IdealForegroundColorBrush}" />
+            </Style>
+        </Style.Resources>
+    </Style>
+    <!-- make these "inverse" ?
+    <Style x:Key="ValidBox" BasedOn="{StaticResource MessagePanel}" TargetType="{x:Type Border}">
+       <Setter Property="Background" Value="{StaticResource ValidDarkColorBrush}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource ValidColorBrush}"/>
+
+        <Style.Resources>
+            <Style TargetType="{x:Type TextBlock}">
+                <Setter Property="Foreground" Value="{StaticResource ValidColorBrush}" />
+            </Style>
+            <Style TargetType="{x:Type TextBox}">
+                <Setter Property="Foreground" Value="{StaticResource ValidColorBrush}" />
+            </Style>
+            <Style TargetType="{x:Type Label}">
+                <Setter Property="Foreground" Value="{StaticResource ValidColorBrush}" />
+            </Style>
+        </Style.Resources>
+    </Style>
+    
+    <Style x:Key="ErrorBox"  BasedOn="{StaticResource MessagePanel}" TargetType="{x:Type Border}">
+        <Setter Property="Background" Value="{StaticResource ErrorDarkColorBrush}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource ErrorColorBrush}"/>
+
+        <Style.Resources>
+            <Style TargetType="{x:Type TextBlock}">
+                <Setter Property="Foreground" Value="{StaticResource ErrorColorBrush}" />
+            </Style>
+            <Style TargetType="{x:Type TextBox}">
+                <Setter Property="Foreground" Value="{StaticResource ErrorColorBrush}" />
+            </Style>
+            <Style TargetType="{x:Type Label}">
+                <Setter Property="Foreground" Value="{StaticResource ErrorColorBrush}" />
+            </Style>
+        </Style.Resources>
+    </Style>
+    
+    <Style x:Key="WarningBox"  BasedOn="{StaticResource MessagePanel}" TargetType="{x:Type Border}">
+        <Setter Property="Background" Value="{StaticResource WarningDarkColorBrush}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource WarningColorBrush}"/>
+
+        <Style.Resources>
+            <Style TargetType="{x:Type TextBlock}">
+                <Setter Property="Foreground" Value="{StaticResource WarningColorBrush}" />
+            </Style>
+            <Style TargetType="{x:Type TextBox}">
+                <Setter Property="Foreground" Value="{StaticResource WarningColorBrush}" />
+            </Style>
+            <Style TargetType="{x:Type Label}">
+                <Setter Property="Foreground" Value="{StaticResource WarningColorBrush}" />
+            </Style>
+        </Style.Resources>
+    </Style>
+
+    <Style x:Key="InfoBox" BasedOn="{StaticResource MessagePanel}" TargetType="{x:Type Border}">
+        <Setter Property="Background" Value="{StaticResource InfoDarkColorBrush}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource InfoColorBrush}"/>
+
+        <Style.Resources>
+            <Style TargetType="{x:Type TextBlock}">
+                <Setter Property="Foreground" Value="{StaticResource InfoColorBrush}" />
+            </Style>
+            <Style TargetType="{x:Type TextBox}">
+                <Setter Property="Foreground" Value="{StaticResource InfoColorBrush}" />
+            </Style>
+            <Style TargetType="{x:Type Label}">
+                <Setter Property="Foreground" Value="{StaticResource InfoColorBrush}" />
+            </Style>
+        </Style.Resources>
+    </Style>
+    
+    -->
+
+    <Style x:Key="AccentButton" BasedOn="{StaticResource MetroButton}"  TargetType="Button" >
+        <Setter Property="Background" Value="{DynamicResource AccentColorBrush}"/>
+        <Setter Property="Foreground" Value="{DynamicResource IdealForegroundColorBrush}" />
+        <Setter Property="BorderThickness" Value="2"/>
+        <Setter Property="MinWidth" Value="100"/>
+    </Style>
+
+    <Style x:Key="StrongAccentButton" BasedOn="{StaticResource MetroButton}"  TargetType="Button" >
+        <Setter Property="Background" Value="{DynamicResource ValidationBrush5}"/>
+        <Setter Property="Foreground" Value="{DynamicResource IdealForegroundColorBrush}" />
+        <Setter Property="BorderThickness" Value="2"/>
+        <Setter Property="MinWidth" Value="100"/>
+    </Style>
+
+    <Style x:Key="ThemedDataGrid" TargetType="DataGrid">
+        <!--<Setter Property="ColumnHeaderStyle" Value="{StaticResource DataGridHeader}"/>
+        <Setter Property="RowHeight" Value="30"/>-->
+    </Style>
+
+</ResourceDictionary>

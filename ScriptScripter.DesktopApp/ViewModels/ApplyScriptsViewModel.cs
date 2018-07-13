@@ -1,0 +1,395 @@
+﻿using NinjaMvvm;
+using NinjaMvvm.Wpf;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+
+namespace ScriptScripter.DesktopApp.ViewModels
+{
+    public class ApplyScriptsViewModel : ScriptScripterViewModelBase
+    {
+        private IEnumerable<Processor.Data.Models.Script> _scriptsToRun;
+        private Processor.Data.Models.ScriptContainer _scriptContainer;
+
+        public ApplyScriptsViewModel() { }//Designer use
+
+        public void Init(Processor.Data.Models.ScriptContainer scriptContainer)
+        {
+            _scriptContainer = scriptContainer;
+            DatabaseName = scriptContainer.DatabaseName;
+            ViewTitle = $"Apply Scripts to '{DatabaseName}'";
+        }
+
+        [Ninject.Inject]
+        public Contracts.IViewModelFaultlessService ViewModelFaultlessService { get; set; }
+        [Ninject.Inject]
+        public Processor.Services.Contracts.IScriptingService ScriptingService { get; set; }
+        [Ninject.Inject]
+        public Processor.Data.Contracts.IConfigurationRepository ConfigurationRepository { get; set; }
+
+        public string DatabaseName
+        {
+            get { return GetField<string>(); }
+            set { SetField(value); }
+        }
+
+        private Processor.Data.Models.DatabaseConnectionParameters GetDatabaseConnectionParameters()
+        {
+            var connParams = _scriptContainer.CustomServerConnectionParameters
+                ?? this.ConfigurationRepository.GetServerConnectionParameters();
+
+            return new Processor.Data.Models.DatabaseConnectionParameters(copyFrom: connParams)
+            {
+                DatabaseName = this.DatabaseName
+            };
+        }
+
+        public System.Collections.ObjectModel.ObservableCollection<LineItem> LineItems
+        {
+            get { return GetField<System.Collections.ObjectModel.ObservableCollection<LineItem>>(); }
+            set { SetField(value); }
+        }
+
+        public LineItem SelectedLineItem
+        {
+            get { return GetField<LineItem>(); }
+            set { SetField(value); }
+        }
+
+        protected override async Task<bool> OnReloadDataAsync(CancellationToken cancellationToken)
+        {
+            var result = await this.ViewModelFaultlessService
+                .TryExecuteSyncAsAsync(() => ScriptingService.GetScriptsThatNeedRun(this.GetDatabaseConnectionParameters(), _scriptContainer));
+
+            if (!result.WasSuccessful) return false;
+
+            _scriptsToRun = result.ReturnValue;
+
+            this.ProcessingSucceeded = false;
+            this.ProcessingFailed = false;
+            this.ProcessingMessage = null;
+
+            LineItems = new System.Collections.ObjectModel.ObservableCollection<LineItem>();
+            foreach (var script in _scriptsToRun)
+            {
+                LineItems.Add(new LineItem()
+                {
+                    RevisionNumber = script.RevisionNumber,
+                    ScriptDate = script.ScriptDate.ToString(),
+                    DeveloperName = script.DeveloperName,
+                    SQLStatement = script.SQLStatement,
+                    Notes = script.Notes
+                });
+            }
+            return true;
+        }
+
+        public bool IsProcessingScripts
+        {
+            get { return GetField<bool>(); }
+            set { SetField(value); }
+        }
+
+        public string ProcessingMessage
+        {
+            get { return GetField<string>(); }
+            set { SetField(value); }
+        }
+
+        public bool ProcessingFailed
+        {
+            get { return GetField<bool>(); }
+            set
+            {
+                if (SetField(value) && value)
+                    ProcessingSucceeded = false;
+            }
+        }
+
+        public bool ProcessingSucceeded
+        {
+            get { return GetField<bool>(); }
+            set
+            {
+                if (SetField(value) && value)
+                    ProcessingFailed = false;
+            }
+        }
+
+        public string StatusMessage
+        {
+            get { return GetField<string>(); }
+            set { SetField(value); }
+        }
+
+
+        #region EditScript Command
+
+        private RelayCommand<LineItem> _editScriptCommand;
+        public RelayCommand<LineItem> EditScriptCommand
+        {
+            get
+            {
+                if (_editScriptCommand == null)
+                    _editScriptCommand = new RelayCommand<LineItem>((param) => this.EditScript(param), (param) => this.CanEditScript(param));
+                return _editScriptCommand;
+            }
+        }
+
+        public bool CanEditScript(LineItem lineItem)
+        {
+            return true;
+        }
+
+        /// <summary>
+        /// Executes the EditScript command 
+        /// </summary>
+        public void EditScript(LineItem lineItem)
+        {
+            var script = _scriptsToRun.Single(s => s.RevisionNumber == lineItem.RevisionNumber);
+
+
+            this.Navigator.ShowDialog<ScriptViewModel>(vm => vm.Init(_scriptContainer, script));
+
+            this.ReloadDataAsync();
+        }
+
+        #endregion
+
+        #region ApplyScripts Command
+
+        private RelayCommand _applyScriptsCommand;
+        public RelayCommand ApplyScriptsCommand
+        {
+            get
+            {
+                if (_applyScriptsCommand == null)
+                    _applyScriptsCommand = new RelayCommand((param) => this.ApplyScriptsAsync(), (param) => this.CanApplyScripts());
+                return _applyScriptsCommand;
+            }
+        }
+
+        public bool CanApplyScripts()
+        {
+            return !IsProcessingScripts && (LineItems?.Any() ?? false);
+        }
+
+        /// <summary>
+        /// Executes the ApplyScripts command 
+        /// </summary>
+        public async void ApplyScriptsAsync()
+        {
+            var progress = new Progress<Processor.Dto.ApplyScriptProgress>();
+
+            progress.ProgressChanged += (s, e) =>
+            {
+                var lineItem = LineItems.SingleOrDefault(r => r.RevisionNumber == e.Script.RevisionNumber);
+                SelectedLineItem = lineItem;
+
+                if (e.IsStarting)
+                {
+                    var total = e.ScriptsCompleted + e.ScriptsRemaining;
+                    var current = e.ScriptsCompleted + 1;
+                    ProcessingMessage = $"Processing Revision #{e.Script.RevisionNumber} ({current} of {total})";
+                    lineItem.FailedProcessing = false;
+                    lineItem.IsBeingProcessed = true;
+                }
+                else
+                {
+                    lineItem.IsBeingProcessed = false;
+                    lineItem.HasBeenProcessed = true;
+                }
+            };
+
+            IsProcessingScripts = true;
+            try
+            {
+                var databaseParams = this.GetDatabaseConnectionParameters();
+
+                var scripts = ScriptingService.GetScriptsThatNeedRun(databaseParams, _scriptContainer);
+
+                var result = await ScriptingService.ApplyScriptsToDatabaseAsync(databaseParams, scripts, progress);
+
+                if (result.WasSuccessful)
+                {
+                    ProcessingSucceeded = true;
+                    StatusMessage = "All scripts applied successfully!";
+                    this.LineItems.Clear();
+                    this.SelectedLineItem = null;
+                }
+                else
+                {
+                    SelectedLineItem.IsBeingProcessed = false;
+                    SelectedLineItem.FailedProcessing = true;
+
+                    ProcessingFailed = true;
+                    StatusMessage = result.Message;
+                }
+            }
+            catch (Exception ex)
+            {
+                this.Navigator.ShowDialog<ErrorViewModel>(vm => vm.LoadFromException(ex));
+            }
+            finally
+            {
+                IsProcessingScripts = false;
+                System.Windows.Input.CommandManager.InvalidateRequerySuggested();
+            }
+        }
+
+        #endregion
+
+        #region Cancel Command
+
+        private RelayCommand _cancelCommand;
+        public RelayCommand CancelCommand
+        {
+            get
+            {
+                if (_cancelCommand == null)
+                    _cancelCommand = new RelayCommand((param) => this.Cancel(), (param) => this.CanCancel());
+                return _cancelCommand;
+            }
+        }
+
+        public bool CanCancel()
+        {
+            return !IsProcessingScripts;
+        }
+
+        /// <summary>
+        /// Executes the Cancel command 
+        /// </summary>
+        public void Cancel()
+        {
+            Navigator.CloseDialog(this);
+        }
+
+        #endregion
+
+        #region RequestClose Command
+
+        private RelayCommand<System.ComponentModel.CancelEventArgs> _requestCloseCommand;
+        public RelayCommand<System.ComponentModel.CancelEventArgs> RequestCloseCommand
+        {
+            get
+            {
+                if (_requestCloseCommand == null)
+                    _requestCloseCommand = new RelayCommand<System.ComponentModel.CancelEventArgs>((param) => this.RequestClose(param), (param) => this.CanRequestClose());
+                return _requestCloseCommand;
+            }
+        }
+
+        public bool CanRequestClose()
+        {
+            return true;
+        }
+
+        /// <summary>
+        /// Executes the RequestClose command 
+        /// </summary>
+        public void RequestClose(System.ComponentModel.CancelEventArgs args)
+        {
+            if (this.IsProcessingScripts)
+            {
+                args.Cancel = true;
+
+                this.Navigator.ShowDialog<MessageBoxViewModel>(vm =>
+               {
+                   vm.ViewTitle = "Cannot Close";
+                   vm.Message = "Cannot close while processing";
+                   vm.SetButtons(MessageBoxViewModel.MessageBoxButton.OK);
+               });
+            }
+        }
+
+        #endregion
+
+        protected override void OnLoadDesignData()
+        {
+            LineItems = new System.Collections.ObjectModel.ObservableCollection<LineItem>();
+            LineItems.Add(new LineItem()
+            {
+                RevisionNumber = 7,
+                ScriptDate = DateTime.Now.ToString(),
+                DeveloperName = "Cpt. Jack Sparrow",
+                SQLStatement = DesignTimeData.SQLStatements.Items[0],
+                Notes = @"Creating the new table"
+            });
+            LineItems.Add(new LineItem()
+            {
+                RevisionNumber = 6,
+                ScriptDate = DateTime.Now.AddSeconds(-456879873).ToString(),
+                DeveloperName = "Cpt. Jack Sparrow",
+                SQLStatement = DesignTimeData.SQLStatements.Items[1],
+                IsBeingProcessed = true,
+                Notes = @"changing the SP cuz Jimmy told me to"
+            });
+            LineItems.Add(new LineItem()
+            {
+                RevisionNumber = 5,
+                ScriptDate = DateTime.Now.AddSeconds(-9456879873).ToString(),
+                DeveloperName = "Benny Jet",
+                SQLStatement = DesignTimeData.SQLStatements.Items[2],
+                HasBeenProcessed = true,
+                Notes = @"Adding a new column because new columns are awesome, and i'm just going to keep typing this comment until i make it wrap.  note i say wrap, not rap, it can rap too, if you just give it the opportunity"
+            });
+        }
+
+        #region LineItem Class
+        public class LineItem : NotificationBase
+        {
+            public int RevisionNumber
+            {
+                get { return GetField<int>(); }
+                set { SetField(value); }
+            }
+
+            public string ScriptDate
+            {
+                get { return GetField<string>(); }
+                set { SetField(value); }
+            }
+
+            public string DeveloperName
+            {
+                get { return GetField<string>(); }
+                set { SetField(value); }
+            }
+
+            public string SQLStatement
+            {
+                get { return GetField<string>(); }
+                set { SetField(value); }
+            }
+
+            public string Notes
+            {
+                get { return GetField<string>(); }
+                set { SetField(value); }
+            }
+
+            public bool HasBeenProcessed
+            {
+                get { return GetField<bool>(); }
+                set { SetField(value); }
+            }
+
+            public bool IsBeingProcessed
+            {
+                get { return GetField<bool>(); }
+                set { SetField(value); }
+            }
+
+            public bool FailedProcessing
+            {
+                get { return GetField<bool>(); }
+                set { SetField(value); }
+            }
+        }
+        #endregion
+    }
+}

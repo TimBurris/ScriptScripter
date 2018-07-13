@@ -1,0 +1,49 @@
+
+/*
+	NOTE:  Everything in this file is/should be written to be run against a DB multiple times, so everything will check for existences before creating
+*/
+
+
+/* first create our versioning schema if we don't already have it */
+if NOT EXISTS (select * from sys.schemas where name='Versioning')
+ begin
+	-- have to use an exec statement because create schema must be the first statement in a batch
+	exec ( 'CREATE SCHEMA Versioning')
+ end
+
+/* The Table to store the current "revision" */
+if NOT exists (select * from dbo.sysobjects where id = object_id(N'[Versioning].[Settings]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
+ BEGIN
+	CREATE TABLE [Versioning].[Settings](
+		[SettingsID] [int] NOT NULL,
+		[CurrentRevision] [int] NOT NULL,
+	 CONSTRAINT [PK_Settings_1] PRIMARY KEY CLUSTERED 
+	(
+		[SettingsID] ASC
+	)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) 
+	)
+
+	ALTER TABLE [Versioning].[Settings]  WITH CHECK ADD  CONSTRAINT [CK_Settings_SettingsIDEquals1] CHECK  (([SettingsID]=(1)))
+
+	ALTER TABLE [Versioning].[Settings] CHECK CONSTRAINT [CK_Settings_SettingsIDEquals1]
+ END
+
+/*make sure our one setting row exists */
+ if not exists(select * from Versioning.Settings where SettingsID=1)
+	insert into Versioning.Settings(SettingsID, CurrentRevision)
+	Select 1 as SettingsID, 0 as CurrentRevision
+
+/* our table to log what revisions have been applied and by who */
+if NOT EXISTS (select * from dbo.sysobjects where id = object_id(N'[Versioning].[ScriptLog]') and OBJECTPROPERTY(id, N'IsUserTable')=1 )
+	CREATE TABLE [Versioning].[ScriptLog] (
+		[ScriptLogID] [int] IDENTITY (1, 1) NOT NULL ,
+		[RevisionNumber] [int] NOT NULL ,
+		[DateRun] [datetime] NOT NULL ,
+		[Machine] [varchar] (100) NOT NULL ,
+		[DeveloperWhoRan] [varchar] (255) NOT NULL ,
+		[SQLScript] [text] NOT NULL ,
+		CONSTRAINT [PK_ScriptLog] PRIMARY KEY  CLUSTERED 
+		(
+			[ScriptLogID]
+		)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) 
+	) 
