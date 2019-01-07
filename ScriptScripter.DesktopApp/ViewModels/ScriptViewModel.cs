@@ -14,10 +14,25 @@ namespace ScriptScripter.DesktopApp.ViewModels
     {
         private Processor.Data.Models.ScriptContainer _scriptContainer;
         private Processor.Data.Models.Script _scriptInEdit;
-        public ScriptViewModel()
+        private readonly NinjaMvvm.Wpf.Abstractions.INavigator _navigator;
+        private readonly Contracts.IViewModelFaultlessService _viewModelFaultlessService;
+        private readonly Processor.Data.Contracts.IConfigurationRepository _configurationRepository;
+        private readonly Processor.Data.Contracts.IScriptRepositoryFactory _scriptsRepoFactory;
+
+        public ScriptViewModel() { }//Designer use
+
+        public ScriptViewModel(NinjaMvvm.Wpf.Abstractions.INavigator navigator,
+            Contracts.IViewModelFaultlessService viewModelFaultlessService,
+            Processor.Data.Contracts.IConfigurationRepository configurationRepository,
+            Processor.Data.Contracts.IScriptRepositoryFactory scriptsRepoFactory)
         {
             ViewTitle = "Create New Script";
+            this._navigator = navigator;
+            this._viewModelFaultlessService = viewModelFaultlessService;
+            this._configurationRepository = configurationRepository;
+            this._scriptsRepoFactory = scriptsRepoFactory;
         }
+
 
         public void Init(Processor.Data.Models.ScriptContainer scriptContainer)
         {
@@ -34,14 +49,7 @@ namespace ScriptScripter.DesktopApp.ViewModels
             this.SQLStatement = script.SQLStatement;
         }
 
-        [Ninject.Inject]
-        public Processor.Data.Contracts.IScriptRepositoryFactory ScriptsRepoFactory { get; set; }
 
-        [Ninject.Inject]
-        public Processor.Data.Contracts.IConfigurationRepository ConfigurationRepository { get; set; }
-
-        [Ninject.Inject]
-        public Contracts.IViewModelFaultlessService ViewModelFaultlessService { get; set; }
 
         public string SQLStatement
         {
@@ -80,15 +88,15 @@ namespace ScriptScripter.DesktopApp.ViewModels
         {
             if (this.GetValidationResult().IsValid)
             {
-                this.ViewModelFaultlessService.TryExecuteSyncAsAsync(() => this.ExecuteCommit())
-                    .OnSuccessAsync(() => Navigator.CloseDialog(this));
+                _viewModelFaultlessService.TryExecuteSyncAsAsync(() => this.ExecuteCommit())
+                    .OnSuccessAsync(() => _navigator.CloseDialog(this));
             }
             else
                 ShowErrors = true;
         }
         private void ExecuteCommit()
         {
-            var repo = this.ScriptsRepoFactory.GetScriptsRepository(_scriptContainer);
+            var repo = _scriptsRepoFactory.GetScriptsRepository(_scriptContainer);
 
             if (_scriptInEdit == null)
             {
@@ -96,7 +104,7 @@ namespace ScriptScripter.DesktopApp.ViewModels
                 {
                     SQLStatement = this.SQLStatement,
                     Notes = this.Comments,
-                    DeveloperName = this.ConfigurationRepository.GetDeveloperName(),
+                    DeveloperName = _configurationRepository.GetDeveloperName(),
                     ScriptDate = DateTime.Now
                 });
             }
@@ -106,7 +114,7 @@ namespace ScriptScripter.DesktopApp.ViewModels
                 _scriptInEdit.Notes = this.Comments;
 
                 //i debate on this... do we change the developer name?  i think so.
-                _scriptInEdit.DeveloperName = this.ConfigurationRepository.GetDeveloperName();
+                _scriptInEdit.DeveloperName = _configurationRepository.GetDeveloperName();
                 //do not chang ethe date
 
                 repo.UpdateScript(_scriptInEdit);
@@ -138,7 +146,7 @@ namespace ScriptScripter.DesktopApp.ViewModels
         /// </summary>
         public void Cancel()
         {
-            Navigator.CloseDialog(this);
+            _navigator.CloseDialog(this);
         }
 
         #endregion

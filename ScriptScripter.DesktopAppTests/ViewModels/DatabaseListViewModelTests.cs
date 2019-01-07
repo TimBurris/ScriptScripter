@@ -33,10 +33,12 @@ namespace ScriptScripter.DesktopApp.ViewModels.Tests
             RepoMocks.MockScriptsRepos[2].Setup(m => m.GetLastScript())
                 .Returns((Processor.Data.Models.Script)null); //makes usre it's fine wiht NULL (meaning no scripts in the file yet)
 
-            var vm = new DatabaseListViewModel(fileSystem: null);
-            vm.ScriptsRepoFactory = RepoMocks.MockScriptRepositoryFactory.Object;
-            vm.ScriptsContainerRepository = RepoMocks.MockScriptContainerRepo.Object;
-            vm.ViewModelFaultlessService = new ViewModelFaultlessService(navigator: null);
+            var vm = new DatabaseListViewModel(fileSystem: null,
+                navigator: null,
+                viewModelFaultlessService: new ViewModelFaultlessService(navigator: null),
+                scriptsRepoFactory: RepoMocks.MockScriptRepositoryFactory.Object,
+                scriptsContainerRepository: RepoMocks.MockScriptContainerRepo.Object,
+                eventNotificationService: null);
 
             vm.ReloadAsync().Wait();
 

@@ -25,7 +25,8 @@ namespace ScriptScripter.Processor.Services.Tests
                                     { _fileName, _mockFileData},
                                 });
 
-            _service = new ConfigurationFileUpgradeService(_mockFileSystem, configurationFileName: _fileName);
+            _service = new ConfigurationFileUpgradeService(_mockFileSystem);
+            _service.ConfigurationFileName = _fileName;
         }
 
         private void Act()
@@ -62,7 +63,7 @@ namespace ScriptScripter.Processor.Services.Tests
                         }";
 
             //sanity check, everything should be empty, then we'll upgrade and prove not empty
-            var before = new Data.Repositories.ScriptContainerRepository(_mockFileSystem, _fileName)
+            var before = new Data.Repositories.ScriptContainerRepository(_mockFileSystem, eventNotificationService: null) { ConfigurationFileName = _fileName }
                 .GetAll()
                 .ToList();
 
@@ -73,7 +74,7 @@ namespace ScriptScripter.Processor.Services.Tests
             this.Act();
 
             //*************  assert   ******************
-            var after = new Data.Repositories.ScriptContainerRepository(_mockFileSystem, _fileName)
+            var after = new Data.Repositories.ScriptContainerRepository(_mockFileSystem, eventNotificationService: null) { ConfigurationFileName = _fileName }
                  .GetAll()
                  .ToList();
             after.Should().NotBeEmpty();

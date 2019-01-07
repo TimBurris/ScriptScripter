@@ -68,16 +68,19 @@
       <HintPath>..\packages\MahApps.Metro.1.6.5\lib\net47\MahApps.Metro.dll</HintPath>
     </Reference>
     <Reference Include="NinjaMvvm, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\NinjaMvvm.Wpf.1.0.0.1\lib\net471\NinjaMvvm.dll</HintPath>
+      <HintPath>..\packages\NinjaMvvm.Wpf.1.0.2.1\lib\net471\NinjaMvvm.dll</HintPath>
     </Reference>
-    <Reference Include="NinjaMvvm.Wpf, Version=1.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\NinjaMvvm.Wpf.1.0.0.1\lib\net471\NinjaMvvm.Wpf.dll</HintPath>
+    <Reference Include="NinjaMvvm.Wpf, Version=1.0.2.1, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\NinjaMvvm.Wpf.1.0.2.1\lib\net471\NinjaMvvm.Wpf.dll</HintPath>
+    </Reference>
+    <Reference Include="NinjaMvvm.Wpf.Ninject, Version=1.0.0.1, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\NinjaMvvm.Wpf.Ninject.1.0.0.1\lib\net471\NinjaMvvm.Wpf.Ninject.dll</HintPath>
     </Reference>
     <Reference Include="Ninject, Version=3.3.4.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
       <HintPath>..\packages\Ninject.3.3.4\lib\net45\Ninject.dll</HintPath>
     </Reference>
     <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
-      <HintPath>..\packages\NLog.4.5.6\lib\net45\NLog.dll</HintPath>
+      <HintPath>..\packages\NLog.4.5.7\lib\net45\NLog.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Annotations, Version=4.2.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
@@ -90,8 +93,8 @@
     <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
-    <Reference Include="System.IO.Abstractions, Version=2.1.0.205, Culture=neutral, PublicKeyToken=96bf224d23c43e59, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.IO.Abstractions.2.1.0.205\lib\net40\System.IO.Abstractions.dll</HintPath>
+    <Reference Include="System.IO.Abstractions, Version=2.1.0.211, Culture=neutral, PublicKeyToken=96bf224d23c43e59, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.IO.Abstractions.2.1.0.211\lib\net40\System.IO.Abstractions.dll</HintPath>
     </Reference>
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.Runtime.Serialization" />
@@ -124,7 +127,6 @@
     <Compile Include="BoundControlBase.cs" />
     <Compile Include="BoundViewBase.cs" />
     <Compile Include="Contracts\IFileNameDropHandler.cs" />
-    <Compile Include="Contracts\INavigator.cs" />
     <Compile Include="Contracts\IThemeService.cs" />
     <Compile Include="Contracts\IViewModelFaultlessService.cs" />
     <Compile Include="Controls\BindablePasswordBox.cs" />
@@ -151,8 +153,8 @@
       <DependentUpon>DialogWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="FileNameDropHandler.cs" />
-    <Compile Include="Navigator.cs" />
     <Compile Include="Ninjector.cs" />
+    <Compile Include="ScriptScripterNavigator.cs" />
     <Compile Include="Themes\ThemeOption.cs" />
     <Compile Include="Themes\ThemeService.cs" />
     <Compile Include="ViewModelFaultlessService.cs" />

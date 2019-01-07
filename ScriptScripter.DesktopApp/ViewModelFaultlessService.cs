@@ -8,9 +8,9 @@ namespace ScriptScripter.DesktopApp
 {
     public class ViewModelFaultlessService : FaultlessExecution.FaultlessExecutionService, Contracts.IViewModelFaultlessService
     {
-        private readonly Contracts.INavigator _navigator;
+        private readonly NinjaMvvm.Wpf.Abstractions.INavigator _navigator;
 
-        public ViewModelFaultlessService(Contracts.INavigator navigator)
+        public ViewModelFaultlessService(NinjaMvvm.Wpf.Abstractions.INavigator navigator)
         {
             this._navigator = navigator;
         }

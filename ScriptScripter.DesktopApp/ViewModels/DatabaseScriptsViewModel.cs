@@ -12,52 +12,43 @@ namespace ScriptScripter.DesktopApp.ViewModels
     public class DatabaseScriptsViewModel : ScriptScripterViewModelBase
     {
         private Processor.Data.Models.ScriptContainer _scriptContainer;
+        private readonly Processor.Services.Contracts.IEventNotificationService _eventNotificationService;
+        private readonly NinjaMvvm.Wpf.Abstractions.INavigator _navigator;
+        private readonly Processor.Data.Contracts.IConfigurationRepository _configurationRepository;
+        private readonly Processor.Data.Contracts.IRevisionRepository _revisionRepository;
+        private readonly Processor.Data.Contracts.IScriptRepositoryFactory _scriptRepoFactory;
+        private readonly Processor.Services.Contracts.IScriptingService _scriptingService;
+        private readonly Contracts.IViewModelFaultlessService _viewModelFaultlessService;
 
-        public DatabaseScriptsViewModel() { }
+        public DatabaseScriptsViewModel() { }//designer only
+        public DatabaseScriptsViewModel(NinjaMvvm.Wpf.Abstractions.INavigator navigator,
+            Processor.Data.Contracts.IConfigurationRepository configurationRepository,
+            Processor.Data.Contracts.IRevisionRepository revisionRepository,
+            Processor.Data.Contracts.IScriptRepositoryFactory scriptRepoFactory,
+            Processor.Services.Contracts.IScriptingService scriptingService,
+            Contracts.IViewModelFaultlessService viewModelFaultlessService,
+            Processor.Services.Contracts.IEventNotificationService eventNotificationService
+)
+        {
+            this._navigator = navigator;
+            this._configurationRepository = configurationRepository;
+            this._revisionRepository = revisionRepository;
+            this._scriptRepoFactory = scriptRepoFactory;
+            this._scriptingService = scriptingService;
+            this._viewModelFaultlessService = viewModelFaultlessService;
+            this._eventNotificationService = eventNotificationService;
+
+            if (_eventNotificationService != null)
+            {
+                _eventNotificationService.ServerConnectionChanged += _eventNotificationService_ServerConnectionChanged;
+                _eventNotificationService.ScriptContainerContentsChanged += _eventNotificationService_ScriptContainerContentsChanged;
+            }
+        }
 
         public void Init(Processor.Data.Models.ScriptContainer scriptContainer)
         {
             _scriptContainer = scriptContainer;
             DatabaseName = _scriptContainer.DatabaseName;
-        }
-
-        [Ninject.Inject]
-        public Processor.Data.Contracts.IConfigurationRepository ConfigurationRepository { get; set; }
-
-        [Ninject.Inject]
-        public Processor.Data.Contracts.IRevisionRepository RevisionRepository { get; set; }
-
-        [Ninject.Inject]
-        public Processor.Data.Contracts.IScriptRepositoryFactory ScriptRepoFactory { get; set; }
-
-        [Ninject.Inject]
-        public Processor.Services.Contracts.IScriptingService ScriptingService { get; set; }
-
-        [Ninject.Inject]
-        public Contracts.IViewModelFaultlessService ViewModelFaultlessService { get; set; }
-
-        private Processor.Services.Contracts.IEventNotificationService _eventNotificationService;
-
-        [Ninject.Inject]
-        public Processor.Services.Contracts.IEventNotificationService EventNotificationService
-        {
-            get { return _eventNotificationService; }
-            set
-            {
-                if (_eventNotificationService != null)
-                {
-                    _eventNotificationService.ServerConnectionChanged -= _eventNotificationService_ServerConnectionChanged;
-                    _eventNotificationService.ScriptContainerContentsChanged -= _eventNotificationService_ScriptContainerContentsChanged;
-                }
-
-                _eventNotificationService = value;
-
-                if (_eventNotificationService != null)
-                {
-                    _eventNotificationService.ServerConnectionChanged += _eventNotificationService_ServerConnectionChanged;
-                    _eventNotificationService.ScriptContainerContentsChanged += _eventNotificationService_ScriptContainerContentsChanged;
-                }
-            }
         }
 
         private void _eventNotificationService_ScriptContainerContentsChanged(object sender, Processor.EventArgs<Processor.Data.Models.ScriptContainer> e)
@@ -74,7 +65,7 @@ namespace ScriptScripter.DesktopApp.ViewModels
         private Processor.Data.Models.DatabaseConnectionParameters GetDatabaseConnectionParameters()
         {
             var connParams = _scriptContainer.CustomServerConnectionParameters
-                ?? this.ConfigurationRepository.GetServerConnectionParameters();
+                ?? _configurationRepository.GetServerConnectionParameters();
 
             return new Processor.Data.Models.DatabaseConnectionParameters(copyFrom: connParams)
             {
@@ -91,10 +82,10 @@ namespace ScriptScripter.DesktopApp.ViewModels
             //if they have customconnection show it, else show null
             this.ServerConnectionInfo = _scriptContainer.CustomServerConnectionParameters?.ToString();
 
-            var scriptRepo = this.ScriptRepoFactory.GetScriptsRepository(_scriptContainer);
+            var scriptRepo = _scriptRepoFactory.GetScriptsRepository(_scriptContainer);
             var databaseConnectionParams = this.GetDatabaseConnectionParameters();
-            var t = this.ViewModelFaultlessService.TryExecuteSyncAsAsync(() => scriptRepo.GetLastScript());
-            var t3 = this.ViewModelFaultlessService.TryExecuteAsync(() => ScriptingService.TestDatabaseConnectionAsync(databaseConnectionParams));
+            var t = _viewModelFaultlessService.TryExecuteSyncAsAsync(() => scriptRepo.GetLastScript());
+            var t3 = _viewModelFaultlessService.TryExecuteAsync(() => _scriptingService.TestDatabaseConnectionAsync(databaseConnectionParams));
 
             await Task.WhenAll(t, t3);
 
@@ -105,7 +96,7 @@ namespace ScriptScripter.DesktopApp.ViewModels
             connectionResult = t3.Result.ReturnValue;
 
             if (connectionResult.WasSuccessful)
-                lastRevision = (await this.ViewModelFaultlessService.TryExecuteSyncAsAsync(() => RevisionRepository.GetLastRevision(databaseConnectionParams)))
+                lastRevision = (await _viewModelFaultlessService.TryExecuteSyncAsAsync(() => _revisionRepository.GetLastRevision(databaseConnectionParams)))
                     .ReturnValue;
             else
                 lastRevision = null;
@@ -252,7 +243,7 @@ namespace ScriptScripter.DesktopApp.ViewModels
         /// </summary>
         public void AddNewScript()
         {
-            Navigator.ShowDialog<ScriptViewModel>(vm => vm.Init(_scriptContainer));
+            _navigator.ShowDialog<ScriptViewModel>(vm => vm.Init(_scriptContainer));
         }
 
         #endregion
@@ -260,6 +251,7 @@ namespace ScriptScripter.DesktopApp.ViewModels
         #region ApplyScripts Command
 
         private RelayCommand _applyScriptsCommand;
+
         public RelayCommand ApplyScriptsCommand
         {
             get
@@ -280,7 +272,7 @@ namespace ScriptScripter.DesktopApp.ViewModels
         /// </summary>
         public void ApplyScripts()
         {
-            Navigator.ShowDialog<ApplyScriptsViewModel>(vm => vm.Init(_scriptContainer));
+            _navigator.ShowDialog<ApplyScriptsViewModel>(vm => vm.Init(_scriptContainer));
 
             this.ReloadDataAsync();
         }

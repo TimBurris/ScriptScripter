@@ -25,8 +25,8 @@ namespace ScriptScripter.DesktopApp.ViewModels.Tests
         [TestInitialize]
         public void Init()
         {
-            _viewModel = new AddDatabaseViewModel(defaultFileNamePattern: "DBScripts_{DatabaseName}.xml");
-            _viewModel.FileDialogService = _mockFileDialogService.Object;
+            _viewModel = new AddDatabaseViewModel(scriptContainerRepository: null, navigator: null, fileDialogService: _mockFileDialogService.Object, databaseConnectionControlVM: null);
+            _viewModel.DefaultFileNamePattern = "DBScripts_{DatabaseName}.xml";
 
             _mockFileDialogService.Setup(m => m.ShowSelectFileDialog(It.IsAny<FileAndFolderDialog.Abstractions.OpenFileOptions>()))
                 .Callback<FileAndFolderDialog.Abstractions.OpenFileOptions>(options => _optionsSentIn = options);
@@ -37,8 +37,7 @@ namespace ScriptScripter.DesktopApp.ViewModels.Tests
         public void case_insensitive_matches_databasename_replacement_string()
         {
             //*************  arrange  ******************
-            _viewModel = new AddDatabaseViewModel(defaultFileNamePattern: "DBScripts_{DATABASEname}.xml");
-            _viewModel.FileDialogService = _mockFileDialogService.Object;
+            _viewModel.DefaultFileNamePattern = "DBScripts_{DATABASEname}.xml";
             _viewModel.DatabaseName = "Olaf";
 
             //*************    act    ******************

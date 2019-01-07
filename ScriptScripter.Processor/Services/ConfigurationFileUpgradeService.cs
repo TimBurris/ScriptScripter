@@ -8,20 +8,8 @@ namespace ScriptScripter.Processor.Services
 {
     public class ConfigurationFileUpgradeService : Data.Repositories.ConfigFileBase, Contracts.IConfigurationFileUpgradeService
     {
-        private readonly Data.Contracts.IScriptContainerRepository _scriptContainerRepository;
-
         public ConfigurationFileUpgradeService(System.IO.Abstractions.IFileSystem fileSystem)
             : base(fileSystem)
-        {
-        }
-
-        public ConfigurationFileUpgradeService(System.IO.Abstractions.IFileSystem fileSystem, string configurationFileName)
-            : base(fileSystem, configurationFileName)
-        {
-        }
-
-        public ConfigurationFileUpgradeService()
-            : base()
         {
         }
 

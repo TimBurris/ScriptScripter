@@ -13,7 +13,7 @@ namespace ScriptScripter.DesktopApp.ViewModels.Tests
         protected DesktopAppTests.RepoMockery RepoMocks { get; set; } = new DesktopAppTests.RepoMockery();
         protected DesktopAppTests.ServiceMockery ServiceMocks { get; set; } = new DesktopAppTests.ServiceMockery();
 
-        protected Mock<Contracts.INavigator> MockNavigator { get; set; }
+        protected Mock<NinjaMvvm.Wpf.Abstractions.INavigator> MockNavigator { get; set; }
 
         [TestInitialize]
         public void BaseTestInit()
@@ -23,7 +23,7 @@ namespace ScriptScripter.DesktopApp.ViewModels.Tests
 
         protected virtual void SetupMocks()
         {
-            MockNavigator = new Mock<Contracts.INavigator>(Moq.MockBehavior.Strict);
+            MockNavigator = new Mock<NinjaMvvm.Wpf.Abstractions.INavigator>(Moq.MockBehavior.Strict);
             RepoMocks.SetupMocks(Moq.MockBehavior.Strict);
             ServiceMocks.SetupMocks(Moq.MockBehavior.Strict);
         }

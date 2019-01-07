@@ -121,6 +121,17 @@ namespace ScriptScripter.DesktopApp.ViewModels
             Information = 64
         }
 
+
+        private readonly NinjaMvvm.Wpf.Abstractions.INavigator _navigator;
+
+
+        public MessageBoxViewModel() { }//designer only
+
+        public MessageBoxViewModel(NinjaMvvm.Wpf.Abstractions.INavigator navigator)
+        {
+            this._navigator = navigator;
+        }
+
         public void Init(String title, String message, MessageBoxButton buttons)
         {
             this.ViewTitle = title;
@@ -188,7 +199,7 @@ Mei adhuc movet imperdiet cu.Te meliore blandit sea. Est ei quaeque antiopam tem
 
         private void Close()
         {
-            Navigator.CloseDialog(this);
+            _navigator.CloseDialog(this);
         }
 
         #region binding properties
@@ -357,6 +368,7 @@ Mei adhuc movet imperdiet cu.Te meliore blandit sea. Est ei quaeque antiopam tem
 
         #region ShowMoreDetails Relay Command
         private RelayCommand _showMoreDetailsCommand;
+
         public RelayCommand ShowMoreDetailsCommand
         {
             get

@@ -8,12 +8,17 @@ namespace ScriptScripter.DesktopApp.ViewModels
 {
     public class ErrorViewModel : MessageBoxViewModel
     {
-        [Ninject.Inject]
-        public NLog.ILogger Logger { get; set; }
+        private readonly NLog.ILogger _logger;
+
+        public ErrorViewModel() { }//designer only
+        public ErrorViewModel(NLog.ILogger logger)
+        {
+            this._logger = logger;
+        }
 
         public void LoadFromException(Exception ex)
         {
-            this.Logger.Error(ex, "Error recieved and being shown to user");
+            _logger.Error(ex, "Error recieved and being shown to user");
 
             this.ViewTitle = "Unexpected error recieved";
             this.Message = "The following error was recieved (and logged based on your NLog settings in config): " + ex.Message;

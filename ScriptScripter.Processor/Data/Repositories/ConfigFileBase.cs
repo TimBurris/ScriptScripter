@@ -8,24 +8,11 @@ namespace ScriptScripter.Processor.Data.Repositories
 {
     public class ConfigFileBase
     {
-        private string _configurationFileName;
         private System.IO.Abstractions.IFileSystem _fileSystem;
 
         public ConfigFileBase(System.IO.Abstractions.IFileSystem fileSystem)
         {
             _fileSystem = fileSystem;
-        }
-
-        public ConfigFileBase(System.IO.Abstractions.IFileSystem fileSystem, string configurationFileName)
-            : this(fileSystem)
-        {
-            _configurationFileName = configurationFileName;
-        }
-
-        public ConfigFileBase()
-            //use default implementation which calls System.IO
-            : this(fileSystem: new System.IO.Abstractions.FileSystem())
-        {
         }
 
         protected void WriteFile(Settings settings)
@@ -40,6 +27,8 @@ namespace ScriptScripter.Processor.Data.Repositories
             _fileSystem.File.WriteAllText(fileName, Newtonsoft.Json.JsonConvert.SerializeObject(settings, Newtonsoft.Json.Formatting.Indented));
         }
 
+        public string ConfigurationFileName { get; set; }
+
         protected Settings ReadFile()
         {
             var fileName = this.GetFileName();
@@ -53,11 +42,11 @@ namespace ScriptScripter.Processor.Data.Repositories
 
         private string GetFileName()
         {
-            if (string.IsNullOrEmpty(_configurationFileName))
+            if (string.IsNullOrEmpty(this.ConfigurationFileName))
             {
-                _configurationFileName = Properties.Settings.Default.ConfigurationSettingsFile;
+                this.ConfigurationFileName = Properties.Settings.Default.ConfigurationSettingsFile;
             }
-            var s = Environment.ExpandEnvironmentVariables(_configurationFileName);
+            var s = Environment.ExpandEnvironmentVariables(this.ConfigurationFileName);
 
             return _fileSystem.Path.GetFullPath(s);
         }

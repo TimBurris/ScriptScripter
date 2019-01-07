@@ -23,18 +23,32 @@ namespace ScriptScripter.Processor.Data.Repositories.Tests
                                                                         }
                                                 }";
 
+        private ConfigurationRepository _repo;
+        private System.IO.Abstractions.TestingHelpers.MockFileSystem _mockFS;
+        private Dictionary<string, System.IO.Abstractions.TestingHelpers.MockFileData> _fileSystemData = new Dictionary<string, System.IO.Abstractions.TestingHelpers.MockFileData>();
+        private Mock<Services.Contracts.IEventNotificationService> _mockENS = new Mock<Services.Contracts.IEventNotificationService>();
+        private Mock<Services.Contracts.ICryptoService> _mockCryptoService = new Mock<Services.Contracts.ICryptoService>();
+
+        [TestInitialize]
+        public void Init()
+        {
+            _mockFS = new System.IO.Abstractions.TestingHelpers.MockFileSystem(_fileSystemData);
+            _repo = new ConfigurationRepository(_mockFS,
+                _mockENS.Object,
+                _mockCryptoService.Object
+                );
+        }
 
         [TestMethod()]
         public void GetDeveloperNameTest()
         {
-            var fileSystem = new System.IO.Abstractions.TestingHelpers.MockFileSystem(new Dictionary<string, System.IO.Abstractions.TestingHelpers.MockFileData>
-                                {
-                                    { @"c:\temp\myfolder\myfile.json", new System.IO.Abstractions.TestingHelpers.MockFileData(_validSettingsJson) },
-                                });
 
-            var repo = new ConfigurationRepository(fileSystem, configurationFileName: @"c:\temp\myfolder\myfile.json");
 
-            var name = repo.GetDeveloperName();
+            _fileSystemData.Add(@"c:\temp\myfolder\myfile.json", new System.IO.Abstractions.TestingHelpers.MockFileData(_validSettingsJson));
+
+            _repo.ConfigurationFileName = @"c:\temp\myfolder\myfile.json";
+
+            var name = _repo.GetDeveloperName();
 
             name.Should().Be("Dumpster Ninja");
         }
@@ -44,16 +58,13 @@ namespace ScriptScripter.Processor.Data.Repositories.Tests
         [DataRow("")]
         public void SetDeveloperNameTest(string settingsJson)
         {
-            var fileSystem = new System.IO.Abstractions.TestingHelpers.MockFileSystem(new Dictionary<string, System.IO.Abstractions.TestingHelpers.MockFileData>
-                                {
-                                    { @"c:\temp\myfolder\myfile.json", new System.IO.Abstractions.TestingHelpers.MockFileData(settingsJson) },
-                                });
+            _fileSystemData.Add(@"c:\temp\myfolder\myfile.json", new System.IO.Abstractions.TestingHelpers.MockFileData(settingsJson));
 
-            var repo = new ConfigurationRepository(fileSystem, configurationFileName: @"c:\temp\myfolder\myfile.json");
+            _repo.ConfigurationFileName = @"c:\temp\myfolder\myfile.json";
 
-            repo.SetDeveloperName("Sam Harris");
+            _repo.SetDeveloperName("Sam Harris");
 
-            var contents = fileSystem.File.ReadAllText(@"c:\temp\myfolder\myfile.json");
+            var contents = _mockFS.File.ReadAllText(@"c:\temp\myfolder\myfile.json");
 
             contents.Should().Contain("\"DeveloperName\": \"Sam Harris\",");
         }
@@ -61,18 +72,13 @@ namespace ScriptScripter.Processor.Data.Repositories.Tests
         [TestMethod()]
         public void GetServerConnectionParametersTest()
         {
-            var fileSystem = new System.IO.Abstractions.TestingHelpers.MockFileSystem(new Dictionary<string, System.IO.Abstractions.TestingHelpers.MockFileData>
-                                {
-                                    { @"c:\temp\myfolder\myfile.json", new System.IO.Abstractions.TestingHelpers.MockFileData(_validSettingsJson) },
-                                });
-            var mockCryptoService = new Mock<Services.Contracts.ICryptoService>();
-            mockCryptoService.Setup(m => m.Decrypt("this_is_my_encrypted_pw"))
+            _fileSystemData.Add(@"c:\temp\myfolder\myfile.json", new System.IO.Abstractions.TestingHelpers.MockFileData(_validSettingsJson));
+            _mockCryptoService.Setup(m => m.Decrypt("this_is_my_encrypted_pw"))
                 .Returns("my_Decrypted_pw");
 
-            var repo = new ConfigurationRepository(fileSystem, configurationFileName: @"c:\temp\myfolder\myfile.json");
-            repo.CryptoService = mockCryptoService.Object;
+            _repo.ConfigurationFileName = @"c:\temp\myfolder\myfile.json";
 
-            var p = repo.GetServerConnectionParameters();
+            var p = _repo.GetServerConnectionParameters();
 
             p.Server.Should().Be("(local)\\myInstance");
             p.Username.Should().Be("myuser");
@@ -85,19 +91,13 @@ namespace ScriptScripter.Processor.Data.Repositories.Tests
         [DataRow("")]
         public void SetServerConnectionParametersTest(string settingsJson)
         {
-            var fileSystem = new System.IO.Abstractions.TestingHelpers.MockFileSystem(new Dictionary<string, System.IO.Abstractions.TestingHelpers.MockFileData>
-                                {
-                                    { @"c:\temp\myfolder\myfile.json", new System.IO.Abstractions.TestingHelpers.MockFileData(settingsJson) },
-                                });
-            var mockCryptoService = new Mock<Services.Contracts.ICryptoService>();
-            mockCryptoService.Setup(m => m.Encrypt("MyPass"))
+            _fileSystemData.Add(@"c:\temp\myfolder\myfile.json", new System.IO.Abstractions.TestingHelpers.MockFileData(settingsJson));
+            _mockCryptoService.Setup(m => m.Encrypt("MyPass"))
                 .Returns("super_unbreakable_pw");
 
             var mockEventService = new Mock<Services.Contracts.IEventNotificationService>();
 
-            var repo = new ConfigurationRepository(fileSystem, configurationFileName: @"c:\temp\myfolder\myfile.json");
-            repo.CryptoService = mockCryptoService.Object;
-            repo.EventNotificationService = mockEventService.Object;
+            _repo.ConfigurationFileName = @"c:\temp\myfolder\myfile.json";
 
             var p = new Models.ServerConnectionParameters();
             p.Server = "MyServer";
@@ -105,9 +105,9 @@ namespace ScriptScripter.Processor.Data.Repositories.Tests
             p.Password = "MyPass";
             p.UseTrustedConnection = true;
 
-            repo.SetServerConnectionParameters(p);
+            _repo.SetServerConnectionParameters(p);
 
-            var contents = fileSystem.File.ReadAllText(@"c:\temp\myfolder\myfile.json");
+            var contents = _mockFS.File.ReadAllText(@"c:\temp\myfolder\myfile.json");
 
             contents.Should().Contain("\"Server\": \"MyServer\"");
             contents.Should().Contain("\"Username\": \"sa\"");

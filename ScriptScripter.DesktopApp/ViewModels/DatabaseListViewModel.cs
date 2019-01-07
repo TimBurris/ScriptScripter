@@ -13,14 +13,35 @@ namespace ScriptScripter.DesktopApp.ViewModels
     public class DatabaseListViewModel : ScriptScripterViewModelBase
     {
         private readonly System.IO.Abstractions.IFileSystem _fileSystem;
+        private readonly NinjaMvvm.Wpf.Abstractions.INavigator _navigator;
+        private readonly Contracts.IViewModelFaultlessService _viewModelFaultlessService;
+        private readonly Processor.Data.Contracts.IScriptRepositoryFactory _scriptsRepoFactory;
+        private readonly Processor.Data.Contracts.IScriptContainerRepository _scriptsContainerRepository;
+        private readonly Processor.Services.Contracts.IEventNotificationService _eventNotificationService;
         private List<ViewModels.DatabaseListViewModel.LineItem> _allLineItems = new List<LineItem>();
 
         public DatabaseListViewModel() { }//Designer only
 
-        public DatabaseListViewModel(System.IO.Abstractions.IFileSystem fileSystem)
+        public DatabaseListViewModel(System.IO.Abstractions.IFileSystem fileSystem,
+            NinjaMvvm.Wpf.Abstractions.INavigator navigator,
+            Contracts.IViewModelFaultlessService viewModelFaultlessService,
+            Processor.Data.Contracts.IScriptRepositoryFactory scriptsRepoFactory,
+            Processor.Data.Contracts.IScriptContainerRepository scriptsContainerRepository,
+            Processor.Services.Contracts.IEventNotificationService eventNotificationService)
         {
             this._fileSystem = fileSystem;
+            this._navigator = navigator;
+            this._viewModelFaultlessService = viewModelFaultlessService;
+            this._scriptsRepoFactory = scriptsRepoFactory;
+            this._scriptsContainerRepository = scriptsContainerRepository;
+            this._eventNotificationService = eventNotificationService;
             this.Tags.ItemPropertyChangedEvent += Tags_ItemPropertyChangedEvent;
+
+            //TODO: confirm these are not hanging around after dead
+            _eventNotificationService.ScriptContainerAdded -= _eventNotificationService_ContainersChange;
+            _eventNotificationService.ScriptContainerUpdated -= _eventNotificationService_ContainersChange;
+            _eventNotificationService.ScriptContainerRemoved -= _eventNotificationService_ContainersChange;
+            _eventNotificationService.ScriptContainerContentsChanged -= _eventNotificationService_ContainersChange;
         }
 
         private void Tags_ItemPropertyChangedEvent(object sender, ItemPropertyChangedEventArgs<TagLineItem> e)
@@ -28,43 +49,7 @@ namespace ScriptScripter.DesktopApp.ViewModels
             this.FilterLineItems();
         }
 
-        [Ninject.Inject]
-        public Contracts.IViewModelFaultlessService ViewModelFaultlessService { get; set; }
-        [Ninject.Inject]
-        public Processor.Data.Contracts.IScriptRepositoryFactory ScriptsRepoFactory { get; set; }
-
-        [Ninject.Inject]
-        public Processor.Data.Contracts.IScriptContainerRepository ScriptsContainerRepository { get; set; }
-
-        private Processor.Services.Contracts.IEventNotificationService _eventNotificationService;
-
-        [Ninject.Inject]
-        public Processor.Services.Contracts.IEventNotificationService EventNotificationService
-        {
-            get { return _eventNotificationService; }
-            set
-            {
-                if (_eventNotificationService != null)
-                {
-                    _eventNotificationService.ScriptContainerAdded -= _eventNotificationService_ContainersChange;
-                    _eventNotificationService.ScriptContainerUpdated -= _eventNotificationService_ContainersChange;
-                    _eventNotificationService.ScriptContainerRemoved -= _eventNotificationService_ContainersChange;
-                    _eventNotificationService.ScriptContainerContentsChanged -= _eventNotificationService_ContainersChange;
-                }
-
-                _eventNotificationService = value;
-
-                if (_eventNotificationService != null)
-                {
-                    _eventNotificationService.ScriptContainerAdded += _eventNotificationService_ContainersChange;
-                    _eventNotificationService.ScriptContainerUpdated += _eventNotificationService_ContainersChange;
-                    _eventNotificationService.ScriptContainerRemoved += _eventNotificationService_ContainersChange;
-                    _eventNotificationService.ScriptContainerContentsChanged += _eventNotificationService_ContainersChange;
-                }
-            }
-        }
-
-        private void _eventNotificationService_ContainersChange(object sender, EventArgs e)
+       private void _eventNotificationService_ContainersChange(object sender, EventArgs e)
         {
             this.ReloadDataAsync();
         }
@@ -77,16 +62,16 @@ namespace ScriptScripter.DesktopApp.ViewModels
             LineItems = new System.Collections.ObjectModel.ObservableCollection<ViewModels.DatabaseListViewModel.LineItem>();
             List<string> allTags = new List<string>();
 
-            var scriptContainers = ScriptsContainerRepository.GetAll();
+            var scriptContainers = _scriptsContainerRepository.GetAll();
 
             foreach (var scriptContainer in scriptContainers)
             {
                 if (scriptContainer.Tags != null)
                     allTags.AddRange(scriptContainer.Tags);
 
-                await this.ViewModelFaultlessService.TryExecuteSyncAsAsync(() =>
+                await _viewModelFaultlessService.TryExecuteSyncAsAsync(() =>
                    {
-                       var repo = this.ScriptsRepoFactory.GetScriptsRepository(scriptContainer);
+                       var repo = _scriptsRepoFactory.GetScriptsRepository(scriptContainer);
                        return repo.GetLastScript();
                    })
                    .OnSuccessAsync(result =>
@@ -272,7 +257,7 @@ namespace ScriptScripter.DesktopApp.ViewModels
                 System.Diagnostics.Process.Start(folder.FullName);
             else
             {
-                Navigator.ShowDialog<MessageBoxViewModel>(vm =>
+                _navigator.ShowDialog<MessageBoxViewModel>(vm =>
                     vm.Init(title: "Folder Not Found",
                         message: "The containing folder does not exist",
                         buttons: MessageBoxViewModel.MessageBoxButton.OK,
@@ -306,7 +291,7 @@ namespace ScriptScripter.DesktopApp.ViewModels
         /// </summary>
         public void Open(LineItem lineItem)
         {
-            Navigator.NavigateTo<DatabaseScriptsViewModel>(vm => vm.Init(scriptContainer: lineItem.ScriptContainer));
+            _navigator.NavigateTo<DatabaseScriptsViewModel>(vm => vm.Init(scriptContainer: lineItem.ScriptContainer));
         }
 
         #endregion
@@ -335,7 +320,7 @@ namespace ScriptScripter.DesktopApp.ViewModels
         public void Remove(LineItem lineItem)
         {
 
-            var confirmViewModel = this.Navigator.ShowDialog<MessageBoxViewModel>(vm =>
+            var confirmViewModel = this._navigator.ShowDialog<MessageBoxViewModel>(vm =>
               {
                   vm.ViewTitle = "Confirm Remove";
                   vm.Message = "Are you sure you would like to remove this database from the list?\r\n(Note= the script file itself will be unaffected)";
@@ -347,10 +332,10 @@ namespace ScriptScripter.DesktopApp.ViewModels
             if (confirmViewModel.ViewResult == MessageBoxViewModel.MessageBoxResult.Yes)
             {
 
-                var result = ScriptsContainerRepository.Remove(lineItem.ScriptContainer.ContainerUid);
+                var result = _scriptsContainerRepository.Remove(lineItem.ScriptContainer.ContainerUid);
                 if (!result.WasSuccessful)
                 {
-                    Navigator.ShowDialog<MessageBoxViewModel>(vm =>
+                    _navigator.ShowDialog<MessageBoxViewModel>(vm =>
                        {
                            vm.ViewTitle = "Remove Failed";
                            vm.Message = result.Message;
@@ -386,7 +371,7 @@ namespace ScriptScripter.DesktopApp.ViewModels
         /// </summary>
         public void Edit(LineItem lineItem)
         {
-            Navigator.ShowDialog<EditDatabaseViewModel>(vm => vm.Init(containerUid: lineItem.ScriptContainer.ContainerUid));
+            _navigator.ShowDialog<EditDatabaseViewModel>(vm => vm.Init(containerUid: lineItem.ScriptContainer.ContainerUid));
         }
 
         #endregion
@@ -415,7 +400,7 @@ namespace ScriptScripter.DesktopApp.ViewModels
         /// </summary>
         public void Add()
         {
-            Navigator.ShowDialog<AddDatabaseViewModel>();
+            _navigator.ShowDialog<AddDatabaseViewModel>();
         }
 
         #endregion

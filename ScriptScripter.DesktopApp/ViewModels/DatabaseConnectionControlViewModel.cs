@@ -12,12 +12,16 @@ namespace ScriptScripter.DesktopApp.ViewModels
     public class DatabaseConnectionControlViewModel : ScriptScripterViewModelBase
     {
         private System.Threading.CancellationTokenSource _testConnectionCancellationTokenSource;
+        private readonly NinjaMvvm.Wpf.Abstractions.INavigator _navigator;
+        private readonly Processor.Services.Contracts.IScriptingService _scriptingService;
 
-        [Ninject.Inject]
-        public Processor.Services.Contracts.IScriptingService ScriptingService { get; set; }
+        public DatabaseConnectionControlViewModel() { }//designer only
 
-        public DatabaseConnectionControlViewModel()
+        public DatabaseConnectionControlViewModel(NinjaMvvm.Wpf.Abstractions.INavigator navigator,
+            Processor.Services.Contracts.IScriptingService scriptingService)
         {
+            this._navigator = navigator;
+            this._scriptingService = scriptingService;
         }
 
         public Processor.Data.Models.ServerConnectionParameters BuildConnectionParameters()
@@ -100,11 +104,11 @@ namespace ScriptScripter.DesktopApp.ViewModels
             try
             {
                 var p = BuildConnectionParameters();
-                var result = await ScriptingService.TestServerConnectionAsync(p, _testConnectionCancellationTokenSource.Token);
+                var result = await _scriptingService.TestServerConnectionAsync(p, _testConnectionCancellationTokenSource.Token);
 
                 if (result.WasSuccessful)
                 {
-                    Navigator.ShowDialog<MessageBoxViewModel>(vm =>
+                    _navigator.ShowDialog<MessageBoxViewModel>(vm =>
                         vm.Init(title: "Connection Successful",
                             message: "Test connection succeeded!",
                             buttons: MessageBoxViewModel.MessageBoxButton.OK,
@@ -114,7 +118,7 @@ namespace ScriptScripter.DesktopApp.ViewModels
                 }
                 else
                 {
-                    Navigator.ShowDialog<MessageBoxViewModel>(vm =>
+                    _navigator.ShowDialog<MessageBoxViewModel>(vm =>
                        vm.Init(title: "Connection Failed",
                            message: result.Message,
                            buttons: MessageBoxViewModel.MessageBoxButton.OK,
@@ -135,6 +139,7 @@ namespace ScriptScripter.DesktopApp.ViewModels
         #region CancelTestConnection Command
 
         private RelayCommand _cancelTestConnectionCommand;
+
         public RelayCommand CancelTestConnectionCommand
         {
             get

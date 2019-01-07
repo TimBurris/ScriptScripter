@@ -15,11 +15,7 @@ namespace ScriptScripter.DesktopApp.ViewModels.Tests
     {
         public DatabaseConnectionViewModel CreateViewModel()
         {
-            var vm = new DatabaseConnectionViewModel();
-            vm.ScriptingService = ServiceMocks.MockScriptingService.Object;
-            vm.ConfigurationRepository = RepoMocks.MockConfigurationRepo.Object;
-            vm.Navigator = MockNavigator.Object;
-            vm.DatabaseConnectionControlVM = new DatabaseConnectionControlViewModel();
+            var vm = new DatabaseConnectionViewModel(MockNavigator.Object, RepoMocks.MockConfigurationRepo.Object, ServiceMocks.MockScriptingService.Object, new DatabaseConnectionControlViewModel());
             return vm;
         }
 

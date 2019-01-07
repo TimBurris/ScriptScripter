@@ -11,6 +11,8 @@ namespace ScriptScripter.DesktopApp.ViewModels
 
     public class EditDatabaseViewModel : BaseDatabaseViewModel
     {
+        private readonly Processor.Data.Contracts.IScriptContainerRepository _scriptContainerRepository;
+        private readonly NinjaMvvm.Wpf.Abstractions.INavigator _navigator;
         private readonly Contracts.IViewModelFaultlessService _viewModelFaultlessService;
         private Processor.Data.Models.ScriptContainer _scriptContainer;
         private Guid _containerUid;
@@ -18,18 +20,16 @@ namespace ScriptScripter.DesktopApp.ViewModels
 
         public EditDatabaseViewModel() { }//Designer only
 
-        public EditDatabaseViewModel(
-            Contracts.IViewModelFaultlessService viewModelFaultlessService)
+        public EditDatabaseViewModel(Processor.Data.Contracts.IScriptContainerRepository scriptContainerRepository,
+            NinjaMvvm.Wpf.Abstractions.INavigator navigator,
+            Contracts.IViewModelFaultlessService viewModelFaultlessService,
+            FileAndFolderDialog.Abstractions.IFileDialogService fileDialogService,
+            DatabaseConnectionControlViewModel databaseConnectionControlVM)
+            : base(navigator, fileDialogService, databaseConnectionControlVM)
         {
             ViewTitle = "Edit Database";
-            this._viewModelFaultlessService = viewModelFaultlessService;
-        }
-
-        public EditDatabaseViewModel(string defaultFileNamePattern,
-             Contracts.IViewModelFaultlessService viewModelFaultlessService)
-            : base(defaultFileNamePattern)
-        {
-            ViewTitle = "Edit Database";
+            this._scriptContainerRepository = scriptContainerRepository;
+            this._navigator = navigator;
             this._viewModelFaultlessService = viewModelFaultlessService;
         }
 
@@ -40,13 +40,13 @@ namespace ScriptScripter.DesktopApp.ViewModels
 
         protected async override Task<bool> OnReloadDataAsync(CancellationToken cancellationToken)
         {
-            var result = await _viewModelFaultlessService.TryExecuteSyncAsAsync(() => this.ScriptContainerRepository.GetByUid(_containerUid));
+            var result = await _viewModelFaultlessService.TryExecuteSyncAsAsync(() => _scriptContainerRepository.GetByUid(_containerUid));
             if (!result.WasSuccessful)
                 return false;
 
             if (result.ReturnValue == null)
             {
-                this.Navigator.ShowDialog<MessageBoxViewModel>(initAction: vm =>
+                this._navigator.ShowDialog<MessageBoxViewModel>(initAction: vm =>
                             vm.Init(title: "Not Found",
                             message: "Script Container not found",
                             buttons: MessageBoxViewModel.MessageBoxButton.OK)
@@ -87,12 +87,12 @@ namespace ScriptScripter.DesktopApp.ViewModels
             _scriptContainer.CustomServerConnectionParameters = connectionParams;
             _scriptContainer.Tags = this.Tags.ToList();
 
-            var result = this.ScriptContainerRepository.Update(_scriptContainer);
+            var result = _scriptContainerRepository.Update(_scriptContainer);
 
             if (result.WasSuccessful)
-                Navigator.CloseDialog(this);
+                _navigator.CloseDialog(this);
             else
-                Navigator.ShowDialog<MessageBoxViewModel>(vm =>
+                _navigator.ShowDialog<MessageBoxViewModel>(vm =>
                     vm.Init(title: "Update Failed",
                        message: result.Message,
                        buttons: MessageBoxViewModel.MessageBoxButton.OK,

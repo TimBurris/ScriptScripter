@@ -8,23 +8,15 @@ namespace ScriptScripter.Processor.Data.Repositories
 {
     public class ScriptContainerRepository : ConfigFileBase, Contracts.IScriptContainerRepository
     {
-        [Ninject.Inject]
-        public Services.Contracts.IEventNotificationService EventNotificationService { get; set; }
+        private readonly Services.Contracts.IEventNotificationService _eventNotificationService;
 
-        public ScriptContainerRepository(System.IO.Abstractions.IFileSystem fileSystem)
+        public ScriptContainerRepository(System.IO.Abstractions.IFileSystem fileSystem,
+            Services.Contracts.IEventNotificationService eventNotificationService)
             : base(fileSystem)
         {
+            this._eventNotificationService = eventNotificationService;
         }
 
-        public ScriptContainerRepository(System.IO.Abstractions.IFileSystem fileSystem, string configurationFileName)
-            : base(fileSystem, configurationFileName)
-        {
-        }
-
-        public ScriptContainerRepository()
-            : base()
-        {
-        }
 
         public IEnumerable<Models.ScriptContainer> GetAll()
         {
@@ -56,7 +48,7 @@ namespace ScriptScripter.Processor.Data.Repositories
 
                 this.WriteFile(settings);
 
-                this.EventNotificationService.NotifyScriptContainerAdded(newContainer);
+                _eventNotificationService.NotifyScriptContainerAdded(newContainer);
 
                 return Dto.ActionResult.SuccessResult();
             }
@@ -85,7 +77,7 @@ namespace ScriptScripter.Processor.Data.Repositories
 
                 this.WriteFile(settings);
 
-                this.EventNotificationService.NotifyScriptContainerUpdated(scriptContainer);
+                _eventNotificationService.NotifyScriptContainerUpdated(scriptContainer);
 
                 return Dto.ActionResult.SuccessResult();
             }
@@ -106,7 +98,7 @@ namespace ScriptScripter.Processor.Data.Repositories
 
                 this.WriteFile(settings);
 
-                this.EventNotificationService.NotifyScriptContainerRemoved(container);
+                _eventNotificationService.NotifyScriptContainerRemoved(container);
 
                 return Dto.ActionResult.SuccessResult();
             }

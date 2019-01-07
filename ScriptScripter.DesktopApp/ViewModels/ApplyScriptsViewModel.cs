@@ -13,8 +13,23 @@ namespace ScriptScripter.DesktopApp.ViewModels
     {
         private IEnumerable<Processor.Data.Models.Script> _scriptsToRun;
         private Processor.Data.Models.ScriptContainer _scriptContainer;
+        private readonly NinjaMvvm.Wpf.Abstractions.INavigator _navigator;
+        private readonly Contracts.IViewModelFaultlessService _viewModelFaultlessService;
+        private readonly Processor.Services.Contracts.IScriptingService _scriptingService;
+        private readonly Processor.Data.Contracts.IConfigurationRepository _configurationRepository;
 
         public ApplyScriptsViewModel() { }//Designer use
+
+        public ApplyScriptsViewModel(NinjaMvvm.Wpf.Abstractions.INavigator navigator,
+            Contracts.IViewModelFaultlessService viewModelFaultlessService,
+            Processor.Services.Contracts.IScriptingService scriptingService,
+            Processor.Data.Contracts.IConfigurationRepository configurationRepository)
+        {
+            this._navigator = navigator;
+            this._viewModelFaultlessService = viewModelFaultlessService;
+            this._scriptingService = scriptingService;
+            this._configurationRepository = configurationRepository;
+        }
 
         public void Init(Processor.Data.Models.ScriptContainer scriptContainer)
         {
@@ -22,13 +37,6 @@ namespace ScriptScripter.DesktopApp.ViewModels
             DatabaseName = scriptContainer.DatabaseName;
             ViewTitle = $"Apply Scripts to '{DatabaseName}'";
         }
-
-        [Ninject.Inject]
-        public Contracts.IViewModelFaultlessService ViewModelFaultlessService { get; set; }
-        [Ninject.Inject]
-        public Processor.Services.Contracts.IScriptingService ScriptingService { get; set; }
-        [Ninject.Inject]
-        public Processor.Data.Contracts.IConfigurationRepository ConfigurationRepository { get; set; }
 
         public string DatabaseName
         {
@@ -39,7 +47,7 @@ namespace ScriptScripter.DesktopApp.ViewModels
         private Processor.Data.Models.DatabaseConnectionParameters GetDatabaseConnectionParameters()
         {
             var connParams = _scriptContainer.CustomServerConnectionParameters
-                ?? this.ConfigurationRepository.GetServerConnectionParameters();
+                ?? _configurationRepository.GetServerConnectionParameters();
 
             return new Processor.Data.Models.DatabaseConnectionParameters(copyFrom: connParams)
             {
@@ -61,8 +69,8 @@ namespace ScriptScripter.DesktopApp.ViewModels
 
         protected override async Task<bool> OnReloadDataAsync(CancellationToken cancellationToken)
         {
-            var result = await this.ViewModelFaultlessService
-                .TryExecuteSyncAsAsync(() => ScriptingService.GetScriptsThatNeedRun(this.GetDatabaseConnectionParameters(), _scriptContainer));
+            var result = await _viewModelFaultlessService
+                .TryExecuteSyncAsAsync(() => _scriptingService.GetScriptsThatNeedRun(this.GetDatabaseConnectionParameters(), _scriptContainer));
 
             if (!result.WasSuccessful) return false;
 
@@ -152,7 +160,7 @@ namespace ScriptScripter.DesktopApp.ViewModels
             var script = _scriptsToRun.Single(s => s.RevisionNumber == lineItem.RevisionNumber);
 
 
-            this.Navigator.ShowDialog<ScriptViewModel>(vm => vm.Init(_scriptContainer, script));
+            _navigator.ShowDialog<ScriptViewModel>(vm => vm.Init(_scriptContainer, script));
 
             this.ReloadDataAsync();
         }
@@ -209,9 +217,9 @@ namespace ScriptScripter.DesktopApp.ViewModels
             {
                 var databaseParams = this.GetDatabaseConnectionParameters();
 
-                var scripts = ScriptingService.GetScriptsThatNeedRun(databaseParams, _scriptContainer);
+                var scripts = _scriptingService.GetScriptsThatNeedRun(databaseParams, _scriptContainer);
 
-                var result = await ScriptingService.ApplyScriptsToDatabaseAsync(databaseParams, scripts, progress);
+                var result = await _scriptingService.ApplyScriptsToDatabaseAsync(databaseParams, scripts, progress);
 
                 if (result.WasSuccessful)
                 {
@@ -231,7 +239,7 @@ namespace ScriptScripter.DesktopApp.ViewModels
             }
             catch (Exception ex)
             {
-                this.Navigator.ShowDialog<ErrorViewModel>(vm => vm.LoadFromException(ex));
+                _navigator.ShowDialog<ErrorViewModel>(vm => vm.LoadFromException(ex));
             }
             finally
             {
@@ -265,7 +273,7 @@ namespace ScriptScripter.DesktopApp.ViewModels
         /// </summary>
         public void Cancel()
         {
-            Navigator.CloseDialog(this);
+            _navigator.CloseDialog(this);
         }
 
         #endregion
@@ -273,6 +281,7 @@ namespace ScriptScripter.DesktopApp.ViewModels
         #region RequestClose Command
 
         private RelayCommand<System.ComponentModel.CancelEventArgs> _requestCloseCommand;
+
         public RelayCommand<System.ComponentModel.CancelEventArgs> RequestCloseCommand
         {
             get
@@ -297,7 +306,7 @@ namespace ScriptScripter.DesktopApp.ViewModels
             {
                 args.Cancel = true;
 
-                this.Navigator.ShowDialog<MessageBoxViewModel>(vm =>
+                _navigator.ShowDialog<MessageBoxViewModel>(vm =>
                {
                    vm.ViewTitle = "Cannot Close";
                    vm.Message = "Cannot close while processing";

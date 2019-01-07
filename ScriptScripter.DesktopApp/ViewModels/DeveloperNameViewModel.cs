@@ -13,21 +13,29 @@ namespace ScriptScripter.DesktopApp.ViewModels
 {
     public class DeveloperNameViewModel : ScriptScripterViewModelBase
     {
-        [Ninject.Inject]
-        public Processor.Data.Contracts.IConfigurationRepository ConfigurationRepository { get; set; }
+        private readonly NinjaMvvm.Wpf.Abstractions.INavigator _navigator;
+        private readonly Contracts.IViewModelFaultlessService _viewModelFaultlessService;
+        private readonly Processor.Services.Contracts.IScriptingService _scriptingService;
+        private readonly Processor.Data.Contracts.IConfigurationRepository _configurationRepository;
 
-        [Ninject.Inject]
-        public Contracts.IViewModelFaultlessService ViewModelFaultlessService { get; set; }
+        public DeveloperNameViewModel() { }//Designer use
 
-        public DeveloperNameViewModel()
+        public DeveloperNameViewModel(NinjaMvvm.Wpf.Abstractions.INavigator navigator,
+            Contracts.IViewModelFaultlessService viewModelFaultlessService,
+            Processor.Services.Contracts.IScriptingService scriptingService,
+            Processor.Data.Contracts.IConfigurationRepository configurationRepository)
         {
             ViewTitle = "Your Name";
+            this._navigator = navigator;
+            this._viewModelFaultlessService = viewModelFaultlessService;
+            this._scriptingService = scriptingService;
+            this._configurationRepository = configurationRepository;
         }
 
         protected override async Task<bool> OnReloadDataAsync(CancellationToken cancellationToken)
         {
-            var result = await this.ViewModelFaultlessService
-                                   .TryExecuteSyncAsAsync(() => this.ConfigurationRepository.GetDeveloperName());
+            var result = await _viewModelFaultlessService
+                                   .TryExecuteSyncAsAsync(() => _configurationRepository.GetDeveloperName());
 
             if (!result.WasSuccessful)
                 return false;
@@ -76,9 +84,9 @@ namespace ScriptScripter.DesktopApp.ViewModels
                 return;
             }
 
-            this.ViewModelFaultlessService
-                .TryExecute(() => this.ConfigurationRepository.SetDeveloperName(DeveloperName))
-                .OnSuccess(() => Navigator.CloseDialog(this));
+            _viewModelFaultlessService
+                .TryExecute(() => _configurationRepository.SetDeveloperName(DeveloperName))
+                .OnSuccess(() => _navigator.CloseDialog(this));
         }
 
         #endregion
@@ -106,7 +114,7 @@ namespace ScriptScripter.DesktopApp.ViewModels
         /// </summary>
         public void Cancel()
         {
-            Navigator.CloseDialog(this);
+            _navigator.CloseDialog(this);
         }
 
         #endregion

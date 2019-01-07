@@ -12,26 +12,30 @@ namespace ScriptScripter.DesktopApp.ViewModels
     public class DatabaseConnectionViewModel : ScriptScripterViewModelBase
     {
         private Processor.Data.Models.ServerConnectionParameters _serverConnectionParameters;
+        private readonly NinjaMvvm.Wpf.Abstractions.INavigator _navigator;
+        private readonly Processor.Data.Contracts.IConfigurationRepository _configurationRepository;
+        private readonly Processor.Services.Contracts.IScriptingService _scriptingService;
+        private readonly DatabaseConnectionControlViewModel _databaseConnectionControlVM;
 
-        [Ninject.Inject]
-        public Processor.Data.Contracts.IConfigurationRepository ConfigurationRepository { get; set; }
 
-        [Ninject.Inject]
-        public Processor.Services.Contracts.IScriptingService ScriptingService { get; set; }
-
-        [Ninject.Inject]
-        public DatabaseConnectionControlViewModel DatabaseConnectionControlVM { get; set; }
-
-        public DatabaseConnectionViewModel()
+        public DatabaseConnectionViewModel() { }//designer only
+        public DatabaseConnectionViewModel(NinjaMvvm.Wpf.Abstractions.INavigator navigator,
+            Processor.Data.Contracts.IConfigurationRepository configurationRepository,
+            Processor.Services.Contracts.IScriptingService scriptingService,
+             DatabaseConnectionControlViewModel databaseConnectionControlVM)
         {
             ViewTitle = "Database Connection";
+            this._navigator = navigator;
+            this._configurationRepository = configurationRepository;
+            this._scriptingService = scriptingService;
+            this._databaseConnectionControlVM = databaseConnectionControlVM;
         }
 
         protected override async Task<bool> OnReloadDataAsync(CancellationToken cancellationToken)
         {
-            _serverConnectionParameters = ConfigurationRepository.GetServerConnectionParameters();
+            _serverConnectionParameters = _configurationRepository.GetServerConnectionParameters();
 
-            this.DatabaseConnectionControlVM.Init(_serverConnectionParameters);
+            _databaseConnectionControlVM.Init(_serverConnectionParameters);
 
             return true;
         }
@@ -59,13 +63,13 @@ namespace ScriptScripter.DesktopApp.ViewModels
         /// </summary>
         public async Task ConnectAsync()
         {
-            var p = this.DatabaseConnectionControlVM.BuildConnectionParameters();
+            var p = _databaseConnectionControlVM.BuildConnectionParameters();
 
-            var result = await ScriptingService.TestServerConnectionAsync(p);
+            var result = await _scriptingService.TestServerConnectionAsync(p);
 
             if (!result.WasSuccessful)
             {
-                Navigator.ShowDialog<MessageBoxViewModel>(vm =>
+                _navigator.ShowDialog<MessageBoxViewModel>(vm =>
                    vm.Init(title: "Test Connection Failed",
                       message: result.Message,
                       buttons: MessageBoxViewModel.MessageBoxButton.OK,
@@ -75,9 +79,9 @@ namespace ScriptScripter.DesktopApp.ViewModels
                 return;
             }
 
-            ConfigurationRepository.SetServerConnectionParameters(p);
+            _configurationRepository.SetServerConnectionParameters(p);
 
-            Navigator.CloseDialog(this);
+            _navigator.CloseDialog(this);
         }
 
         #endregion
@@ -85,6 +89,7 @@ namespace ScriptScripter.DesktopApp.ViewModels
         #region Cancel Command
 
         private RelayCommand _cancelCommand;
+
         public RelayCommand CancelCommand
         {
             get
@@ -105,7 +110,7 @@ namespace ScriptScripter.DesktopApp.ViewModels
         /// </summary>
         public void Cancel()
         {
-            Navigator.CloseDialog(this);
+            _navigator.CloseDialog(this);
         }
 
         #endregion

@@ -40,6 +40,18 @@ namespace ScriptScripter.Processor.Data.Repositories.Tests
                                                                  ]
                                                 }";
 
+        private ScriptContainerRepository _repo;
+        private Mock<System.IO.Abstractions.IFileSystem> _mockFS = new Mock<System.IO.Abstractions.IFileSystem>(MockBehavior.Strict);
+        private Mock<Services.Contracts.IEventNotificationService> _mockENS = new Mock<Services.Contracts.IEventNotificationService>();
+
+        [TestInitialize]
+        public void Init()
+        {
+            _repo = new ScriptContainerRepository(_mockFS.Object,
+                _mockENS.Object
+                );
+        }
+
         [TestMethod()]
         public void GetAllTest()
         {
@@ -48,9 +60,9 @@ namespace ScriptScripter.Processor.Data.Repositories.Tests
                                     { @"c:\temp\myfolder\myfile.json", new System.IO.Abstractions.TestingHelpers.MockFileData(_validSettingsJson) },
                                 });
 
-            var repo = new ScriptContainerRepository(fileSystem, configurationFileName: @"c:\temp\myfolder\myfile.json");
+            _repo.ConfigurationFileName = @"c:\temp\myfolder\myfile.json";
 
-            var results = repo.GetAll().ToList();
+            var results = _repo.GetAll().ToList();
 
             results.Count.Should().Be(3);
             results[0].DatabaseName.Should().Be("SampleData");
@@ -72,9 +84,9 @@ namespace ScriptScripter.Processor.Data.Repositories.Tests
                                     { @"c:\temp\myfolder\myfile.json", new System.IO.Abstractions.TestingHelpers.MockFileData(string.Empty) },
                                 });
 
-            var repo = new ScriptContainerRepository(fileSystem, configurationFileName: @"c:\temp\myfolder\myfile.json");
+            _repo.ConfigurationFileName = @"c:\temp\myfolder\myfile.json";
 
-            var results = repo.GetAll().ToList();
+            var results = _repo.GetAll().ToList();
 
             results.Count.Should().Be(0);
         }
@@ -87,9 +99,9 @@ namespace ScriptScripter.Processor.Data.Repositories.Tests
                                     { @"c:\temp\myfolder\myfile.json", new System.IO.Abstractions.TestingHelpers.MockFileData(_validSettingsJson) },
                                 });
 
-            var repo = new ScriptContainerRepository(fileSystem, configurationFileName: @"c:\temp\myfolder\myfile.json");
+            _repo.ConfigurationFileName = @"c:\temp\myfolder\myfile.json";
 
-            var result = repo.AddNew(databaseName: "saMPledaTA", scriptFilePath: @"C:\temp\myscript.xml", customConnectionParameters: null, tags: null);
+            var result = _repo.AddNew(databaseName: "saMPledaTA", scriptFilePath: @"C:\temp\myscript.xml", customConnectionParameters: null, tags: null);
 
             result.WasSuccessful.Should().BeFalse();
             result.Message.Should().Be("Database already in the list");
@@ -98,50 +110,46 @@ namespace ScriptScripter.Processor.Data.Repositories.Tests
         [TestMethod()]
         public void AddNew_allows_same_database_for_different_server()
         {
-            var mockEventService = new Mock<Services.Contracts.IEventNotificationService>();
             var fileSystem = new System.IO.Abstractions.TestingHelpers.MockFileSystem(new Dictionary<string, System.IO.Abstractions.TestingHelpers.MockFileData>
                                 {
                                     { @"c:\temp\myfolder\myfile.json", new System.IO.Abstractions.TestingHelpers.MockFileData(_validSettingsJson) },
                                 });
 
-            var repo = new ScriptContainerRepository(fileSystem, configurationFileName: @"c:\temp\myfolder\myfile.json");
-            repo.EventNotificationService = mockEventService.Object;
+            _repo.ConfigurationFileName = @"c:\temp\myfolder\myfile.json";
 
             string path = "C:\\Microsoft\\Database\\DBScripts_Northwind.xml";
-            var result = repo.AddNew(databaseName: "Northwind", scriptFilePath: path,
+            var result = _repo.AddNew(databaseName: "Northwind", scriptFilePath: path,
                 customConnectionParameters: new Models.ServerConnectionParameters() { Server = "otherserver" },
                 tags: null);
 
             result.WasSuccessful.Should().BeTrue();
-            repo.GetAll().Where(d => d.DatabaseName.Equals("Northwind", StringComparison.CurrentCultureIgnoreCase))
+            _repo.GetAll().Where(d => d.DatabaseName.Equals("Northwind", StringComparison.CurrentCultureIgnoreCase))
                 .Count().Should().Be(2);
 
-            result = repo.AddNew(databaseName: "Northwind", scriptFilePath: path,
+            result = _repo.AddNew(databaseName: "Northwind", scriptFilePath: path,
                 customConnectionParameters: new Models.ServerConnectionParameters() { Server = "anotherotherserver" },
                 tags: null);
 
             result.WasSuccessful.Should().BeTrue();
-            repo.GetAll().Where(d => d.DatabaseName.Equals("Northwind", StringComparison.CurrentCultureIgnoreCase))
+            _repo.GetAll().Where(d => d.DatabaseName.Equals("Northwind", StringComparison.CurrentCultureIgnoreCase))
                 .Count().Should().Be(3);
         }
 
         [TestMethod()]
         public void AddNew_allows_same_script_file_for_different_database()
         {
-            var mockEventService = new Mock<Services.Contracts.IEventNotificationService>();
             var fileSystem = new System.IO.Abstractions.TestingHelpers.MockFileSystem(new Dictionary<string, System.IO.Abstractions.TestingHelpers.MockFileData>
                                 {
                                     { @"c:\temp\myfolder\myfile.json", new System.IO.Abstractions.TestingHelpers.MockFileData(_validSettingsJson) },
                                 });
 
-            var repo = new ScriptContainerRepository(fileSystem, configurationFileName: @"c:\temp\myfolder\myfile.json");
-            repo.EventNotificationService = mockEventService.Object;
+            _repo.ConfigurationFileName = @"c:\temp\myfolder\myfile.json";
 
             string path = "C:\\Microsoft\\Database\\DBScripts_Northwind.xml";
-            var result = repo.AddNew(databaseName: "MyTestDB", scriptFilePath: path, customConnectionParameters: null, tags: null);
+            var result = _repo.AddNew(databaseName: "MyTestDB", scriptFilePath: path, customConnectionParameters: null, tags: null);
 
             result.WasSuccessful.Should().BeTrue();
-            repo.GetAll().Where(d => d.ScriptFilePath.Equals(path, StringComparison.CurrentCultureIgnoreCase))
+            _repo.GetAll().Where(d => d.ScriptFilePath.Equals(path, StringComparison.CurrentCultureIgnoreCase))
                 .Count().Should().Be(2);
         }
 
@@ -154,12 +162,10 @@ namespace ScriptScripter.Processor.Data.Repositories.Tests
                                 {
                                     { @"c:\temp\myfolder\myfile.json", new System.IO.Abstractions.TestingHelpers.MockFileData(settingsJson) },
                                 });
-            var mockEventService = new Mock<Services.Contracts.IEventNotificationService>();
 
-            var repo = new ScriptContainerRepository(fileSystem, configurationFileName: @"c:\temp\myfolder\myfile.json");
-            repo.EventNotificationService = mockEventService.Object;
+            _repo.ConfigurationFileName = @"c:\temp\myfolder\myfile.json";
 
-            var result = repo.AddNew(databaseName: "MyTestDB", scriptFilePath: @"C:\temp\myscript.xml", customConnectionParameters: null, tags: null);
+            var result = _repo.AddNew(databaseName: "MyTestDB", scriptFilePath: @"C:\temp\myscript.xml", customConnectionParameters: null, tags: null);
 
             result.WasSuccessful.Should().BeTrue();
             var contents = fileSystem.File.ReadAllText(@"c:\temp\myfolder\myfile.json");
@@ -167,7 +173,7 @@ namespace ScriptScripter.Processor.Data.Repositories.Tests
             contents.Should().Contain("\"ScriptFilePath\": \"C:\\\\temp\\\\myscript.xml\"");
 
             // ensure notify is called
-            mockEventService.Verify(m => m.NotifyScriptContainerAdded(It.IsAny<Models.ScriptContainer>()), Times.Once);
+            _mockENS.Verify(m => m.NotifyScriptContainerAdded(It.IsAny<Models.ScriptContainer>()), Times.Once);
         }
 
         [TestMethod()]
@@ -178,10 +184,8 @@ namespace ScriptScripter.Processor.Data.Repositories.Tests
                                 {
                                     { @"c:\temp\myfolder\myfile.json", new System.IO.Abstractions.TestingHelpers.MockFileData(settingsJson) },
                                 });
-            var mockEventService = new Mock<Services.Contracts.IEventNotificationService>();
 
-            var repo = new ScriptContainerRepository(fileSystem, configurationFileName: @"c:\temp\myfolder\myfile.json");
-            repo.EventNotificationService = mockEventService.Object;
+            _repo.ConfigurationFileName = @"c:\temp\myfolder\myfile.json";
 
             var container = new Models.ScriptContainer()
             {
@@ -191,7 +195,7 @@ namespace ScriptScripter.Processor.Data.Repositories.Tests
                 Tags = new List<string>() { "A", "B", "C" }
             };
 
-            var result = repo.Update(container);
+            var result = _repo.Update(container);
 
             result.WasSuccessful.Should().BeTrue();
             var contents = fileSystem.File.ReadAllText(@"c:\temp\myfolder\myfile.json");
@@ -203,26 +207,24 @@ namespace ScriptScripter.Processor.Data.Repositories.Tests
             contents.Should().NotContain("\"ScriptFilePath\": \"C:\\\\temp\\\\myscript.xml\"");
 
             // ensure notify is called
-            mockEventService.Verify(m => m.NotifyScriptContainerUpdated(It.IsAny<Models.ScriptContainer>()), Times.Once);
+            _mockENS.Verify(m => m.NotifyScriptContainerUpdated(It.IsAny<Models.ScriptContainer>()), Times.Once);
         }
 
         [TestMethod()]
         public void AddNew_assigns_guid()
         {
-            var mockEventService = new Mock<Services.Contracts.IEventNotificationService>();
             var fileSystem = new System.IO.Abstractions.TestingHelpers.MockFileSystem(new Dictionary<string, System.IO.Abstractions.TestingHelpers.MockFileData>
                                 {
                                     { @"c:\temp\myfolder\myfile.json", new System.IO.Abstractions.TestingHelpers.MockFileData(string.Empty) },
                                 });
 
-            var repo = new ScriptContainerRepository(fileSystem, configurationFileName: @"c:\temp\myfolder\myfile.json");
-            repo.EventNotificationService = mockEventService.Object;
+            _repo.ConfigurationFileName = @"c:\temp\myfolder\myfile.json";
 
             string path = "C:\\Microsoft\\Database\\DBScripts_Northwind.xml";
-            var result = repo.AddNew(databaseName: "MyTestDB", scriptFilePath: path, customConnectionParameters: null, tags: null);
+            var result = _repo.AddNew(databaseName: "MyTestDB", scriptFilePath: path, customConnectionParameters: null, tags: null);
 
             result.WasSuccessful.Should().BeTrue();
-            repo.GetAll().Single().ContainerUid.Should().NotBeEmpty();
+            _repo.GetAll().Single().ContainerUid.Should().NotBeEmpty();
         }
 
         [TestMethod()]
@@ -232,12 +234,10 @@ namespace ScriptScripter.Processor.Data.Repositories.Tests
                                 {
                                     { @"c:\temp\myfolder\myfile.json", new System.IO.Abstractions.TestingHelpers.MockFileData(_validSettingsJson) },
                                 });
-            var mockEventService = new Mock<Services.Contracts.IEventNotificationService>();
 
-            var repo = new ScriptContainerRepository(fileSystem, configurationFileName: @"c:\temp\myfolder\myfile.json");
-            repo.EventNotificationService = mockEventService.Object;
+            _repo.ConfigurationFileName = @"c:\temp\myfolder\myfile.json";
 
-            var result = repo.Remove(new System.Guid("11111111-1111-1111-1111-111111111111"));
+            var result = _repo.Remove(new System.Guid("11111111-1111-1111-1111-111111111111"));
 
             result.WasSuccessful.Should().BeTrue();
             var contents = fileSystem.File.ReadAllText(@"c:\temp\myfolder\myfile.json").ToLower();
@@ -245,7 +245,7 @@ namespace ScriptScripter.Processor.Data.Repositories.Tests
             contents.Should().NotContain("dbscripts_sampledatabase.xml");
 
             // ensure notify is called
-            mockEventService.Verify(m => m.NotifyScriptContainerRemoved(It.IsAny<Models.ScriptContainer>()), Times.Once);
+            _mockENS.Verify(m => m.NotifyScriptContainerRemoved(It.IsAny<Models.ScriptContainer>()), Times.Once);
         }
 
         [TestMethod()]
@@ -256,9 +256,9 @@ namespace ScriptScripter.Processor.Data.Repositories.Tests
                                     { @"c:\temp\myfolder\myfile.json", new System.IO.Abstractions.TestingHelpers.MockFileData(_validSettingsJson) },
                                 });
 
-            var repo = new ScriptContainerRepository(fileSystem, configurationFileName: @"c:\temp\myfolder\myfile.json");
+            _repo.ConfigurationFileName = @"c:\temp\myfolder\myfile.json";
 
-            var result = repo.Remove(new System.Guid("99999999-9999-9999-9999-999999999999"));
+            var result = _repo.Remove(new System.Guid("99999999-9999-9999-9999-999999999999"));
 
             result.WasSuccessful.Should().BeFalse();
             result.Message.Should().Be("Database not in the list");

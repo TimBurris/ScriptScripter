@@ -14,12 +14,21 @@ namespace ScriptScripter.DesktopApp.ViewModels
 {
     public class SelectThemeViewModel : ScriptScripterViewModelBase
     {
+
+        private readonly NinjaMvvm.Wpf.Abstractions.INavigator _navigator;
+        private readonly Processor.Data.Contracts.IConfigurationRepository _configurationRepository;
+        private readonly Contracts.IViewModelFaultlessService _viewModelFaultlessService;
+        private readonly Contracts.IThemeService _themeService;
+
         public SelectThemeViewModel() { }//designer only
-        public SelectThemeViewModel(Processor.Data.Contracts.IConfigurationRepository configurationRepository,
+        public SelectThemeViewModel(
+            NinjaMvvm.Wpf.Abstractions.INavigator navigator,
+            Processor.Data.Contracts.IConfigurationRepository configurationRepository,
             Contracts.IViewModelFaultlessService viewModelFaultlessService,
             Contracts.IThemeService themeService)
         {
             ViewTitle = "Select Theme";
+            this._navigator = navigator;
             this._configurationRepository = configurationRepository;
             this._viewModelFaultlessService = viewModelFaultlessService;
             this._themeService = themeService;
@@ -86,9 +95,6 @@ namespace ScriptScripter.DesktopApp.ViewModels
         #region Close Command
 
         private RelayCommand _closeCommand;
-        private readonly Processor.Data.Contracts.IConfigurationRepository _configurationRepository;
-        private readonly Contracts.IViewModelFaultlessService _viewModelFaultlessService;
-        private readonly Contracts.IThemeService _themeService;
 
         public RelayCommand CloseCommand
         {
@@ -110,7 +116,7 @@ namespace ScriptScripter.DesktopApp.ViewModels
         /// </summary>
         public void Close()
         {
-            Navigator.CloseDialog(this);
+            _navigator.CloseDialog(this);
         }
 
         #endregion

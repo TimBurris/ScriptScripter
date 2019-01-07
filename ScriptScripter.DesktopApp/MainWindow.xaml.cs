@@ -12,7 +12,6 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using Ninject;
 namespace ScriptScripter.DesktopApp
 {
     /// <summary>
@@ -23,10 +22,6 @@ namespace ScriptScripter.DesktopApp
         public MainWindow()
         {
             InitializeComponent();
-
-            var vm = Ninjector.Container.Get<ViewModels.MainViewModel>();
-            this.DataContext = vm;
-            object obj = vm.ViewBound;
 
             this.Closing += MainWindow_Closing;
         }

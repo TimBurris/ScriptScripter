@@ -12,16 +12,20 @@ namespace ScriptScripter.DesktopApp.ViewModels
 {
     public class AddDatabaseViewModel : BaseDatabaseViewModel
     {
+        private readonly Processor.Data.Contracts.IScriptContainerRepository _scriptContainerRepository;
+        private readonly NinjaMvvm.Wpf.Abstractions.INavigator _navigator;
 
-        public AddDatabaseViewModel()
+        public AddDatabaseViewModel() { }//Designer use
+
+        public AddDatabaseViewModel(Processor.Data.Contracts.IScriptContainerRepository scriptContainerRepository,
+            NinjaMvvm.Wpf.Abstractions.INavigator navigator,
+            FileAndFolderDialog.Abstractions.IFileDialogService fileDialogService,
+            DatabaseConnectionControlViewModel databaseConnectionControlVM)
+        : base(navigator, fileDialogService, databaseConnectionControlVM)
         {
             ViewTitle = "Add Database";
-        }
-
-        public AddDatabaseViewModel(string defaultFileNamePattern)
-            : base(defaultFileNamePattern)
-        {
-            ViewTitle = "Add Database";
+            this._scriptContainerRepository = scriptContainerRepository;
+            _navigator = navigator;
         }
 
         /// <summary>
@@ -37,15 +41,15 @@ namespace ScriptScripter.DesktopApp.ViewModels
 
             var connectionParams = this.UseDefaultDatabaseConnection ? null : this.DatabaseConnectionControlVM.BuildConnectionParameters();
 
-            var result = this.ScriptContainerRepository.AddNew(databaseName: this.DatabaseName,
+            var result = _scriptContainerRepository.AddNew(databaseName: this.DatabaseName,
                 scriptFilePath: this.ScriptFile,
                 customConnectionParameters: connectionParams,
                 tags: this.Tags);
 
             if (result.WasSuccessful)
-                Navigator.CloseDialog(this);
+                _navigator.CloseDialog(this);
             else
-                Navigator.ShowDialog<MessageBoxViewModel>(vm =>
+                _navigator.ShowDialog<MessageBoxViewModel>(vm =>
                     vm.Init(title: "Add Failed",
                        message: result.Message,
                        buttons: MessageBoxViewModel.MessageBoxButton.OK,

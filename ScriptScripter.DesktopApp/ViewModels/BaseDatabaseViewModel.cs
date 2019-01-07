@@ -7,30 +7,32 @@ namespace ScriptScripter.DesktopApp.ViewModels
 {
     public abstract class BaseDatabaseViewModel : ScriptScripterViewModelBase
     {
-        private readonly string _defaultFileNamePattern;
+        private readonly NinjaMvvm.Wpf.Abstractions.INavigator _navigator;
+        private readonly FileAndFolderDialog.Abstractions.IFileDialogService _fileDialogService;
+        public readonly DatabaseConnectionControlViewModel DatabaseConnectionControlVM;
 
-        [Ninject.Inject]
-        public Processor.Data.Contracts.IScriptContainerRepository ScriptContainerRepository { get; set; }
+        public BaseDatabaseViewModel() { }//designer use
 
-        [Ninject.Inject]
-        public FileAndFolderDialog.Abstractions.IFileDialogService FileDialogService { get; set; }
-        [Ninject.Inject]
-        public DatabaseConnectionControlViewModel DatabaseConnectionControlVM { get; set; }
-
-        public BaseDatabaseViewModel()
+        public BaseDatabaseViewModel(NinjaMvvm.Wpf.Abstractions.INavigator navigator,
+            FileAndFolderDialog.Abstractions.IFileDialogService fileDialogService,
+            DatabaseConnectionControlViewModel databaseConnectionControlVM)
         {
-            _defaultFileNamePattern = ScriptScripter.DesktopApp.Properties.Settings.Default.NewFileDefaultNameFormat;
             UseDefaultDatabaseConnection = true;
             this.Tags = new ObservableCollection<string>();
+            this._navigator = navigator;
+            this._fileDialogService = fileDialogService;
+            this.DatabaseConnectionControlVM = databaseConnectionControlVM;
+            this.DefaultFileNamePattern = ScriptScripter.DesktopApp.Properties.Settings.Default.NewFileDefaultNameFormat;
         }
 
-        public BaseDatabaseViewModel(string defaultFileNamePattern)
-            : this()
-        {
-            this._defaultFileNamePattern = defaultFileNamePattern;
-        }
 
         #region Binding props and Lists
+
+        public string DefaultFileNamePattern
+        {
+            get { return GetField<string>(); }
+            set { SetField(value); }
+        }
 
         public ObservableCollection<string> Tags
         {
@@ -108,7 +110,7 @@ namespace ScriptScripter.DesktopApp.ViewModels
         /// </summary>
         public void Cancel()
         {
-            Navigator.CloseDialog(this);
+            _navigator.CloseDialog(this);
         }
 
         #endregion
@@ -141,7 +143,7 @@ namespace ScriptScripter.DesktopApp.ViewModels
 
             if (!string.IsNullOrEmpty(this.DatabaseName))
             {
-                defaultFileName = _defaultFileNamePattern;
+                defaultFileName = this.DefaultFileNamePattern;
                 defaultFileName = System.Text.RegularExpressions.Regex.Replace(
                     input: defaultFileName,
                     pattern: "{DatabaseName}",
@@ -149,7 +151,7 @@ namespace ScriptScripter.DesktopApp.ViewModels
                     options: System.Text.RegularExpressions.RegexOptions.IgnoreCase);
             }
 
-            var result = this.FileDialogService.ShowSelectFileDialog(new FileAndFolderDialog.Abstractions.OpenFileOptions()
+            var result = _fileDialogService.ShowSelectFileDialog(new FileAndFolderDialog.Abstractions.OpenFileOptions()
             {
                 AddExtension = true,
                 CheckFileExists = false,

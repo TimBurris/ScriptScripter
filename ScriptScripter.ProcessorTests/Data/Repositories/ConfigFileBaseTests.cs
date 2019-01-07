@@ -22,71 +22,81 @@ namespace ScriptScripter.Processor.Data.Repositories.Tests
                                                                             Password: ""this_is_my_encrypted_pw""
                                                                         },
                                                 }";
+
+        private ConfigurationRepository _repo;
+        private Mock<System.IO.Abstractions.IFileSystem> _mockFS = new Mock<System.IO.Abstractions.IFileSystem>(MockBehavior.Strict);
+        private Mock<Services.Contracts.IEventNotificationService> _mockENS = new Mock<Services.Contracts.IEventNotificationService>();
+        private Mock<Services.Contracts.ICryptoService> _mockCryptoService = new Mock<Services.Contracts.ICryptoService>();
+
+        [TestInitialize]
+        public void Init()
+        {
+            _repo = new ConfigurationRepository(_mockFS.Object,
+                _mockENS.Object,
+                _mockCryptoService.Object
+                );
+        }
+
         [TestMethod]
         public void Repo_ReadsFile_from_settings()
         {
-            var mockFS = new Mock<System.IO.Abstractions.IFileSystem>(MockBehavior.Strict);
 
-            mockFS.Setup(m => m.File.Exists(@"F:\ScriptScripter\Test\config.json"))
+            _mockFS.Setup(m => m.File.Exists(@"F:\ScriptScripter\Test\config.json"))
                 .Returns(true);
 
-            mockFS.Setup(m => m.File.ReadAllText(@"F:\ScriptScripter\Test\config.json"))
+            _mockFS.Setup(m => m.File.ReadAllText(@"F:\ScriptScripter\Test\config.json"))
                 .Returns(_validSettingsJson);
 
-            mockFS.Setup(m => m.Path.GetFullPath(@"F:\ScriptScripter\Test\config.json"))
+            _mockFS.Setup(m => m.Path.GetFullPath(@"F:\ScriptScripter\Test\config.json"))
                 .Returns(@"F:\ScriptScripter\Test\config.json");
 
-            PathVerifyHack(mockFS);
+            PathVerifyHack(_mockFS);
 
-            var repo = new ConfigurationRepository(fileSystem: mockFS.Object);
-            var x = repo.GetDeveloperName();
-            mockFS.VerifyAll();
+            var x = _repo.GetDeveloperName();
+            _mockFS.VerifyAll();
         }
 
         [TestMethod]
         public void Repo_resolves_environmentvariables_in_path()
         {
             // programdata %\ScriptScripter\Test\config.json
-            var mockFS = new Mock<System.IO.Abstractions.IFileSystem>(MockBehavior.Strict);
 
-            mockFS.Setup(m => m.File.Exists(@"C:\ProgramData\ScriptScripter\config.json"))
+            _mockFS.Setup(m => m.File.Exists(@"C:\ProgramData\ScriptScripter\config.json"))
                 .Returns(true);
 
-            mockFS.Setup(m => m.File.ReadAllText(@"C:\ProgramData\ScriptScripter\config.json"))
+            _mockFS.Setup(m => m.File.ReadAllText(@"C:\ProgramData\ScriptScripter\config.json"))
                 .Returns(_validSettingsJson);
 
-            mockFS.Setup(m => m.Path.GetFullPath(@"C:\ProgramData\ScriptScripter\config.json"))
+            _mockFS.Setup(m => m.Path.GetFullPath(@"C:\ProgramData\ScriptScripter\config.json"))
                 .Returns(@"C:\ProgramData\ScriptScripter\config.json");
 
-            PathVerifyHack(mockFS);
+            PathVerifyHack(_mockFS);
 
-            var repo = new ConfigurationRepository(fileSystem: mockFS.Object, configurationFileName: @"%programdata%\ScriptScripter\config.json");
-            var x = repo.GetDeveloperName();
+            _repo.ConfigurationFileName = @"%programdata%\ScriptScripter\config.json";
+            var x = _repo.GetDeveloperName();
 
-            mockFS.VerifyAll();
+            _mockFS.VerifyAll();
         }
 
         [TestMethod]
         public void Repo_resolves_resolves_relativepath()
         {
-            var mockFS = new Mock<System.IO.Abstractions.IFileSystem>(MockBehavior.Strict);
+            _mockFS.Setup(m => m.File.Exists(@"C:\ScriptScripter\config.json"))
+                 .Returns(true);
 
-            mockFS.Setup(m => m.File.Exists(@"C:\ScriptScripter\config.json"))
-                .Returns(true);
-
-            mockFS.Setup(m => m.File.ReadAllText(@"C:\ScriptScripter\config.json"))
+            _mockFS.Setup(m => m.File.ReadAllText(@"C:\ScriptScripter\config.json"))
                 .Returns(_validSettingsJson);
 
             //here is where we resolve
-            mockFS.Setup(m => m.Path.GetFullPath(@".\ScriptScripter\config.json"))
+            _mockFS.Setup(m => m.Path.GetFullPath(@".\ScriptScripter\config.json"))
                 .Returns(@"C:\ScriptScripter\config.json");
 
-            PathVerifyHack(mockFS);
+            PathVerifyHack(_mockFS);
 
-            var repo = new ConfigurationRepository(fileSystem: mockFS.Object, configurationFileName: @".\ScriptScripter\config.json");
-            var x = repo.GetDeveloperName();
+            _repo.ConfigurationFileName = @".\ScriptScripter\config.json";
+            var x = _repo.GetDeveloperName();
 
-            mockFS.VerifyAll();
+            _mockFS.VerifyAll();
         }
 
         [TestMethod]
@@ -95,25 +105,24 @@ namespace ScriptScripter.Processor.Data.Repositories.Tests
             string fulldirectoryName = @"E:\myFolder\YourFolder\HisFolder\HerFolder\ScriptScripter\";
             string fullFileName = @"E:\myFolder\YourFolder\HisFolder\HerFolder\ScriptScripter\config.json";
 
-            var mockFS = new Mock<System.IO.Abstractions.IFileSystem>(MockBehavior.Strict);
 
-            this.MockReadSettings(mockFS, fullFileName);
+            this.MockReadSettings(_mockFS, fullFileName);
 
-            mockFS.Setup(m => m.Path.GetDirectoryName(fullFileName))
+            _mockFS.Setup(m => m.Path.GetDirectoryName(fullFileName))
                 .Returns(fulldirectoryName);
 
-            mockFS.Setup(m => m.Directory.Exists(fulldirectoryName))
+            _mockFS.Setup(m => m.Directory.Exists(fulldirectoryName))
                 .Returns(false);
 
-            mockFS.Setup(m => m.Directory.CreateDirectory(fulldirectoryName))
+            _mockFS.Setup(m => m.Directory.CreateDirectory(fulldirectoryName))
                 .Returns(new System.IO.Abstractions.DirectoryInfoWrapper(new System.IO.DirectoryInfo(fulldirectoryName)));
 
-            mockFS.Setup(m => m.File.WriteAllText(fullFileName, It.IsAny<string>()));
+            _mockFS.Setup(m => m.File.WriteAllText(fullFileName, It.IsAny<string>()));
 
-            var repo = new ConfigurationRepository(fileSystem: mockFS.Object, configurationFileName: fullFileName);
-            repo.SetDeveloperName("Dumpster Ninja");
+            _repo.ConfigurationFileName = fullFileName;
+            _repo.SetDeveloperName("Dumpster Ninja");
 
-            mockFS.VerifyAll();
+            _mockFS.VerifyAll();
         }
 
         private void MockReadSettings(Mock<System.IO.Abstractions.IFileSystem> mockFS, string fullFileName)

@@ -86,12 +86,11 @@ namespace ScriptScripter.DesktopApp.ViewModels.Tests
         public void YesTest()
         {
             bool closeCalled = false;
-            var vm = new MessageBoxViewModel();
+            var mockNavigator = new Mock<NinjaMvvm.Wpf.Abstractions.INavigator>();
 
-            var mockNavigator = new Mock<Contracts.INavigator>();
+            var vm = new MessageBoxViewModel(mockNavigator.Object);
             mockNavigator.Setup(mck => mck.CloseDialog(vm))
                 .Callback(() => closeCalled = true);
-            vm.Navigator = mockNavigator.Object;
 
             vm.Yes();
 
@@ -103,11 +102,11 @@ namespace ScriptScripter.DesktopApp.ViewModels.Tests
         public void NoTest()
         {
             bool closeCalled = false;
-            var vm = new MessageBoxViewModel();
-            var mockNavigator = new Mock<Contracts.INavigator>();
+            var mockNavigator = new Mock<NinjaMvvm.Wpf.Abstractions.INavigator>();
+
+            var vm = new MessageBoxViewModel(mockNavigator.Object);
             mockNavigator.Setup(mck => mck.CloseDialog(vm))
                 .Callback(() => closeCalled = true);
-            vm.Navigator = mockNavigator.Object;
 
             vm.No();
 
@@ -119,11 +118,11 @@ namespace ScriptScripter.DesktopApp.ViewModels.Tests
         public void OKTest()
         {
             bool closeCalled = false;
-            var vm = new MessageBoxViewModel();
-            var mockNavigator = new Mock<Contracts.INavigator>();
+            var mockNavigator = new Mock<NinjaMvvm.Wpf.Abstractions.INavigator>();
+
+            var vm = new MessageBoxViewModel(mockNavigator.Object);
             mockNavigator.Setup(mck => mck.CloseDialog(vm))
                 .Callback(() => closeCalled = true);
-            vm.Navigator = mockNavigator.Object;
 
             vm.OK();
 
@@ -135,11 +134,11 @@ namespace ScriptScripter.DesktopApp.ViewModels.Tests
         public void CancelTest()
         {
             bool closeCalled = false;
-            var vm = new MessageBoxViewModel();
-            var mockNavigator = new Mock<Contracts.INavigator>();
+            var mockNavigator = new Mock<NinjaMvvm.Wpf.Abstractions.INavigator>();
+
+            var vm = new MessageBoxViewModel(mockNavigator.Object);
             mockNavigator.Setup(mck => mck.CloseDialog(vm))
                 .Callback(() => closeCalled = true);
-            vm.Navigator = mockNavigator.Object;
 
             vm.Cancel();
 

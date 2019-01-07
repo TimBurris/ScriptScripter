@@ -10,9 +10,14 @@ namespace ScriptScripter.DesktopApp.ViewModels
 {
     public class RetryActionViewModel : ScriptScripterViewModelBase
     {
-        public RetryActionViewModel()
+        private readonly NinjaMvvm.Wpf.Abstractions.INavigator _navigator;
+
+        public RetryActionViewModel() { }//designer only
+
+        public RetryActionViewModel(NinjaMvvm.Wpf.Abstractions.INavigator navigator)
         {
             ViewTitle = "Failed to execute";
+            this._navigator = navigator;
         }
 
         protected override void OnLoadDesignData()
@@ -57,7 +62,7 @@ namespace ScriptScripter.DesktopApp.ViewModels
         public void Retry()
         {
             this.ViewResult = true;
-            this.Navigator.CloseDialog(this);
+            this._navigator.CloseDialog(this);
         }
 
         #endregion
@@ -65,6 +70,7 @@ namespace ScriptScripter.DesktopApp.ViewModels
         #region Cancel Command
 
         private RelayCommand _cancelCommand;
+
         public RelayCommand CancelCommand
         {
             get
@@ -86,7 +92,7 @@ namespace ScriptScripter.DesktopApp.ViewModels
         public void Cancel()
         {
             this.ViewResult = false;
-            this.Navigator.CloseDialog(this);
+            this._navigator.CloseDialog(this);
         }
 
         #endregion

@@ -11,6 +11,7 @@ namespace ScriptScripter.DesktopApp.ViewModels
 {
     public class MainViewModel : ScriptScripterViewModelBase
     {
+        private readonly NinjaMvvm.Wpf.Abstractions.INavigator _navigator;
         private readonly Processor.Services.Contracts.IScriptContainerWatcherService _scriptContainerWatcherService;
         private readonly Processor.Data.Contracts.IConfigurationRepository _configurationRepository;
         private readonly Contracts.IViewModelFaultlessService _viewModelFaultlessService;
@@ -20,7 +21,9 @@ namespace ScriptScripter.DesktopApp.ViewModels
 
         public MainViewModel() { }//designer only
 
-        public MainViewModel(Processor.Services.Contracts.IScriptContainerWatcherService scriptContainerWatcherService,
+        public MainViewModel(
+            NinjaMvvm.Wpf.Abstractions.INavigator navigator,
+            Processor.Services.Contracts.IScriptContainerWatcherService scriptContainerWatcherService,
             Processor.Data.Contracts.IConfigurationRepository configurationRepository,
             Contracts.IViewModelFaultlessService viewModelFaultlessService,
             Processor.Services.Contracts.IEventNotificationService eventNotificationService,
@@ -28,6 +31,7 @@ namespace ScriptScripter.DesktopApp.ViewModels
             Contracts.IThemeService themeService)
         {
             ViewTitle = "ScriptScripter";
+            this._navigator = navigator;
             this._scriptContainerWatcherService = scriptContainerWatcherService;
             this._configurationRepository = configurationRepository;
             this._viewModelFaultlessService = viewModelFaultlessService;
@@ -173,7 +177,7 @@ namespace ScriptScripter.DesktopApp.ViewModels
         /// </summary>
         public void ReturnHome()
         {
-            Navigator.NavigateTo<DatabaseListViewModel>();
+            _navigator.NavigateTo<DatabaseListViewModel>();
         }
 
         #endregion
@@ -201,7 +205,7 @@ namespace ScriptScripter.DesktopApp.ViewModels
         /// </summary>
         public void ChangeServer()
         {
-            Navigator.ShowDialog<DatabaseConnectionViewModel>();
+            _navigator.ShowDialog<DatabaseConnectionViewModel>();
         }
 
         #endregion
@@ -230,7 +234,7 @@ namespace ScriptScripter.DesktopApp.ViewModels
         public void ChangeDeveloper()
         {
 
-            Navigator.ShowDialog<DeveloperNameViewModel>();
+            _navigator.ShowDialog<DeveloperNameViewModel>();
 
             BindDeveloperName(_configurationRepository.GetDeveloperName());
         }
@@ -260,7 +264,7 @@ namespace ScriptScripter.DesktopApp.ViewModels
         /// </summary>
         public void ChangeTheme()
         {
-            Navigator.ShowDialog<SelectThemeViewModel>();
+            _navigator.ShowDialog<SelectThemeViewModel>();
         }
 
         #endregion

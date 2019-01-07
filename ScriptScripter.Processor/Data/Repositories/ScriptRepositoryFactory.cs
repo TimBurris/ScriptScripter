@@ -11,7 +11,7 @@ namespace ScriptScripter.Processor.Data.Repositories
     {
         public Contracts.IScriptsRepository GetScriptsRepository(Models.ScriptContainer scriptContainer)
         {
-            var repo = Ninjector.Container.Get<Contracts.IScriptsRepository>();// new Ninject.Parameters.ConstructorArgument(name: "scriptContainer", value: scriptContainer));
+            var repo = Ninjector.Container.Get<Contracts.IScriptsRepository>();
             repo.ScriptContainer = scriptContainer;
 
             return repo;

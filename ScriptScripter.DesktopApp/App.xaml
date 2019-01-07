@@ -5,7 +5,7 @@
              xmlns:v="clr-namespace:ScriptScripter.DesktopApp.Views"
              xmlns:vm="clr-namespace:ScriptScripter.DesktopApp.ViewModels"
              xmlns:Converters="clr-namespace:ScriptScripter.DesktopApp.Converters"
-             StartupUri="MainWindow.xaml">
+             Startup="Application_Startup">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>

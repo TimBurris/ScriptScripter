@@ -454,5 +454,41 @@ namespace ScriptScripter.Processor.Data.Repositories.Tests
                 .Should().Contain($"<RevisionNumber>1</RevisionNumber>");
 
         }
+
+
+        [TestMethod]
+        public void ExportScripts()
+        {
+            //*************  arrange  ******************
+            _repo = new ScriptsRepository(new System.IO.Abstractions.FileSystem());
+            _repo.ScriptContainer = new Models.ScriptContainer()
+            {
+                ScriptFilePath = @"C:\Code\ClientProjects\CinemaInventory\DBScripts_MovieMunchDB.xml"
+            };
+            var scripts = _repo.GetAllScripts();
+
+            foreach (var s in scripts)
+            {
+                System.Diagnostics.Debug.WriteLine("/***********************************************************************");
+                System.Diagnostics.Debug.WriteLine(s.Notes);
+                System.Diagnostics.Debug.WriteLine("***********************************************************************/");
+                System.Diagnostics.Debug.WriteLine(s.SQLStatement);
+                System.Diagnostics.Debug.WriteLine(string.Empty);
+                System.Diagnostics.Debug.WriteLine(string.Empty);
+                System.Diagnostics.Debug.WriteLine(string.Empty);
+                System.Diagnostics.Debug.WriteLine(string.Empty);
+                System.Diagnostics.Debug.WriteLine(string.Empty);
+
+
+            }
+
+
+            //*************    act    ******************
+
+
+            //*************  assert   ******************
+
+
+        }
     }
 }
