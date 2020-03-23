@@ -58,8 +58,8 @@
     <Reference Include="FileAndFolderDialog.Wpf, Version=1.0.1.1, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\FileAndFolderDialog.Wpf.1.0.1.1\lib\net471\FileAndFolderDialog.Wpf.dll</HintPath>
     </Reference>
-    <Reference Include="FluentAssertions, Version=5.4.1.0, Culture=neutral, PublicKeyToken=33f2691a05b67b6a, processorArchitecture=MSIL">
-      <HintPath>..\packages\FluentAssertions.5.4.1\lib\net47\FluentAssertions.dll</HintPath>
+    <Reference Include="FluentAssertions, Version=5.10.3.0, Culture=neutral, PublicKeyToken=33f2691a05b67b6a, processorArchitecture=MSIL">
+      <HintPath>..\packages\FluentAssertions.5.10.3\lib\net47\FluentAssertions.dll</HintPath>
     </Reference>
     <Reference Include="FluentValidation, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7de548da2fbae0f0, processorArchitecture=MSIL">
       <HintPath>..\packages\FluentValidation.8.6.2\lib\net45\FluentValidation.dll</HintPath>
@@ -80,11 +80,11 @@
       <HintPath>..\packages\Ninject.3.3.4\lib\net45\Ninject.dll</HintPath>
     </Reference>
     <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
-      <HintPath>..\packages\NLog.4.5.7\lib\net45\NLog.dll</HintPath>
+      <HintPath>..\packages\NLog.4.7.0\lib\net45\NLog.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Annotations, Version=4.2.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.ComponentModel.Annotations.4.5.0\lib\net461\System.ComponentModel.Annotations.dll</HintPath>
+      <HintPath>..\packages\System.ComponentModel.Annotations.4.7.0\lib\net461\System.ComponentModel.Annotations.dll</HintPath>
     </Reference>
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.ComponentModel.Primitives, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
@@ -93,8 +93,8 @@
     <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
-    <Reference Include="System.IO.Abstractions, Version=2.1.0.211, Culture=neutral, PublicKeyToken=96bf224d23c43e59, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.IO.Abstractions.2.1.0.211\lib\net40\System.IO.Abstractions.dll</HintPath>
+    <Reference Include="System.IO.Abstractions, Version=10.0.0.0, Culture=neutral, PublicKeyToken=96bf224d23c43e59, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.IO.Abstractions.10.0.1\lib\net461\System.IO.Abstractions.dll</HintPath>
     </Reference>
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.Runtime.Serialization" />
