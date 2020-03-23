@@ -20,7 +20,7 @@ namespace ScriptScripter.DesktopAppTests
             var repo = new Mock<Processor.Data.Contracts.IScriptsRepository>(MockScriptRepositoryFactory.Behavior);
             MockScriptsRepos.Add(repo);
 
-            MockScriptRepositoryFactory.Setup(m => m.GetScriptsRepository(scriptContainer))
+            MockScriptRepositoryFactory.Setup(m => m.GetScriptsRepository(scriptContainer.ScriptFilePath))
                 .Returns(repo.Object);
         }
 

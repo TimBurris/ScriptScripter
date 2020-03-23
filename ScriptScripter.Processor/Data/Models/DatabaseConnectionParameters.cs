@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace ScriptScripter.Processor.Data.Models
 {
+    //the reason we need this, rather than just a simple connection string, is that when we get down to running this in SMO, we need the individual components
     public class DatabaseConnectionParameters : ServerConnectionParameters
     {
         public DatabaseConnectionParameters()

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26430.13
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29911.84
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScriptScripter.DesktopApp", "ScriptScripter.DesktopApp\ScriptScripter.DesktopApp.csproj", "{7C1D9105-4E5E-4E22-8F53-793F9524F6BB}"
 EndProject
@@ -14,6 +14,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{249225BE-2873-402C-8FE0-67CCEC00A4A6}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScriptScripter.Processor.IntegrationTests", "ScriptScripter.Processor.IntegrationTests\ScriptScripter.Processor.IntegrationTests.csproj", "{19DAD6A1-8ACA-459B-81CA-B17720915519}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScriptScripter.Command", "ScriptScripter.Command\ScriptScripter.Command.csproj", "{201591FF-2BD8-4B6A-A1B0-D060D23CDC03}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,6 +43,10 @@ Global
 		{19DAD6A1-8ACA-459B-81CA-B17720915519}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{19DAD6A1-8ACA-459B-81CA-B17720915519}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{19DAD6A1-8ACA-459B-81CA-B17720915519}.Release|Any CPU.Build.0 = Release|Any CPU
+		{201591FF-2BD8-4B6A-A1B0-D060D23CDC03}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{201591FF-2BD8-4B6A-A1B0-D060D23CDC03}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{201591FF-2BD8-4B6A-A1B0-D060D23CDC03}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{201591FF-2BD8-4B6A-A1B0-D060D23CDC03}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -52,29 +58,5 @@ Global
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C9ED2B5C-2BBB-4351-9A3C-07574EDA3808}
-	EndGlobalSection
-	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 6
-		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
-		SccTeamFoundationServer = https://burristech.visualstudio.com/
-		SccLocalPath0 = .
-		SccProjectUniqueName1 = ScriptScripter.DesktopApp\\ScriptScripter.DesktopApp.csproj
-		SccProjectName1 = ScriptScripter.DesktopApp
-		SccLocalPath1 = ScriptScripter.DesktopApp
-		SccProjectUniqueName2 = ScriptScripter.Processor\\ScriptScripter.Processor.csproj
-		SccProjectName2 = ScriptScripter.Processor
-		SccLocalPath2 = ScriptScripter.Processor
-		SccProjectUniqueName3 = ScriptScripter.ProcessorTests\\ScriptScripter.ProcessorTests.csproj
-		SccProjectTopLevelParentUniqueName3 = ScriptScripter.sln
-		SccProjectName3 = ScriptScripter.ProcessorTests
-		SccLocalPath3 = ScriptScripter.ProcessorTests
-		SccProjectUniqueName4 = ScriptScripter.DesktopAppTests\\ScriptScripter.DesktopAppTests.csproj
-		SccProjectTopLevelParentUniqueName4 = ScriptScripter.sln
-		SccProjectName4 = ScriptScripter.DesktopAppTests
-		SccLocalPath4 = ScriptScripter.DesktopAppTests
-		SccProjectUniqueName5 = ScriptScripter.Processor.IntegrationTests\\ScriptScripter.Processor.IntegrationTests.csproj
-		SccProjectTopLevelParentUniqueName5 = ScriptScripter.sln
-		SccProjectName5 = ScriptScripter.Processor.IntegrationTests
-		SccLocalPath5 = ScriptScripter.Processor.IntegrationTests
 	EndGlobalSection
 EndGlobal

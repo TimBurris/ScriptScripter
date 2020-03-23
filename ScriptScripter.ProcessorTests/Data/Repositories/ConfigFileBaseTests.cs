@@ -115,7 +115,7 @@ namespace ScriptScripter.Processor.Data.Repositories.Tests
                 .Returns(false);
 
             _mockFS.Setup(m => m.Directory.CreateDirectory(fulldirectoryName))
-                .Returns(new System.IO.Abstractions.DirectoryInfoWrapper(new System.IO.DirectoryInfo(fulldirectoryName)));
+                .Returns(new System.IO.Abstractions.DirectoryInfoWrapper(_mockFS.Object,new System.IO.DirectoryInfo(fulldirectoryName)));
 
             _mockFS.Setup(m => m.File.WriteAllText(fullFileName, It.IsAny<string>()));
 
@@ -147,7 +147,7 @@ namespace ScriptScripter.Processor.Data.Repositories.Tests
             var c2 = mockFileSystem.Object.Path.DirectorySeparatorChar;
             var c3 = mockFileSystem.Object.Path.PathSeparator;
             var c4 = mockFileSystem.Object.Path.VolumeSeparatorChar;
-            var cs = mockFileSystem.Object.Path.InvalidPathChars;
+            var cs = mockFileSystem.Object.Path.GetInvalidPathChars();
         }
     }
 }
