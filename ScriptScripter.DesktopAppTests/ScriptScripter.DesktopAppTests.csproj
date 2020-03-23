@@ -58,8 +58,8 @@
     <Reference Include="FluentAssertions, Version=5.4.1.0, Culture=neutral, PublicKeyToken=33f2691a05b67b6a, processorArchitecture=MSIL">
       <HintPath>..\packages\FluentAssertions.5.4.1\lib\net47\FluentAssertions.dll</HintPath>
     </Reference>
-    <Reference Include="FluentValidation, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7de548da2fbae0f0, processorArchitecture=MSIL">
-      <HintPath>..\packages\FluentValidation.7.6.104\lib\net45\FluentValidation.dll</HintPath>
+    <Reference Include="FluentValidation, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7de548da2fbae0f0, processorArchitecture=MSIL">
+      <HintPath>..\packages\FluentValidation.8.6.2\lib\net45\FluentValidation.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
@@ -76,11 +76,11 @@
     <Reference Include="Moq, Version=4.9.0.0, Culture=neutral, PublicKeyToken=69f491c39445e920, processorArchitecture=MSIL">
       <HintPath>..\packages\Moq.4.9.0\lib\net45\Moq.dll</HintPath>
     </Reference>
-    <Reference Include="NinjaMvvm, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\NinjaMvvm.Wpf.1.0.2.1\lib\net471\NinjaMvvm.dll</HintPath>
+    <Reference Include="NinjaMvvm, Version=1.0.10.1, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\NinjaMvvm.Wpf.1.0.10.1\lib\net471\NinjaMvvm.dll</HintPath>
     </Reference>
-    <Reference Include="NinjaMvvm.Wpf, Version=1.0.2.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\NinjaMvvm.Wpf.1.0.2.1\lib\net471\NinjaMvvm.Wpf.dll</HintPath>
+    <Reference Include="NinjaMvvm.Wpf, Version=1.0.10.1, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\NinjaMvvm.Wpf.1.0.10.1\lib\net471\NinjaMvvm.Wpf.dll</HintPath>
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="System" />
