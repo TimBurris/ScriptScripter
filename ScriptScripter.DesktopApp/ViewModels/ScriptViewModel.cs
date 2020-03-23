@@ -96,7 +96,7 @@ namespace ScriptScripter.DesktopApp.ViewModels
         }
         private void ExecuteCommit()
         {
-            var repo = _scriptsRepoFactory.GetScriptsRepository(_scriptContainer);
+            var repo = _scriptsRepoFactory.GetScriptsRepository(_scriptContainer.ScriptFilePath);
 
             if (_scriptInEdit == null)
             {

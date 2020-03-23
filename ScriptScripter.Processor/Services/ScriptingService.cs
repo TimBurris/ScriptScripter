@@ -99,9 +99,9 @@ namespace ScriptScripter.Processor.Services
             }
             return message;
         }
-        public IEnumerable<Data.Models.Script> GetScriptsThatNeedRun(Data.Models.DatabaseConnectionParameters databaseConnectionParams, Processor.Data.Models.ScriptContainer scriptContainer)
+        public IEnumerable<Data.Models.Script> GetScriptsThatNeedRun(Data.Models.DatabaseConnectionParameters databaseConnectionParams, string scriptFilePath)
         {
-            var repo = _scriptRepoFactory.GetScriptsRepository(scriptContainer);
+            var repo = _scriptRepoFactory.GetScriptsRepository(scriptFilePath);
             var lastRevision = _revisionRepository.GetLastRevision(databaseConnectionParams);
             IEnumerable<Data.Models.Script> scripts;
 

@@ -71,7 +71,7 @@ namespace ScriptScripter.DesktopApp.ViewModels
 
                 await _viewModelFaultlessService.TryExecuteSyncAsAsync(() =>
                    {
-                       var repo = _scriptsRepoFactory.GetScriptsRepository(scriptContainer);
+                       var repo = _scriptsRepoFactory.GetScriptsRepository(scriptContainer.ScriptFilePath);
                        return repo.GetLastScript();
                    })
                    .OnSuccessAsync(result =>

@@ -62,7 +62,7 @@ namespace ScriptScripter.Processor.Data.Repositories.Tests
             var fileSystem = new System.IO.Abstractions.TestingHelpers.MockFileSystem(x);
 
             var repo = new ScriptsRepository(fileSystem);
-            repo.ScriptContainer = new Models.ScriptContainer() { ScriptFilePath = @"C:\myfile.xml" };
+            repo.ScriptFilePath = @"C:\myfile.xml";
 
             /*************    act    ******************/
             /*************  assert   ******************/
@@ -83,7 +83,7 @@ namespace ScriptScripter.Processor.Data.Repositories.Tests
             var fileSystem = new System.IO.Abstractions.TestingHelpers.MockFileSystem(x);
 
             var repo = new ScriptsRepository(fileSystem);
-            repo.ScriptContainer = new Models.ScriptContainer() { ScriptFilePath = @"C:\myfile.xml" };
+            repo.ScriptFilePath = @"C:\myfile.xml";
 
             /*************    act    ******************/
             /*************  assert   ******************/
@@ -101,7 +101,7 @@ namespace ScriptScripter.Processor.Data.Repositories.Tests
             });
 
             var repo = new ScriptsRepository(fileSystem);
-            repo.ScriptContainer = new Models.ScriptContainer() { ScriptFilePath = @"C:\myfile.xml" };
+            repo.ScriptFilePath = @"C:\myfile.xml";
 
             /*************    act    ******************/
             var results = repo.ReadScripts();
@@ -363,7 +363,7 @@ namespace ScriptScripter.Processor.Data.Repositories.Tests
         {
             _fs = this.GetMockedFileSystem();
             _repo = new ScriptsRepository(fileSystem: _fs);
-            _repo.ScriptContainer = new Models.ScriptContainer() { ScriptFilePath = _mockedContainerFile };
+            _repo.ScriptFilePath = _mockedContainerFile;
         }
 
         private System.IO.Abstractions.IFileSystem GetMockedFileSystem()
@@ -461,10 +461,7 @@ namespace ScriptScripter.Processor.Data.Repositories.Tests
         {
             //*************  arrange  ******************
             _repo = new ScriptsRepository(new System.IO.Abstractions.FileSystem());
-            _repo.ScriptContainer = new Models.ScriptContainer()
-            {
-                ScriptFilePath = @"C:\Code\ClientProjects\CinemaInventory\DBScripts_MovieMunchDB.xml"
-            };
+            _repo.ScriptFilePath = @"C:\Code\ClientProjects\CinemaInventory\DBScripts_MovieMunchDB.xml";
             var scripts = _repo.GetAllScripts();
 
             foreach (var s in scripts)

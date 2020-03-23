@@ -8,7 +8,7 @@ namespace ScriptScripter.Processor.Data.Contracts
 {
     public interface IScriptsRepository
     {
-        Models.ScriptContainer ScriptContainer { get; set; }
+        string ScriptFilePath { get; set; }
 
         IEnumerable<Models.Script> GetAllScripts();
         IEnumerable<Models.Script> GetAllScriptsAfterRevisionNumber(int revisionNumber);

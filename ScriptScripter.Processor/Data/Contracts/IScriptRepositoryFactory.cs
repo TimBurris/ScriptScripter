@@ -8,6 +8,6 @@ namespace ScriptScripter.Processor.Data.Contracts
 {
     public interface IScriptRepositoryFactory
     {
-        IScriptsRepository GetScriptsRepository(Models.ScriptContainer scriptContainer);
+        IScriptsRepository GetScriptsRepository(string scriptFilePath);
     }
 }

@@ -15,7 +15,7 @@ namespace ScriptScripter.Processor.Data.Repositories
             _fileSystem = fileSystem;
         }
 
-        public Models.ScriptContainer ScriptContainer { get; set; }
+        public string ScriptFilePath { get; set; }
 
         public Models.Script AddNewScript(Models.Script script)
         {
@@ -109,7 +109,7 @@ namespace ScriptScripter.Processor.Data.Repositories
 
         public virtual List<Models.Script> ReadScripts()
         {
-            var fileName = this.ScriptContainer.ScriptFilePath;
+            var fileName = this.ScriptFilePath;
 
             if (!_fileSystem.File.Exists(fileName))
                 return new List<Models.Script>();
@@ -160,7 +160,7 @@ namespace ScriptScripter.Processor.Data.Repositories
             {
                 this.WriteScripts(x, scripts);
 
-                _fileSystem.File.WriteAllText(this.ScriptContainer.ScriptFilePath, x.ToString());
+                _fileSystem.File.WriteAllText(this.ScriptFilePath, x.ToString());
             }
         }
 

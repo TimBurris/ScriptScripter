@@ -23,7 +23,7 @@ namespace ScriptScripter.Processor.Services.Contracts
 
         DatabaseScriptStates GetDatabaseScriptState(Data.Models.Script latestScript, Data.Models.Revision latestRevision);
 
-        IEnumerable<Data.Models.Script> GetScriptsThatNeedRun(Data.Models.DatabaseConnectionParameters databaseConnectionParams, Processor.Data.Models.ScriptContainer scriptContainer);
+        IEnumerable<Data.Models.Script> GetScriptsThatNeedRun(Data.Models.DatabaseConnectionParameters databaseConnectionParams, string scriptFilePath);
 
         Task<Dto.ActionResult> TestDatabaseConnectionAsync(Data.Models.DatabaseConnectionParameters databaseConnectionParams);
         Task<Dto.ActionResult> TestDatabaseConnectionAsync(Data.Models.DatabaseConnectionParameters databaseConnectionParams, System.Threading.CancellationToken cancellationToken);
