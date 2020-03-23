@@ -15,7 +15,7 @@ namespace ScriptScripter.Command
         {
             Container = this.Kernel;
 
-            Bind<NLog.ILogger>().ToMethod(p => NLog.LogManager.GetLogger(name: p.Request.Target.Member.DeclaringType.FullName));
+            Bind<NLog.ILogger>().ToMethod(p => NLog.LogManager.GetLogger(name: "ScriptScripter.Command"));
             Bind<FaultlessExecution.Abstractions.IFaultlessExecutionService>().To<FaultlessExecution.FaultlessExecutionService>();
         }
     }
