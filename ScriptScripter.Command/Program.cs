@@ -69,7 +69,13 @@ namespace ScriptScripter.Command
 
             if (_verbose)
             {
+                var pw = connectionParams.Password;
+                if (!string.IsNullOrEmpty(pw))
+                {
+                    connectionParams.Password = "- password removed for security, but it was NOT NULL -";
+                }
                 _logger.Info(Newtonsoft.Json.JsonConvert.SerializeObject(connectionParams, Newtonsoft.Json.Formatting.Indented));
+                connectionParams.Password = pw;
             }
 
             var progress = new Progress<Processor.Dto.ApplyScriptProgress>();
