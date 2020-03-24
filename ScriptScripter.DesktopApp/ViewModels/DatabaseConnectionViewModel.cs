@@ -15,10 +15,11 @@ namespace ScriptScripter.DesktopApp.ViewModels
         private readonly NinjaMvvm.Wpf.Abstractions.INavigator _navigator;
         private readonly Processor.Data.Contracts.IConfigurationRepository _configurationRepository;
         private readonly Processor.Services.Contracts.IScriptingService _scriptingService;
-        private readonly DatabaseConnectionControlViewModel _databaseConnectionControlVM;
-
 
         public DatabaseConnectionViewModel() { }//designer only
+
+        //HACK: i hate doing this, but without it Ninject seems to be choosing the wrong freaking constructor!
+        [Ninject.Inject]
         public DatabaseConnectionViewModel(NinjaMvvm.Wpf.Abstractions.INavigator navigator,
             Processor.Data.Contracts.IConfigurationRepository configurationRepository,
             Processor.Services.Contracts.IScriptingService scriptingService,
@@ -28,17 +29,18 @@ namespace ScriptScripter.DesktopApp.ViewModels
             this._navigator = navigator;
             this._configurationRepository = configurationRepository;
             this._scriptingService = scriptingService;
-            this._databaseConnectionControlVM = databaseConnectionControlVM;
+            this.DatabaseConnectionControlVM = databaseConnectionControlVM;
         }
 
         protected override async Task<bool> OnReloadDataAsync(CancellationToken cancellationToken)
         {
             _serverConnectionParameters = _configurationRepository.GetServerConnectionParameters();
 
-            _databaseConnectionControlVM.Init(_serverConnectionParameters);
+            this.DatabaseConnectionControlVM.Init(_serverConnectionParameters);
 
             return true;
         }
+        public DatabaseConnectionControlViewModel DatabaseConnectionControlVM { get; private set; }
 
         #region Connect Command
 
@@ -63,7 +65,7 @@ namespace ScriptScripter.DesktopApp.ViewModels
         /// </summary>
         public async Task ConnectAsync()
         {
-            var p = _databaseConnectionControlVM.BuildConnectionParameters();
+            var p = this.DatabaseConnectionControlVM.BuildConnectionParameters();
 
             var result = await _scriptingService.TestServerConnectionAsync(p);
 
