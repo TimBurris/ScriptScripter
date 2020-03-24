@@ -17,9 +17,9 @@ namespace ScriptScripter.DesktopApp.ViewModels.Tests
         public void Load_should_load_data_for_all_databases()
         {
             var containers = new List<Processor.Data.Models.ScriptContainer>() {
-                     new Processor.Data.Models.ScriptContainer() {DatabaseName="DB1" },
-                     new Processor.Data.Models.ScriptContainer() {DatabaseName="DB2" },
-                     new Processor.Data.Models.ScriptContainer() {DatabaseName="DB3" }
+                     new Processor.Data.Models.ScriptContainer() {DatabaseName="DB1",ScriptFilePath="C:\\DB1" },
+                     new Processor.Data.Models.ScriptContainer() {DatabaseName="DB2",ScriptFilePath="C:\\DB2" },
+                     new Processor.Data.Models.ScriptContainer() {DatabaseName="DB3" ,ScriptFilePath="C:\\DB3"}
              };
             RepoMocks.MockScriptContainerRepo.Setup(m => m.GetAll())
                  .Returns(containers);

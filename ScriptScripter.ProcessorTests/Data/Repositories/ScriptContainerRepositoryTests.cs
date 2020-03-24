@@ -41,13 +41,13 @@ namespace ScriptScripter.Processor.Data.Repositories.Tests
                                                 }";
 
         private ScriptContainerRepository _repo;
-        private Mock<System.IO.Abstractions.IFileSystem> _mockFS = new Mock<System.IO.Abstractions.IFileSystem>(MockBehavior.Strict);
+        private System.IO.Abstractions.TestingHelpers.MockFileSystem _mockFS = new System.IO.Abstractions.TestingHelpers.MockFileSystem();
         private Mock<Services.Contracts.IEventNotificationService> _mockENS = new Mock<Services.Contracts.IEventNotificationService>();
 
         [TestInitialize]
         public void Init()
         {
-            _repo = new ScriptContainerRepository(_mockFS.Object,
+            _repo = new ScriptContainerRepository(_mockFS,
                 _mockENS.Object
                 );
         }
@@ -55,10 +55,7 @@ namespace ScriptScripter.Processor.Data.Repositories.Tests
         [TestMethod()]
         public void GetAllTest()
         {
-            var fileSystem = new System.IO.Abstractions.TestingHelpers.MockFileSystem(new Dictionary<string, System.IO.Abstractions.TestingHelpers.MockFileData>
-                                {
-                                    { @"c:\temp\myfolder\myfile.json", new System.IO.Abstractions.TestingHelpers.MockFileData(_validSettingsJson) },
-                                });
+            _mockFS.AddFile(@"c:\temp\myfolder\myfile.json", new System.IO.Abstractions.TestingHelpers.MockFileData(_validSettingsJson));
 
             _repo.ConfigurationFileName = @"c:\temp\myfolder\myfile.json";
 
@@ -79,10 +76,8 @@ namespace ScriptScripter.Processor.Data.Repositories.Tests
         [TestMethod()]
         public void GetAll_succeeds_when_file_is_empty()
         {
-            var fileSystem = new System.IO.Abstractions.TestingHelpers.MockFileSystem(new Dictionary<string, System.IO.Abstractions.TestingHelpers.MockFileData>
-                                {
-                                    { @"c:\temp\myfolder\myfile.json", new System.IO.Abstractions.TestingHelpers.MockFileData(string.Empty) },
-                                });
+            _mockFS.AddFile(@"c:\temp\myfolder\myfile.json", new System.IO.Abstractions.TestingHelpers.MockFileData(string.Empty));
+
 
             _repo.ConfigurationFileName = @"c:\temp\myfolder\myfile.json";
 
@@ -94,10 +89,8 @@ namespace ScriptScripter.Processor.Data.Repositories.Tests
         [TestMethod()]
         public void AddNew_fails_when_database_name_already_exists()
         {
-            var fileSystem = new System.IO.Abstractions.TestingHelpers.MockFileSystem(new Dictionary<string, System.IO.Abstractions.TestingHelpers.MockFileData>
-                                {
-                                    { @"c:\temp\myfolder\myfile.json", new System.IO.Abstractions.TestingHelpers.MockFileData(_validSettingsJson) },
-                                });
+            _mockFS.AddFile(@"c:\temp\myfolder\myfile.json", new System.IO.Abstractions.TestingHelpers.MockFileData(_validSettingsJson));
+
 
             _repo.ConfigurationFileName = @"c:\temp\myfolder\myfile.json";
 
@@ -110,10 +103,8 @@ namespace ScriptScripter.Processor.Data.Repositories.Tests
         [TestMethod()]
         public void AddNew_allows_same_database_for_different_server()
         {
-            var fileSystem = new System.IO.Abstractions.TestingHelpers.MockFileSystem(new Dictionary<string, System.IO.Abstractions.TestingHelpers.MockFileData>
-                                {
-                                    { @"c:\temp\myfolder\myfile.json", new System.IO.Abstractions.TestingHelpers.MockFileData(_validSettingsJson) },
-                                });
+            _mockFS.AddFile(@"c:\temp\myfolder\myfile.json", new System.IO.Abstractions.TestingHelpers.MockFileData(_validSettingsJson));
+
 
             _repo.ConfigurationFileName = @"c:\temp\myfolder\myfile.json";
 
@@ -138,10 +129,7 @@ namespace ScriptScripter.Processor.Data.Repositories.Tests
         [TestMethod()]
         public void AddNew_allows_same_script_file_for_different_database()
         {
-            var fileSystem = new System.IO.Abstractions.TestingHelpers.MockFileSystem(new Dictionary<string, System.IO.Abstractions.TestingHelpers.MockFileData>
-                                {
-                                    { @"c:\temp\myfolder\myfile.json", new System.IO.Abstractions.TestingHelpers.MockFileData(_validSettingsJson) },
-                                });
+            _mockFS.AddFile(@"c:\temp\myfolder\myfile.json", new System.IO.Abstractions.TestingHelpers.MockFileData(_validSettingsJson));
 
             _repo.ConfigurationFileName = @"c:\temp\myfolder\myfile.json";
 
@@ -158,17 +146,15 @@ namespace ScriptScripter.Processor.Data.Repositories.Tests
         [DataRow("")]
         public void AddNew_succeeds(string settingsJson)
         {
-            var fileSystem = new System.IO.Abstractions.TestingHelpers.MockFileSystem(new Dictionary<string, System.IO.Abstractions.TestingHelpers.MockFileData>
-                                {
-                                    { @"c:\temp\myfolder\myfile.json", new System.IO.Abstractions.TestingHelpers.MockFileData(settingsJson) },
-                                });
+            _mockFS.AddFile(@"c:\temp\myfolder\myfile.json", new System.IO.Abstractions.TestingHelpers.MockFileData(settingsJson));
+
 
             _repo.ConfigurationFileName = @"c:\temp\myfolder\myfile.json";
 
             var result = _repo.AddNew(databaseName: "MyTestDB", scriptFilePath: @"C:\temp\myscript.xml", customConnectionParameters: null, tags: null);
 
             result.WasSuccessful.Should().BeTrue();
-            var contents = fileSystem.File.ReadAllText(@"c:\temp\myfolder\myfile.json");
+            var contents = _mockFS.File.ReadAllText(@"c:\temp\myfolder\myfile.json");
             contents.Should().Contain("\"DatabaseName\": \"MyTestDB\"");
             contents.Should().Contain("\"ScriptFilePath\": \"C:\\\\temp\\\\myscript.xml\"");
 
@@ -179,11 +165,8 @@ namespace ScriptScripter.Processor.Data.Repositories.Tests
         [TestMethod()]
         public void Update_succeeds()
         {
-            string settingsJson = _validSettingsJson;
-            var fileSystem = new System.IO.Abstractions.TestingHelpers.MockFileSystem(new Dictionary<string, System.IO.Abstractions.TestingHelpers.MockFileData>
-                                {
-                                    { @"c:\temp\myfolder\myfile.json", new System.IO.Abstractions.TestingHelpers.MockFileData(settingsJson) },
-                                });
+            _mockFS.AddFile(@"c:\temp\myfolder\myfile.json", new System.IO.Abstractions.TestingHelpers.MockFileData(_validSettingsJson));
+
 
             _repo.ConfigurationFileName = @"c:\temp\myfolder\myfile.json";
 
@@ -198,7 +181,7 @@ namespace ScriptScripter.Processor.Data.Repositories.Tests
             var result = _repo.Update(container);
 
             result.WasSuccessful.Should().BeTrue();
-            var contents = fileSystem.File.ReadAllText(@"c:\temp\myfolder\myfile.json");
+            var contents = _mockFS.File.ReadAllText(@"c:\temp\myfolder\myfile.json");
             contents.Should().Contain("\"ContainerUid\": \"11111111-1111-1111-1111-111111111111\"");
             contents.Should().Contain("\"DatabaseName\": \"MyUpdatedDB\"");
             contents.Should().Contain("\"ScriptFilePath\": \"c:\\\\temp\\\\updated.xml\"");
@@ -213,10 +196,7 @@ namespace ScriptScripter.Processor.Data.Repositories.Tests
         [TestMethod()]
         public void AddNew_assigns_guid()
         {
-            var fileSystem = new System.IO.Abstractions.TestingHelpers.MockFileSystem(new Dictionary<string, System.IO.Abstractions.TestingHelpers.MockFileData>
-                                {
-                                    { @"c:\temp\myfolder\myfile.json", new System.IO.Abstractions.TestingHelpers.MockFileData(string.Empty) },
-                                });
+            _mockFS.AddFile(@"c:\temp\myfolder\myfile.json", new System.IO.Abstractions.TestingHelpers.MockFileData(string.Empty));
 
             _repo.ConfigurationFileName = @"c:\temp\myfolder\myfile.json";
 
@@ -230,17 +210,15 @@ namespace ScriptScripter.Processor.Data.Repositories.Tests
         [TestMethod()]
         public void Remove_succeeds()
         {
-            var fileSystem = new System.IO.Abstractions.TestingHelpers.MockFileSystem(new Dictionary<string, System.IO.Abstractions.TestingHelpers.MockFileData>
-                                {
-                                    { @"c:\temp\myfolder\myfile.json", new System.IO.Abstractions.TestingHelpers.MockFileData(_validSettingsJson) },
-                                });
+            _mockFS.AddFile(@"c:\temp\myfolder\myfile.json", new System.IO.Abstractions.TestingHelpers.MockFileData(_validSettingsJson));
+
 
             _repo.ConfigurationFileName = @"c:\temp\myfolder\myfile.json";
 
             var result = _repo.Remove(new System.Guid("11111111-1111-1111-1111-111111111111"));
 
             result.WasSuccessful.Should().BeTrue();
-            var contents = fileSystem.File.ReadAllText(@"c:\temp\myfolder\myfile.json").ToLower();
+            var contents = _mockFS.File.ReadAllText(@"c:\temp\myfolder\myfile.json").ToLower();
             contents.Should().NotContain("sampledata");
             contents.Should().NotContain("dbscripts_sampledatabase.xml");
 
@@ -251,10 +229,7 @@ namespace ScriptScripter.Processor.Data.Repositories.Tests
         [TestMethod()]
         public void Remove_fails_when_database_not_in_list()
         {
-            var fileSystem = new System.IO.Abstractions.TestingHelpers.MockFileSystem(new Dictionary<string, System.IO.Abstractions.TestingHelpers.MockFileData>
-                                {
-                                    { @"c:\temp\myfolder\myfile.json", new System.IO.Abstractions.TestingHelpers.MockFileData(_validSettingsJson) },
-                                });
+            _mockFS.AddFile(@"c:\temp\myfolder\myfile.json", new System.IO.Abstractions.TestingHelpers.MockFileData(_validSettingsJson));
 
             _repo.ConfigurationFileName = @"c:\temp\myfolder\myfile.json";
 

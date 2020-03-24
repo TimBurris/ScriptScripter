@@ -36,8 +36,21 @@ namespace ScriptScripter.DesktopApp.ViewModels
             this._scriptsContainerRepository = scriptsContainerRepository;
             this._eventNotificationService = eventNotificationService;
             this.Tags.ItemPropertyChangedEvent += Tags_ItemPropertyChangedEvent;
+        }
+        protected override void OnBound()
+        {
+            base.OnBound();
 
-            //TODO: confirm these are not hanging around after dead
+            _eventNotificationService.ScriptContainerAdded += _eventNotificationService_ContainersChange;
+            _eventNotificationService.ScriptContainerUpdated += _eventNotificationService_ContainersChange;
+            _eventNotificationService.ScriptContainerRemoved += _eventNotificationService_ContainersChange;
+            _eventNotificationService.ScriptContainerContentsChanged += _eventNotificationService_ContainersChange;
+        }
+
+        protected override void OnUnloaded()
+        {
+            base.OnUnloaded();
+
             _eventNotificationService.ScriptContainerAdded -= _eventNotificationService_ContainersChange;
             _eventNotificationService.ScriptContainerUpdated -= _eventNotificationService_ContainersChange;
             _eventNotificationService.ScriptContainerRemoved -= _eventNotificationService_ContainersChange;
@@ -49,7 +62,7 @@ namespace ScriptScripter.DesktopApp.ViewModels
             this.FilterLineItems();
         }
 
-       private void _eventNotificationService_ContainersChange(object sender, EventArgs e)
+        private void _eventNotificationService_ContainersChange(object sender, EventArgs e)
         {
             this.ReloadDataAsync();
         }

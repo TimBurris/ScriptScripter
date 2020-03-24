@@ -25,14 +25,13 @@ namespace ScriptScripter.Processor.Data.Repositories.Tests
 
         private ConfigurationRepository _repo;
         private System.IO.Abstractions.TestingHelpers.MockFileSystem _mockFS;
-        private Dictionary<string, System.IO.Abstractions.TestingHelpers.MockFileData> _fileSystemData = new Dictionary<string, System.IO.Abstractions.TestingHelpers.MockFileData>();
         private Mock<Services.Contracts.IEventNotificationService> _mockENS = new Mock<Services.Contracts.IEventNotificationService>();
         private Mock<Services.Contracts.ICryptoService> _mockCryptoService = new Mock<Services.Contracts.ICryptoService>();
 
         [TestInitialize]
         public void Init()
         {
-            _mockFS = new System.IO.Abstractions.TestingHelpers.MockFileSystem(_fileSystemData);
+            _mockFS = new System.IO.Abstractions.TestingHelpers.MockFileSystem();
             _repo = new ConfigurationRepository(_mockFS,
                 _mockENS.Object,
                 _mockCryptoService.Object
@@ -44,7 +43,7 @@ namespace ScriptScripter.Processor.Data.Repositories.Tests
         {
 
 
-            _fileSystemData.Add(@"c:\temp\myfolder\myfile.json", new System.IO.Abstractions.TestingHelpers.MockFileData(_validSettingsJson));
+            _mockFS.AddFile(@"c:\temp\myfolder\myfile.json", new System.IO.Abstractions.TestingHelpers.MockFileData(_validSettingsJson));
 
             _repo.ConfigurationFileName = @"c:\temp\myfolder\myfile.json";
 
@@ -58,7 +57,7 @@ namespace ScriptScripter.Processor.Data.Repositories.Tests
         [DataRow("")]
         public void SetDeveloperNameTest(string settingsJson)
         {
-            _fileSystemData.Add(@"c:\temp\myfolder\myfile.json", new System.IO.Abstractions.TestingHelpers.MockFileData(settingsJson));
+            _mockFS.AddFile(@"c:\temp\myfolder\myfile.json", new System.IO.Abstractions.TestingHelpers.MockFileData(settingsJson));
 
             _repo.ConfigurationFileName = @"c:\temp\myfolder\myfile.json";
 
@@ -72,7 +71,7 @@ namespace ScriptScripter.Processor.Data.Repositories.Tests
         [TestMethod()]
         public void GetServerConnectionParametersTest()
         {
-            _fileSystemData.Add(@"c:\temp\myfolder\myfile.json", new System.IO.Abstractions.TestingHelpers.MockFileData(_validSettingsJson));
+            _mockFS.AddFile(@"c:\temp\myfolder\myfile.json", new System.IO.Abstractions.TestingHelpers.MockFileData(_validSettingsJson));
             _mockCryptoService.Setup(m => m.Decrypt("this_is_my_encrypted_pw"))
                 .Returns("my_Decrypted_pw");
 
@@ -91,11 +90,11 @@ namespace ScriptScripter.Processor.Data.Repositories.Tests
         [DataRow("")]
         public void SetServerConnectionParametersTest(string settingsJson)
         {
-            _fileSystemData.Add(@"c:\temp\myfolder\myfile.json", new System.IO.Abstractions.TestingHelpers.MockFileData(settingsJson));
+            _mockFS.AddFile(@"c:\temp\myfolder\myfile.json", new System.IO.Abstractions.TestingHelpers.MockFileData(settingsJson));
             _mockCryptoService.Setup(m => m.Encrypt("MyPass"))
                 .Returns("super_unbreakable_pw");
 
-            var mockEventService = new Mock<Services.Contracts.IEventNotificationService>();
+            //var mockEventService = new Mock<Services.Contracts.IEventNotificationService>();
 
             _repo.ConfigurationFileName = @"c:\temp\myfolder\myfile.json";
 
@@ -115,7 +114,7 @@ namespace ScriptScripter.Processor.Data.Repositories.Tests
             contents.Should().Contain("\"UseTrustedConnection\": true");
 
             // ensure notify is called
-            mockEventService.Verify(m => m.NotifyServerConnectionChanged(), Times.Once);
+            _mockENS.Verify(m => m.NotifyServerConnectionChanged(), Times.Once);
         }
 
     }
