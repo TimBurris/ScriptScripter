@@ -6,8 +6,6 @@ namespace ScriptScripter.Command
     {
         public class IncomingOptions
         {
-            //[Option('c', "connectionstring", Required = true, HelpText = "The connection string for the database where scripts should be applied")]
-            //public string ConnectionString { get; set; }
             [Option('f', "scriptfilepath", Required = true, HelpText = "The full path to the script file that is to be applied")]
             public string ScriptFilePath { get; set; }
 
@@ -17,8 +15,7 @@ namespace ScriptScripter.Command
             [Option('d', "databasename", Required = true, HelpText = "The database to apply the scripts to")]
             public String DatabaseName { get; set; }
 
-
-            [Option('t', "trustedconnection", Required = false, HelpText = "y|yes|t|true to use windows auth")]
+            [Option('t', "trustedconnection", Required = false, HelpText = "When specifed, connect to the database using Windows Authentication")]
             public bool UseTrustedConnection { get; set; }
 
             [Option('p', "password", Required = false, HelpText = "Optional, passord for the database connection use when not using Trusted Connection")]

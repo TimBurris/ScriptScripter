@@ -9,105 +9,63 @@ namespace ScriptScripter.Command
 {
     partial class Program
     {
+        //these variables will be setup based on input parameters
+        private static bool _verbose;
+        private static string _scriptFilePath;
+        private static Processor.Data.Models.DatabaseConnectionParameters _connectionParams;
 
-        public static bool _verbose;
-        public static NLog.ILogger _logger;
+        //these will come from our IoC Container
+        private static NLog.ILogger _logger;
+        private static Processor.Services.Contracts.IScriptingService _service;
 
         static async Task Main(string[] args)
         {
-            var kernel = new Ninject.StandardKernel(new Ninject.Modules.INinjectModule[] { new Ninjector(), new ScriptScripter.Processor.Ninjector() });
+            InitIoc();
 
-            Ninjector.Container = kernel;
-            ScriptScripter.Processor.Ninjector.Container = kernel;
+            //logger used in inputparam init, so make sure you get it going before processing input params
             _logger = Ninjector.Container.Get<NLog.ILogger>();
 
-            Processor.Data.Models.DatabaseConnectionParameters connectionParams = null;
-            string scriptFilePath = null;
+            //setup based on the our input parameters
+            InitFromInputParamsExitIfInvalid(args);
 
-            var parseResult = Parser.Default.ParseArguments<IncomingOptions>(args)
-                         .WithParsed<IncomingOptions>(o =>
-                        {
-                            _verbose = o.Verbose;
-                            scriptFilePath = o.ScriptFilePath;
-                            connectionParams = new Processor.Data.Models.DatabaseConnectionParameters()
-                            {
-                                DatabaseName = o.DatabaseName,
-                                Server = o.Server,
-                                Password = o.Password,
-                                Username = o.Username,
-                                UseTrustedConnection = o.UseTrustedConnection
+            //for debugging/loggin purposes, log out what the params were 
+            LogParamState();
 
-                            };
+            //fire up our scripting service so we can get to work
+            _service = Ninjector.Container.Get<Processor.Services.Contracts.IScriptingService>();
 
-                        })
-                         .WithNotParsed<IncomingOptions>(o =>
-                         {
-                             _logger.Error("Exiting due to missing or failed parameters");
-                             foreach (var x in o)
-                             {
-                                 _logger.Error(Newtonsoft.Json.JsonConvert.SerializeObject((object)x, Newtonsoft.Json.Formatting.Indented));
-                             }
-                             Environment.Exit(5000);
-                         });
+            //test the database connection
+            await TestDatabaseConnectionExitIfFailAsync();
 
+            //fetch the scripts that we should run
+            IEnumerable<Processor.Data.Models.Script> scriptsToRun = GetScriptsToRunExitIfFail();
 
-            if (connectionParams == null)
+            if (!scriptsToRun.Any())
             {
-                _logger.Error("connection parameters wer now received");
-                Environment.Exit(5001);
+                _logger.Info("Database is already up to date (no scripts to run)");
             }
-            if (scriptFilePath == null)
+            else
             {
-                _logger.Error("scriptfilepath is missing");
-                Environment.Exit(5002);
-            }
-            if (!System.IO.File.Exists(scriptFilePath))
-            {
-                _logger.Error($"{scriptFilePath} does not exist on disk");
-                Environment.Exit(5003);
+                //now apply the scripts to the database
+                await ApplyScriptsExitIfFailAsync(scriptsToRun);
             }
 
-            if (_verbose)
-            {
-                var pw = connectionParams.Password;
-                if (!string.IsNullOrEmpty(pw))
-                {
-                    connectionParams.Password = "- password removed for security, but it was NOT NULL -";
-                }
-                _logger.Info(Newtonsoft.Json.JsonConvert.SerializeObject(connectionParams, Newtonsoft.Json.Formatting.Indented));
-                connectionParams.Password = pw;
-            }
-
+            //all above routines are set to exit on fail
+            //   so if we make it here, everything worked
+            Environment.Exit(0);//success
+        }
+        private static async Task ApplyScriptsExitIfFailAsync(IEnumerable<Processor.Data.Models.Script> scriptsToRun)
+        {
+            //init a handler to process the progress updates
             var progress = new Progress<Processor.Dto.ApplyScriptProgress>();
             progress.ProgressChanged += Progress_ProgressChanged;
 
-
-            var service = Ninjector.Container.Get<Processor.Services.Contracts.IScriptingService>();
-            var connectionResult = await service.TestDatabaseConnectionAsync(connectionParams);
-            if (!connectionResult.WasSuccessful)
-            {
-                _logger.Error($"Failed to connect to database: {connectionResult.Message}");
-                Environment.Exit(5004);
-            }
-
-
-            IEnumerable<Processor.Data.Models.Script> scriptsToRun = null;
             try
             {
-                scriptsToRun = service.GetScriptsThatNeedRun(connectionParams, scriptFilePath);
-            }
-            catch (Exception ex)
-            {
-                _logger.Error(ex, "error getting scripts to run");
-                Environment.Exit(5005);
-            }
-
-            try
-            {
-                var result = await service.ApplyScriptsToDatabaseAsync(connectionParams, scriptsToRun, progress);
+                var result = await _service.ApplyScriptsToDatabaseAsync(_connectionParams, scriptsToRun, progress);
                 if (result.WasSuccessful)
                 {
-                    Environment.Exit(0);//success
+                    _logger.Info("***************************************************\r\nScripts Applied Successfully\r\n***************************************************");
                 }
                 else
                 {
@@ -121,6 +79,98 @@ namespace ScriptScripter.Command
                 Environment.Exit(5006);
             }
         }
+        private static async Task TestDatabaseConnectionExitIfFailAsync()
+        {
+            var connectionResult = await _service.TestDatabaseConnectionAsync(_connectionParams);
+            if (!connectionResult.WasSuccessful)
+            {
+                _logger.Error($"Failed to connect to database: {connectionResult.Message}");
+                Environment.Exit(5004);
+            }
+        }
+        private static IEnumerable<Processor.Data.Models.Script> GetScriptsToRunExitIfFail()
+        {
+
+            IEnumerable<Processor.Data.Models.Script> scriptsToRun = null;
+            try
+            {
+                scriptsToRun = _service.GetScriptsThatNeedRun(_connectionParams, _scriptFilePath);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex, "error getting scripts to run");
+                Environment.Exit(5005);
+            }
+            return scriptsToRun;
+        }
+
+        private static void InitFromInputParamsExitIfInvalid(string[] args)
+        {
+            var parseResult = Parser.Default.ParseArguments<IncomingOptions>(args)
+                         .WithParsed<IncomingOptions>(o =>
+                         {
+                             _verbose = o.Verbose;
+                             _scriptFilePath = o.ScriptFilePath;
+                             _connectionParams = new Processor.Data.Models.DatabaseConnectionParameters()
+                             {
+                                 DatabaseName = o.DatabaseName,
+                                 Server = o.Server,
+                                 Password = o.Password,
+                                 Username = o.Username,
+                                 UseTrustedConnection = o.UseTrustedConnection
+
+                             };
+
+                         })
+                         .WithNotParsed<IncomingOptions>(o =>
+                         {
+                             _logger.Error("Exiting due to missing or failed parameters");
+                             foreach (var x in o)
+                             {
+                                 _logger.Error(Newtonsoft.Json.JsonConvert.SerializeObject((object)x, Newtonsoft.Json.Formatting.Indented));
+                             }
+                             Environment.Exit(5000);
+                         });
+
+
+            if (_connectionParams == null)
+            {
+                _logger.Error("connection parameters wer now received");
+                Environment.Exit(5001);
+            }
+            if (_scriptFilePath == null)
+            {
+                _logger.Error("scriptfilepath is missing");
+                Environment.Exit(5002);
+            }
+            if (!System.IO.File.Exists(_scriptFilePath))
+            {
+                _logger.Error($"{_scriptFilePath} does not exist on disk");
+                Environment.Exit(5003);
+            }
+        }
+
+        private static void InitIoc()
+        {
+            var kernel = new Ninject.StandardKernel(new Ninject.Modules.INinjectModule[] { new Ninjector(), new ScriptScripter.Processor.Ninjector() });
+
+            Ninjector.Container = kernel;
+            ScriptScripter.Processor.Ninjector.Container = kernel;
+        }
+
+        private static void LogParamState()
+        {
+            _logger.Info($"ScriptFilePath: {_scriptFilePath}");
+
+            var pw = _connectionParams.Password;
+            if (!string.IsNullOrEmpty(pw))
+            {
+                _connectionParams.Password = "- password removed for security, but it was NOT NULL -";
+            }
+            _logger.Info(Newtonsoft.Json.JsonConvert.SerializeObject(_connectionParams, Newtonsoft.Json.Formatting.Indented));
+            _connectionParams.Password = pw;
+        }
+
         private static void Progress_ProgressChanged(object sender, Processor.Dto.ApplyScriptProgress e)
         {
             if (e.IsStarting)
