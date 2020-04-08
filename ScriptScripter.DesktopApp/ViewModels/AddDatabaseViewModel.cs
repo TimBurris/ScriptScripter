@@ -15,7 +15,7 @@ namespace ScriptScripter.DesktopApp.ViewModels
         private readonly Processor.Data.Contracts.IScriptContainerRepository _scriptContainerRepository;
         private readonly NinjaMvvm.Wpf.Abstractions.INavigator _navigator;
 
-        public AddDatabaseViewModel() { }//Designer use
+        // public AddDatabaseViewModel() { }//Designer use   //removed because for somereason IoC is using this ctor instead of the correct one
 
         public AddDatabaseViewModel(Processor.Data.Contracts.IScriptContainerRepository scriptContainerRepository,
             NinjaMvvm.Wpf.Abstractions.INavigator navigator,
