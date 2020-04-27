@@ -7,15 +7,19 @@ using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Moq;
+using ScriptScripter.Processor.Services.Contracts;
 
 namespace ScriptScripter.DesktopApp.ViewModels.Tests
 {
     [TestClass()]
     public class DatabaseConnectionViewModelTests : VMTestBase
     {
+        public Mock<NinjaMvvm.Wpf.Abstractions.INavigator> _mockNavigator = new Mock<NinjaMvvm.Wpf.Abstractions.INavigator>();
+        public Mock<IScriptingService> _mockScriptingService = new Mock<IScriptingService>();
         public DatabaseConnectionViewModel CreateViewModel()
         {
-            var vm = new DatabaseConnectionViewModel(MockNavigator.Object, RepoMocks.MockConfigurationRepo.Object, ServiceMocks.MockScriptingService.Object, new DatabaseConnectionControlViewModel());
+
+            var vm = new DatabaseConnectionViewModel(MockNavigator.Object, RepoMocks.MockConfigurationRepo.Object, ServiceMocks.MockScriptingService.Object, new DatabaseConnectionControlViewModel(_mockNavigator.Object, _mockScriptingService.Object));
             return vm;
         }
 
