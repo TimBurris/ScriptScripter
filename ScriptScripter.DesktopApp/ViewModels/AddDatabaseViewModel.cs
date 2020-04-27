@@ -26,6 +26,7 @@ namespace ScriptScripter.DesktopApp.ViewModels
             ViewTitle = "Add Database";
             this._scriptContainerRepository = scriptContainerRepository;
             _navigator = navigator;
+            
         }
 
         /// <summary>

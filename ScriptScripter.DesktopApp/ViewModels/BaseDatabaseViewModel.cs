@@ -9,7 +9,6 @@ namespace ScriptScripter.DesktopApp.ViewModels
     {
         private readonly NinjaMvvm.Wpf.Abstractions.INavigator _navigator;
         private readonly FileAndFolderDialog.Abstractions.IFileDialogService _fileDialogService;
-        public readonly DatabaseConnectionControlViewModel DatabaseConnectionControlVM;
 
         public BaseDatabaseViewModel() { }//designer use
 
@@ -25,6 +24,7 @@ namespace ScriptScripter.DesktopApp.ViewModels
             this.DefaultFileNamePattern = ScriptScripter.DesktopApp.Properties.Settings.Default.NewFileDefaultNameFormat;
         }
 
+        public DatabaseConnectionControlViewModel DatabaseConnectionControlVM { get; }
 
         #region Binding props and Lists
 

@@ -18,7 +18,7 @@ namespace ScriptScripter.DesktopApp.ViewModels
         private Guid _containerUid;
 
 
-        public EditDatabaseViewModel() { }//Designer only
+        // public EditDatabaseViewModel() { }//Designer use   //removed because for somereason IoC is using this ctor instead of the correct one
 
         public EditDatabaseViewModel(Processor.Data.Contracts.IScriptContainerRepository scriptContainerRepository,
             NinjaMvvm.Wpf.Abstractions.INavigator navigator,

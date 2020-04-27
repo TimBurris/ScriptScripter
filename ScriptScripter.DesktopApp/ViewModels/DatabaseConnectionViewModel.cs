@@ -16,7 +16,7 @@ namespace ScriptScripter.DesktopApp.ViewModels
         private readonly Processor.Data.Contracts.IConfigurationRepository _configurationRepository;
         private readonly Processor.Services.Contracts.IScriptingService _scriptingService;
 
-        public DatabaseConnectionViewModel() { }//designer only
+    //   public DatabaseConnectionViewModel() { }//designer only  //removed because for somereason IoC is using this ctor instead of the correct one
 
         //HACK: i hate doing this, but without it Ninject seems to be choosing the wrong freaking constructor!
         [Ninject.Inject]
