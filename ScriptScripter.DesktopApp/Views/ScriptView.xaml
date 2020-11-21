@@ -21,7 +21,7 @@
 
         <Label Grid.Row="0" Content="SQL Statement(s)"/>
         <TextBox Grid.Row="1" TextWrapping="Wrap" AcceptsReturn="True" 
-                 Text="{Binding SQLStatement, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged,NotifyOnValidationError=True, ValidatesOnDataErrors=True}" 
+                 Text="{Binding SqlStatement, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged,NotifyOnValidationError=True, ValidatesOnDataErrors=True}" 
                  ScrollViewer.HorizontalScrollBarVisibility="Auto"
                  ScrollViewer.VerticalScrollBarVisibility="Auto"/>
 

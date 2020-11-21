@@ -105,14 +105,12 @@ namespace ScriptScripter.DesktopApp.ViewModels
             //TODO: these properties are poorly named, inconsistent with models. fix them.  their vm names look good... the model names suck
             if (lastRevision != null)
             {
-                DatabaseRevisionNumber = lastRevision.RevisionNumber.ToString();
-                DatabaseLastRevisionDate = lastRevision.RunDate.ToString();
+                DatabaseLastRevisionDate = lastRevision.ScriptDate.LocalDateTime.ToString();
                 DatabaseLastRevisionByDeveloper = lastRevision.RunByDeveloperName;
             }
             if (lastScript != null)
             {
-                ScriptFileRevisionNumber = lastScript.RevisionNumber.ToString();
-                ScriptFileLastRevisionDate = lastScript.ScriptDate.ToString();
+                ScriptFileLastRevisionDate = lastScript.ScriptDate.LocalDateTime.ToString();
                 ScriptFileLastRevisionByDeveloper = lastScript.DeveloperName;
             }
 
@@ -122,19 +120,28 @@ namespace ScriptScripter.DesktopApp.ViewModels
             IsDatabaseNewer = false;
 
             if (!connectionResult.WasSuccessful)
+            {
                 IsNotConnected = true;
-            else if (lastRevision == null && lastScript == null)
-                IsUpToDate = true;
-            else if (lastRevision == null)
-                IsOutOfDate = true;
-            else if (lastScript == null)
-                IsDatabaseNewer = true;
-            else if (lastScript.RevisionNumber > lastRevision.RevisionNumber)
-                IsOutOfDate = true;
-            else if (lastScript.RevisionNumber == lastRevision.RevisionNumber)
-                IsUpToDate = true;
+            }
             else
-                IsDatabaseNewer = true;
+            {
+                var state = _scriptingService.GetDatabaseScriptState(databaseConnectionParams, _scriptContainer.ScriptFilePath);
+                switch (state)
+                {
+                    case Processor.Services.Contracts.DatabaseScriptStates.Newer:
+                        IsDatabaseNewer = true;
+                        break;
+                    case Processor.Services.Contracts.DatabaseScriptStates.OutOfdate:
+                        IsOutOfDate = true;
+                        break;
+                    case Processor.Services.Contracts.DatabaseScriptStates.UpToDate:
+                        IsUpToDate = true;
+                        break;
+
+                    default:
+                        throw new NotSupportedException($"{state} is not supported by this view");
+                }
+            }
 
             return true;
         }
@@ -171,12 +178,6 @@ namespace ScriptScripter.DesktopApp.ViewModels
             set { SetField(value); }
         }
 
-        public string ScriptFileRevisionNumber
-        {
-            get { return GetField<string>(); }
-            set { SetField(value); }
-        }
-
         public string ScriptFileLastRevisionDate
         {
             get { return GetField<string>(); }
@@ -184,12 +185,6 @@ namespace ScriptScripter.DesktopApp.ViewModels
         }
 
         public string ScriptFileLastRevisionByDeveloper
-        {
-            get { return GetField<string>(); }
-            set { SetField(value); }
-        }
-
-        public string DatabaseRevisionNumber
         {
             get { return GetField<string>(); }
             set { SetField(value); }
@@ -305,12 +300,10 @@ namespace ScriptScripter.DesktopApp.ViewModels
 
             this.ServerConnectionInfo = "deserver\\SQL (sa ********)";
             DatabaseName = "SampleDatabase";
-            ScriptFileRevisionNumber = "378";
-            ScriptFileLastRevisionDate = DateTime.Now.AddDays(-37).ToString();
+            ScriptFileLastRevisionDate = DateTime.UtcNow.AddDays(-37).ToString();
             ScriptFileLastRevisionByDeveloper = "Cpt. Jack Sparrow";
 
-            DatabaseRevisionNumber = "217";
-            DatabaseLastRevisionDate = DateTime.Now.AddDays(-3).ToString();
+            DatabaseLastRevisionDate = DateTime.UtcNow.AddDays(-3).ToString();
             DatabaseLastRevisionByDeveloper = "Jimmy James";
 
         }

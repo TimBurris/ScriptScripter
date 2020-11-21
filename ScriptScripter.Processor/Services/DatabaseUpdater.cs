@@ -73,21 +73,20 @@ namespace ScriptScripter.Processor.Services
                             IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[ScriptScripter].[Revision]') AND type in (N'U'))
                             BEGIN
 	                            CREATE TABLE [ScriptScripter].[Revision] (
-		                            [RevisionId] [int] IDENTITY (1, 1) NOT NULL ,
-		                            [RevisionNumber] [int] NOT NULL ,
-		                            [SQLStatement] [varchar](MAX),
+		                            [ScriptId] [Uniqueidentifier] NOT NULL DEFAULT(newid()),
+		                            [SqlStatement] [varchar](MAX),
 		                           
                                     [ScriptDeveloperName] [varchar](255),
 		                            [ScriptNotes] [varchar](MAX),
-		                            [ScriptDate] [datetime] NOT NULL ,
+		                            [ScriptDate] [datetimeoffset](7) NOT NULL ,
 		
 		                            [RunByDeveloperName] [varchar](255),
 		                            [RunOnMachineName] [varchar](255),
-		                            [RunDate] [datetime] NOT NULL ,
+		                            [RunDate] [datetimeoffset](7) NOT NULL ,
 
 		                            CONSTRAINT [PK_ScriptScripter_Revision] PRIMARY KEY  CLUSTERED 
 		                            (
-			                            [RevisionId]
+			                            [ScriptId]
 		                            )
 	                            ) ;
                             END";
@@ -97,8 +96,8 @@ namespace ScriptScripter.Processor.Services
 
         public void LogScript(Data.Models.Script script, string executedByDeveloperName)
         {
-            string revisionNumber = script.RevisionNumber.ToString();
-            string sqlStatement = SqlSafeString(script.SQLStatement);
+            string scriptId = script.ScriptId.ToString();
+            string sqlStatement = SqlSafeString(script.SqlStatement);
 
             string scriptDeveloperName = SqlSafeString(script.DeveloperName, maxLength: 255);
             string scriptNotes = SqlSafeString(script.Notes);
@@ -106,14 +105,14 @@ namespace ScriptScripter.Processor.Services
 
             string runByDeveloperName = SqlSafeString(executedByDeveloperName, maxLength: 255);
             string runOnMachineName = SqlSafeString(Environment.MachineName, maxLength: 255);
-            string runDate = DateTime.Now.ToString();
+            string runDate = DateTime.UtcNow.ToString();
 
             //why am i not worries about sql injection?  well because this whole tool is you executing whatever you want against the database.  
             //    therefore, you don't need a sql injection to F things up, just freaking run whatever you want
             string sql = $@"
                     INSERT INTO [ScriptScripter].[Revision]
-                        ([RevisionNumber]
-                        ,[SQLStatement]
+                        ([ScriptId]
+                        ,[SqlStatement]
                         ,[ScriptDeveloperName]
                         ,[ScriptNotes]
                         ,[ScriptDate]
@@ -121,7 +120,7 @@ namespace ScriptScripter.Processor.Services
                         ,[RunOnMachineName]
                         ,[RunDate])
                      VALUES
-                           ({revisionNumber}
+                           ('{scriptId}'
                            ,'{sqlStatement}'
                            ,'{scriptDeveloperName}'
                            ,'{scriptNotes}'
@@ -137,7 +136,7 @@ namespace ScriptScripter.Processor.Services
 
         public void RunScript(Data.Models.Script script)
         {
-            this.ConnectedDatabase.ExecuteNonQuery(script.SQLStatement);
+            this.ConnectedDatabase.ExecuteNonQuery(script.SqlStatement);
         }
 
         private string TruncateString(string value, int length)

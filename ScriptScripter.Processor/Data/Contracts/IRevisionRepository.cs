@@ -8,7 +8,7 @@ namespace ScriptScripter.Processor.Data.Contracts
 {
     public interface IRevisionRepository
     {
-        //Future?  IEnumerable<Models.Revision> GetAllRevisions(string databaseName);
+        IEnumerable<Models.Revision> GetAll(Data.Models.DatabaseConnectionParameters databaseConnectionParms);
         Models.Revision GetLastRevision(Data.Models.DatabaseConnectionParameters database);
 
         /// <summary>

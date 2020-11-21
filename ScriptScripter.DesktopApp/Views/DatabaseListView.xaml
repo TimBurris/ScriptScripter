@@ -171,21 +171,16 @@
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
 
-                            <Label Grid.Row="0" Grid.Column="0" Content="Last Script #" Foreground="{StaticResource AccentColorBrush}" FontSize="10"/>
-                            <Label Grid.Row="0" Grid.Column="1" Content="{Binding RevisionNumber}" FontSize="10"/>
-
-                            <Label Grid.Row="0" Grid.Column="2" Content="Last Script Date" Foreground="{StaticResource AccentColorBrush}" FontSize="10"/>
-                            <Label Grid.Row="0" Grid.Column="3" Content="{Binding ScriptDate}" FontSize="10"/>
+                            <Label Grid.Row="0" Grid.Column="0" Content="Last Script Date" Foreground="{StaticResource AccentColorBrush}" FontSize="10"/>
+                            <Label Grid.Row="0" Grid.Column="1" Content="{Binding ScriptDate}" FontSize="10"/>
 
                             <Label Grid.Row="1" Grid.Column="0" Content="Last Script By" Foreground="{StaticResource AccentColorBrush}" FontSize="10"/>
-                            <Label Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" Content="{Binding DeveloperName}" FontSize="10"/>
+                            <Label Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Content="{Binding DeveloperName}" FontSize="10"/>
 
-                            <Label Grid.Row="1" Grid.Column="4" Content="{Binding TagNames}" FontSize="8"  HorizontalAlignment="Right" />
+                            <Label Grid.Row="1" Grid.Column="2" Content="{Binding TagNames}" FontSize="8"  HorizontalAlignment="Right" />
                         </Grid>
 
                     </Grid>

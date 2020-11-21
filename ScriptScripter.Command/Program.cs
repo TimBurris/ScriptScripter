@@ -177,7 +177,7 @@ namespace ScriptScripter.Command
             {
                 var total = e.ScriptsCompleted + e.ScriptsRemaining;
                 var current = e.ScriptsCompleted + 1;
-                _logger.Info($"Processing Revision #{e.Script.RevisionNumber} ({current} of {total})");
+                _logger.Info($"Processing Revision #{e.Script.ScriptId} ({current} of {total})");
                 if (_verbose)
                 {
                     _logger.Info(Newtonsoft.Json.JsonConvert.SerializeObject(e.Script, Newtonsoft.Json.Formatting.Indented));
@@ -185,7 +185,7 @@ namespace ScriptScripter.Command
             }
             else
             {
-                _logger.Info($"Completed Revision #{e.Script.RevisionNumber}");
+                _logger.Info($"Completed Revision #{e.Script.ScriptId}");
             }
         }
     }

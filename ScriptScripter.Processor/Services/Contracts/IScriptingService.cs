@@ -21,7 +21,7 @@ namespace ScriptScripter.Processor.Services.Contracts
 
         Task<Dto.ActionResult> ApplyScriptsToDatabaseAsync(Data.Models.DatabaseConnectionParameters databaseConnectionParams, IEnumerable<Data.Models.Script> scripts, IProgress<Dto.ApplyScriptProgress> progress);
 
-        DatabaseScriptStates GetDatabaseScriptState(Data.Models.Script latestScript, Data.Models.Revision latestRevision);
+        DatabaseScriptStates GetDatabaseScriptState(Data.Models.DatabaseConnectionParameters databaseConnectionParams, string scriptFilePath);
 
         IEnumerable<Data.Models.Script> GetScriptsThatNeedRun(Data.Models.DatabaseConnectionParameters databaseConnectionParams, string scriptFilePath);
 

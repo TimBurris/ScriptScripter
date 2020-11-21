@@ -79,19 +79,15 @@
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
-                        <Label Grid.Row="0" Grid.Column="0" Content="Rev #" Foreground="{StaticResource AccentColorBrush}"/>
-                        <Label Grid.Row="0" Grid.Column="1" Content="{Binding RevisionNumber}"/>
+                     
+                        <Label Grid.Row="0" Grid.Column="0" Content="Added" Foreground="{StaticResource AccentColorBrush}"/>
+                        <Label Grid.Row="0" Grid.Column="1" Content="{Binding ScriptDate}"/>
 
-                        <Label Grid.Row="0" Grid.Column="2" Content="Added" Foreground="{StaticResource AccentColorBrush}"/>
-                        <Label Grid.Row="0" Grid.Column="3" Content="{Binding ScriptDate}"/>
-
-                        <Label Grid.Row="0" Grid.Column="4" Content="by" Foreground="{StaticResource AccentColorBrush}"/>
-                        <Label Grid.Row="0" Grid.Column="5" Content="{Binding DeveloperName}"/>
-                        <Button Grid.Row="0" Grid.Column="6"
+                        <Label Grid.Row="0" Grid.Column="2" Content="by" Foreground="{StaticResource AccentColorBrush}"/>
+                        <Label Grid.Row="0" Grid.Column="3" Content="{Binding DeveloperName}"/>
+                        <Button Grid.Row="0" Grid.Column="4"
                                 Width="100"
                                 Style="{StaticResource StrongAccentButton}"
                                 Content="Fix Script"
@@ -100,15 +96,15 @@
                                 CommandParameter="{Binding}"/>
 
                         <Label Grid.Row="1" Grid.Column="0" Content="Notes" Foreground="{StaticResource AccentColorBrush}"/>
-                        <TextBlock Grid.Row="1" Grid.Column ="1" Grid.ColumnSpan="6" 
+                        <TextBlock Grid.Row="1" Grid.Column ="1" Grid.ColumnSpan="4" 
                                    Text="{Binding Notes}" 
                                    VerticalAlignment="Center"
                                    FontSize="10"/>
 
                         <Label Grid.Row="2" Grid.Column="0" Content="SQL" Foreground="{StaticResource AccentColorBrush}"/>
-                        <TextBlock Grid.Row="2" Grid.Column ="1" Grid.ColumnSpan="6" 
-                                   Text="{Binding SQLStatement}" 
-                                   FontSize="10" ToolTip="{Binding SQLStatement}"/>
+                        <TextBlock Grid.Row="2" Grid.Column ="1" Grid.ColumnSpan="4" 
+                                   Text="{Binding SqlStatement}" 
+                                   FontSize="10" ToolTip="{Binding SqlStatement}"/>
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>

@@ -69,7 +69,7 @@ namespace ScriptScripter.Processor.Services
                             progress.Report(new Dto.ApplyScriptProgress()
                             {
                                 Script = script,
-                                Revision = new Data.Models.Revision() { RevisionNumber = script.RevisionNumber },
+                                Revision = new Data.Models.Revision() { ScriptId = script.ScriptId },
                                 IsStarting = false,
                                 ScriptsCompleted = count,
                                 ScriptsRemaining = scriptList.Count - count,
@@ -101,32 +101,46 @@ namespace ScriptScripter.Processor.Services
         }
         public IEnumerable<Data.Models.Script> GetScriptsThatNeedRun(Data.Models.DatabaseConnectionParameters databaseConnectionParams, string scriptFilePath)
         {
+            //Simple, get all the scripts, get all the revisions.  whichever scripts don't exist in the revision list, well that's what you need to run :)
+
             var repo = _scriptRepoFactory.GetScriptsRepository(scriptFilePath);
-            var lastRevision = _revisionRepository.GetLastRevision(databaseConnectionParams);
-            IEnumerable<Data.Models.Script> scripts;
+            var revisionsByScriptId = _revisionRepository.GetAll(databaseConnectionParams).ToDictionary(x => x.ScriptId);
+            List<Data.Models.Script> scripts = repo.GetAllScripts().ToList();
 
-            if (lastRevision == null)
-                scripts = repo.GetAllScripts();
-            else
-                scripts = repo.GetAllScriptsAfterRevisionNumber(lastRevision.RevisionNumber);
-
+            if (revisionsByScriptId.Any())
+            {
+                foreach (var s in scripts.ToList())
+                {
+                    if (revisionsByScriptId.ContainsKey(s.ScriptId))
+                    {
+                        scripts.Remove(s);
+                    }
+                }
+            }
             return scripts;
         }
 
-        public Contracts.DatabaseScriptStates GetDatabaseScriptState(Data.Models.Script latestScript, Data.Models.Revision latestRevision)
+        public Contracts.DatabaseScriptStates GetDatabaseScriptState(Data.Models.DatabaseConnectionParameters databaseConnectionParams, string scriptFilePath)
         {
-            if (latestRevision == null && latestScript == null)
-                return Contracts.DatabaseScriptStates.UpToDate;
-            else if (latestRevision == null)
-                return Contracts.DatabaseScriptStates.OutOfdate;
-            else if (latestScript == null)
+            var repo = _scriptRepoFactory.GetScriptsRepository(scriptFilePath);
+            var revisionsByScriptId = _revisionRepository.GetAll(databaseConnectionParams).ToDictionary(x => x.ScriptId);
+            var scriptsById = repo.GetAllScripts().ToDictionary(x => x.ScriptId);
+
+            //first priorty, does the database have revisions that are not in the script file?  if so, that's bad and is the highest priority
+            if (revisionsByScriptId.Any(x => !scriptsById.ContainsKey(x.Key)))
+            {
                 return Contracts.DatabaseScriptStates.Newer;
-            else if (latestScript.RevisionNumber > latestRevision.RevisionNumber)
+            }
+
+            //next, are there scripts that are not in the DB?  if so, the the database needs to run revisions
+            if (scriptsById.Any(x => !revisionsByScriptId.ContainsKey(x.Key)))
+            {
                 return Contracts.DatabaseScriptStates.OutOfdate;
-            else if (latestScript.RevisionNumber == latestRevision.RevisionNumber)
-                return Contracts.DatabaseScriptStates.UpToDate;
-            else
-                return Contracts.DatabaseScriptStates.Newer;
+            }
+
+            //ok, all that's left then is that they are equal, so it's up to date
+
+            return Contracts.DatabaseScriptStates.UpToDate;
         }
 
         public async Task<Dto.ActionResult> TestServerConnectionAsync(Data.Models.ServerConnectionParameters connectionParameters)

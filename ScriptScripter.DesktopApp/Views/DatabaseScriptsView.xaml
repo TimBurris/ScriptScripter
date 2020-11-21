@@ -38,22 +38,19 @@
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
-                    <Label Grid.Row="0" Grid.Column="0" Content="Last Revision #:"/>
-                    <Label  Grid.Row="0" Grid.Column="1" Content="{Binding ScriptFileRevisionNumber}"/>
+               
+                    <Label Grid.Row="0" Grid.Column="0"  Content="Last Revision Date:"/>
+                    <Label Grid.Row="0" Grid.Column="1"  Content="{Binding ScriptFileLastRevisionDate}"/>
 
-                    <Label Grid.Row="1" Grid.Column="0"  Content="Last Revision Date:"/>
-                    <Label Grid.Row="1" Grid.Column="1"  Content="{Binding ScriptFileLastRevisionDate}"/>
+                    <Label Grid.Row="1" Grid.Column="0"  Content="Last Revision By:"/>
+                    <Label Grid.Row="1" Grid.Column="1"  Content="{Binding ScriptFileLastRevisionByDeveloper}"/>
 
-                    <Label Grid.Row="2" Grid.Column="0"  Content="Last Revision By:"/>
-                    <Label Grid.Row="2" Grid.Column="1"  Content="{Binding ScriptFileLastRevisionByDeveloper}"/>
-
-                    <Button Grid.Row="3" Grid.ColumnSpan="2" 
+                    <Button Grid.Row="2" Grid.ColumnSpan="2" 
                             Content="Add New Script" 
                             Command="{Binding AddNewScriptCommand}" 
                             Style="{StaticResource AccentButton}" Width="200"/>
@@ -83,22 +80,18 @@
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
 
-                    <Label Grid.Row="0" Grid.Column="0" Content="Last Revision #:"/>
-                    <Label  Grid.Row="0" Grid.Column="1" Content="{Binding DatabaseRevisionNumber}"/>
+                    <Label Grid.Row="0" Grid.Column="0"  Content="Last Revision Date:"/>
+                    <Label Grid.Row="0" Grid.Column="1"  Content="{Binding DatabaseLastRevisionDate}"/>
 
-                    <Label Grid.Row="1" Grid.Column="0"  Content="Last Revision Date:"/>
-                    <Label Grid.Row="1" Grid.Column="1"  Content="{Binding DatabaseLastRevisionDate}"/>
-
-                    <Label Grid.Row="2" Grid.Column="0"  Content="Last Revision Applied By:"/>
-                    <Label Grid.Row="2" Grid.Column="1"  Content="{Binding DatabaseLastRevisionByDeveloper}"/>
-                    <Button  Grid.Row="3" Grid.ColumnSpan="2" 
+                    <Label Grid.Row="1" Grid.Column="0"  Content="Last Revision Applied By:"/>
+                    <Label Grid.Row="1" Grid.Column="1"  Content="{Binding DatabaseLastRevisionByDeveloper}"/>
+                    <Button  Grid.Row="2" Grid.ColumnSpan="2" 
                              Command="{Binding ApplyScriptsCommand}" 
                              Content="Review &amp; Apply Revisions"
                              Visibility="{Binding IsOutOfDate, Converter={StaticResource BoolToVis}}"

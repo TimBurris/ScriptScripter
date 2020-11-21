@@ -17,6 +17,19 @@ namespace ScriptScripter.Processor.Data.Repositories
             var connString = databaseConnectionParms.GetConnectionString();
             return new System.Data.SqlClient.SqlConnection(connString);
         }
+        public IEnumerable<Models.Revision> GetAll(Data.Models.DatabaseConnectionParameters databaseConnectionParms)
+        {
+
+            using (var connection = this.GetConnection(databaseConnectionParms))
+            {
+                if (!this.IsUnderControl(connection))
+                    return null;
+                else
+                    return connection.Query<Data.Models.Revision>(
+                        sql: $@"SELECT * 
+                            FROM {_tableNameWithSchema}");
+            }
+        }
 
         public Models.Revision GetLastRevision(Data.Models.DatabaseConnectionParameters databaseConnectionParms)
         {
@@ -28,7 +41,7 @@ namespace ScriptScripter.Processor.Data.Repositories
                     return connection.QueryFirstOrDefault<Data.Models.Revision>(
                         sql: $@"SELECT * 
                             FROM {_tableNameWithSchema} 
-                            Order By [{nameof(Data.Models.Revision.RevisionNumber)}] DESC");
+                            Order By [{nameof(Data.Models.Revision.ScriptDate)}] DESC");
             }
         }
 

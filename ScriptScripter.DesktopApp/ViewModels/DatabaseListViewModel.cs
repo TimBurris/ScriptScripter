@@ -121,8 +121,7 @@ namespace ScriptScripter.DesktopApp.ViewModels
                 ScriptFile = scriptContainer.ScriptFilePath,
                 DatabaseName = scriptContainer.DatabaseName,
                 DeveloperName = script?.DeveloperName,
-                RevisionNumber = script?.RevisionNumber.ToString(),
-                ScriptDate = script?.ScriptDate.ToString(),
+                ScriptDate = script == null ? null : script.ScriptDate.LocalDateTime.ToString(),
                 ServerConnectionInfo = this.GetConnectionDisplayText(scriptContainer.CustomServerConnectionParameters),
             };
 
@@ -191,16 +190,14 @@ namespace ScriptScripter.DesktopApp.ViewModels
                 ScriptFile = @"C:\Code\MyProject\Database\Scripts\DBScripts_SampleDatabase.xml",
                 DatabaseName = "SampleData",
                 DeveloperName = "Cpt. Jack Sparrow",
-                RevisionNumber = "97",
-                ScriptDate = DateTime.Now.AddHours(-5498797).ToString(),
+                ScriptDate = DateTime.UtcNow.AddHours(-5498797).ToString(),
             });
             LineItems.Add(new ViewModels.DatabaseListViewModel.LineItem
             {
                 ScriptFile = @"C:\Microsoft\Database\DBScripts_MailDB.xml",
                 DatabaseName = "MailDB",
                 DeveloperName = "Benny Jet",
-                RevisionNumber = "16",
-                ScriptDate = DateTime.Now.AddHours(-54654).ToString(),
+                ScriptDate = DateTime.UtcNow.AddHours(-54654).ToString(),
                 ServerConnectionInfo = "(local) Integrated Security",
                 TagNames = "Project A"
             });
@@ -209,16 +206,14 @@ namespace ScriptScripter.DesktopApp.ViewModels
                 ScriptFile = @"C:\Microsoft\Database\DBScripts_Northwind.xml",
                 DatabaseName = "Northwind",
                 DeveloperName = "Dumpster Ninja",
-                RevisionNumber = "2",
-                ScriptDate = DateTime.Now.AddHours(-4545767).ToString(),
+                ScriptDate = DateTime.UtcNow.AddHours(-4545767).ToString(),
             });
             LineItems.Add(new ViewModels.DatabaseListViewModel.LineItem
             {
                 ScriptFile = @"C:\Code\YourProject\Myproject\Database\Scripts\DBScripts_DatbaseX.xml",
                 DatabaseName = "DatbaseX",
                 DeveloperName = "Cpt. Jack Sparrow",
-                RevisionNumber = "978",
-                ScriptDate = DateTime.Now.AddHours(-345).ToString(),
+                ScriptDate = DateTime.UtcNow.AddHours(-345).ToString(),
                 ServerConnectionInfo = "Pizza\\ProdSQL sa ********",
                 TagNames = "Project A, Test, Production"
             });
@@ -429,12 +424,6 @@ namespace ScriptScripter.DesktopApp.ViewModels
             }
 
             public string ScriptFile
-            {
-                get { return GetField<string>(); }
-                set { SetField(value); }
-            }
-
-            public string RevisionNumber
             {
                 get { return GetField<string>(); }
                 set { SetField(value); }

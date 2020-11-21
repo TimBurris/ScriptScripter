@@ -85,10 +85,10 @@ namespace ScriptScripter.DesktopApp.ViewModels
             {
                 LineItems.Add(new LineItem()
                 {
-                    RevisionNumber = script.RevisionNumber,
-                    ScriptDate = script.ScriptDate.ToString(),
+                    ScriptId = script.ScriptId,
+                    ScriptDate = script.ScriptDate.LocalDateTime.ToString(),
                     DeveloperName = script.DeveloperName,
-                    SQLStatement = script.SQLStatement,
+                    SqlStatement = script.SqlStatement,
                     Notes = script.Notes
                 });
             }
@@ -157,7 +157,7 @@ namespace ScriptScripter.DesktopApp.ViewModels
         /// </summary>
         public void EditScript(LineItem lineItem)
         {
-            var script = _scriptsToRun.Single(s => s.RevisionNumber == lineItem.RevisionNumber);
+            var script = _scriptsToRun.Single(s => s.ScriptId == lineItem.ScriptId);
 
 
             _navigator.ShowDialog<ScriptViewModel>(vm => vm.Init(_scriptContainer, script));
@@ -194,14 +194,14 @@ namespace ScriptScripter.DesktopApp.ViewModels
 
             progress.ProgressChanged += (s, e) =>
             {
-                var lineItem = LineItems.SingleOrDefault(r => r.RevisionNumber == e.Script.RevisionNumber);
+                var lineItem = LineItems.SingleOrDefault(r => r.ScriptId == e.Script.ScriptId);
                 SelectedLineItem = lineItem;
 
                 if (e.IsStarting)
                 {
                     var total = e.ScriptsCompleted + e.ScriptsRemaining;
                     var current = e.ScriptsCompleted + 1;
-                    ProcessingMessage = $"Processing Revision #{e.Script.RevisionNumber} ({current} of {total})";
+                    ProcessingMessage = $"Processing Revision Dated {e.Script.ScriptDate.LocalDateTime.ToString("g")} ({current} of {total})";
                     lineItem.FailedProcessing = false;
                     lineItem.IsBeingProcessed = true;
                 }
@@ -322,27 +322,27 @@ namespace ScriptScripter.DesktopApp.ViewModels
             LineItems = new System.Collections.ObjectModel.ObservableCollection<LineItem>();
             LineItems.Add(new LineItem()
             {
-                RevisionNumber = 7,
-                ScriptDate = DateTime.Now.ToString(),
+                ScriptId = Guid.NewGuid(),
+                ScriptDate = DateTime.UtcNow.ToString(),
                 DeveloperName = "Cpt. Jack Sparrow",
-                SQLStatement = DesignTimeData.SQLStatements.Items[0],
+                SqlStatement = DesignTimeData.SqlStatements.Items[0],
                 Notes = @"Creating the new table"
             });
             LineItems.Add(new LineItem()
             {
-                RevisionNumber = 6,
-                ScriptDate = DateTime.Now.AddSeconds(-456879873).ToString(),
+                ScriptId = Guid.NewGuid(),
+                ScriptDate = DateTime.UtcNow.AddSeconds(-456879873).ToString(),
                 DeveloperName = "Cpt. Jack Sparrow",
-                SQLStatement = DesignTimeData.SQLStatements.Items[1],
+                SqlStatement = DesignTimeData.SqlStatements.Items[1],
                 IsBeingProcessed = true,
                 Notes = @"changing the SP cuz Jimmy told me to"
             });
             LineItems.Add(new LineItem()
             {
-                RevisionNumber = 5,
-                ScriptDate = DateTime.Now.AddSeconds(-9456879873).ToString(),
+                ScriptId = Guid.NewGuid(),
+                ScriptDate = DateTime.UtcNow.AddSeconds(-9456879873).ToString(),
                 DeveloperName = "Benny Jet",
-                SQLStatement = DesignTimeData.SQLStatements.Items[2],
+                SqlStatement = DesignTimeData.SqlStatements.Items[2],
                 HasBeenProcessed = true,
                 Notes = @"Adding a new column because new columns are awesome, and i'm just going to keep typing this comment until i make it wrap.  note i say wrap, not rap, it can rap too, if you just give it the opportunity"
             });
@@ -351,9 +351,9 @@ namespace ScriptScripter.DesktopApp.ViewModels
         #region LineItem Class
         public class LineItem : NotificationBase
         {
-            public int RevisionNumber
+            public Guid ScriptId
             {
-                get { return GetField<int>(); }
+                get { return GetField<Guid>(); }
                 set { SetField(value); }
             }
 
@@ -369,7 +369,7 @@ namespace ScriptScripter.DesktopApp.ViewModels
                 set { SetField(value); }
             }
 
-            public string SQLStatement
+            public string SqlStatement
             {
                 get { return GetField<string>(); }
                 set { SetField(value); }

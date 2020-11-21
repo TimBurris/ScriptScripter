@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ScriptScripter.DesktopApp.DesignTimeData
 {
-    public static class SQLStatements
+    public static class SqlStatements
     {
         private static string[] _statements;
 
