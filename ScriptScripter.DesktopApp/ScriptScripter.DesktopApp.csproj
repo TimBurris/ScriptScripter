@@ -159,6 +159,7 @@
     <Compile Include="Themes\ThemeService.cs" />
     <Compile Include="ViewModelFaultlessService.cs" />
     <Compile Include="ViewModels\BaseDatabaseViewModel.cs" />
+    <Compile Include="ViewModels\ScriptListViewModel.cs" />
     <Compile Include="ViewModels\SelectThemeViewModel.cs" />
     <Compile Include="ViewModels\EditDatabaseViewModel.cs" />
     <Compile Include="ViewModels\ApplyScriptsViewModel.cs" />
@@ -174,6 +175,9 @@
     <Compile Include="ViewModels\RetryActionViewModel.cs" />
     <Compile Include="ViewModels\ScriptViewModel.cs" />
     <Compile Include="ViewModels\ScriptScripterViewModelBase.cs" />
+    <Compile Include="Views\ScriptListView.xaml.cs">
+      <DependentUpon>ScriptListView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\ApplyScriptsView.xaml.cs">
       <DependentUpon>ApplyScriptsView.xaml</DependentUpon>
     </Compile>
@@ -252,6 +256,10 @@
     <Page Include="Themes\Standard\StandardTheme.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ScriptListView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\ApplyScriptsView.xaml">
       <SubType>Designer</SubType>

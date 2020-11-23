@@ -476,6 +476,62 @@ namespace ScriptScripter.DesktopApp.ViewModels
 
         #endregion
 
+        #region AddScript Command
+
+        private RelayCommand<LineItem> _addScriptCommand;
+        public RelayCommand<LineItem> AddScriptCommand
+        {
+            get
+            {
+                if (_addScriptCommand == null)
+                    _addScriptCommand = new RelayCommand<LineItem>((param) => this.AddScript(param), (param) => this.CanAddScript());
+                return _addScriptCommand;
+            }
+        }
+
+        public bool CanAddScript()
+        {
+            return true;
+        }
+
+        /// <summary>
+        /// Executes the AddScript command 
+        /// </summary>
+        public void AddScript(LineItem lineItem)
+        {
+            _navigator.ShowDialog<ScriptViewModel>(vm => vm.Init(lineItem.ScriptContainer));
+        }
+
+        #endregion
+
+        #region ViewScripts Command
+
+        private RelayCommand<LineItem> _viewScriptsCommand;
+        public RelayCommand<LineItem> ViewScriptsCommand
+        {
+            get
+            {
+                if (_viewScriptsCommand == null)
+                    _viewScriptsCommand = new RelayCommand<LineItem>((param) => this.ViewScripts(param), (param) => this.CanViewScripts());
+                return _viewScriptsCommand;
+            }
+        }
+
+        public bool CanViewScripts()
+        {
+            return true;
+        }
+
+        /// <summary>
+        /// Executes the ViewScripts command 
+        /// </summary>
+        public void ViewScripts(LineItem lineItem)
+        {
+            _navigator.NavigateTo<ScriptListViewModel>(vm => vm.Init(scriptContainer: lineItem.ScriptContainer));
+        }
+
+        #endregion
+
         public class TagLineItem : NotificationBase
         {
 

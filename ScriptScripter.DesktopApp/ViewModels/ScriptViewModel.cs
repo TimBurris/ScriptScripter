@@ -28,7 +28,6 @@ namespace ScriptScripter.DesktopApp.ViewModels
             NLog.ILogger logger)
             : base(logger)
         {
-            ViewTitle = "Create New Script";
             this._navigator = navigator;
             this._viewModelFaultlessService = viewModelFaultlessService;
             this._configurationRepository = configurationRepository;
@@ -39,20 +38,27 @@ namespace ScriptScripter.DesktopApp.ViewModels
         public void Init(Processor.Data.Models.ScriptContainer scriptContainer)
         {
             _scriptContainer = scriptContainer;
+            ViewTitle = $"Create New Script - {scriptContainer.DatabaseName}";
+            this.DatabaseName = scriptContainer.DatabaseName;
         }
+
         public void Init(Processor.Data.Models.ScriptContainer scriptContainer, Processor.Data.Models.Script script)
         {
             this.Init(scriptContainer);
 
-            ViewTitle = "Edit Script";
+            ViewTitle = $"Edit Script - {scriptContainer.DatabaseName}";
             _scriptInEdit = script;
 
             this.Comments = script.Notes;
             this.SqlStatement = script.SqlStatement;
+            this.DatabaseName = scriptContainer.DatabaseName;
         }
 
-
-
+        public string DatabaseName
+        {
+            get { return GetField<string>(); }
+            set { SetField(value); }
+        }
         public string SqlStatement
         {
             get { return GetField<string>(); }

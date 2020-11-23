@@ -7,8 +7,6 @@
                  xmlns:c="clr-namespace:ScriptScripter.DesktopApp.Controls"
              xmlns:u="clr-namespace:ScriptScripter.DesktopApp"
              mc:Ignorable="d" 
-             xmlns:designViewModel="clr-namespace:ScriptScripter.DesktopApp.ViewModels"
-             d:DataContext ="{d:DesignInstance {x:Type designViewModel:DatabaseListViewModel}, IsDesignTimeCreatable=True}" 
              d:DesignHeight="700" d:DesignWidth="500">
     <u:BoundViewBase.Resources>
         <FrameworkElement x:Key="ProxyElement" DataContext="{Binding}"/>
@@ -101,7 +99,32 @@
                                         </Rectangle.OpacityMask>
                                     </Rectangle>
                                 </Button>
-
+                                <Button Command="{Binding DataContext.AddScriptCommand, Source={StaticResource ProxyElement}}"
+                                            CommandParameter="{Binding }"
+                                            BorderThickness="0"
+                                            ToolTip="Add New Script">
+                                    <Rectangle Width="20"
+                                           Height="20"
+                                           Fill="{Binding Path=Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}">
+                                        <Rectangle.OpacityMask>
+                                            <VisualBrush Stretch="Fill"
+                                         Visual="{DynamicResource appbar_add}" />
+                                        </Rectangle.OpacityMask>
+                                    </Rectangle>
+                                </Button>
+                                <Button Command="{Binding DataContext.ViewScriptsCommand, Source={StaticResource ProxyElement}}"
+                                            CommandParameter="{Binding }"
+                                            BorderThickness="0"
+                                            ToolTip="View Scripts In File">
+                                    <Rectangle Width="20"
+                                           Height="20"
+                                           Fill="{Binding Path=Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}">
+                                        <Rectangle.OpacityMask>
+                                            <VisualBrush Stretch="Fill"
+                                         Visual="{DynamicResource appbar_paper}" />
+                                        </Rectangle.OpacityMask>
+                                    </Rectangle>
+                                </Button>
                                 <Button Command="{Binding DataContext.EditCommand, Source={StaticResource ProxyElement}}"
                                             CommandParameter="{Binding }"
                                             BorderThickness="0"

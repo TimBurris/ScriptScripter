@@ -70,6 +70,9 @@
             <DataTemplate DataType="{x:Type vm:SelectThemeViewModel}">
                 <v:SelectThemeView/>
             </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:ScriptListViewModel}">
+                <v:ScriptListView/>
+            </DataTemplate>
 
         </ResourceDictionary>
     </Application.Resources>

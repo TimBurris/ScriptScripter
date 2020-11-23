@@ -7,9 +7,6 @@
              xmlns:controls="clr-namespace:ScriptScripter.DesktopApp.Controls"
              xmlns:u="clr-namespace:ScriptScripter.DesktopApp"
              mc:Ignorable="d" 
-             xmlns:designViewModel="clr-namespace:ScriptScripter.DesktopApp.ViewModels"
-             d:DataContext ="{d:DesignInstance {x:Type designViewModel:DatabaseScriptsViewModel}, IsDesignTimeCreatable=True}" 
-             
              d:DesignHeight="600" d:DesignWidth="800">
     <Grid>
         <Grid.RowDefinitions>
