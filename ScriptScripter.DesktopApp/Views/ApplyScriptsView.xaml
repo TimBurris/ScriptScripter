@@ -97,12 +97,14 @@
 
                         <Label Grid.Row="1" Grid.Column="0" Content="Notes" Foreground="{StaticResource AccentColorBrush}"/>
                         <TextBlock Grid.Row="1" Grid.Column ="1" Grid.ColumnSpan="4" 
+                                   Foreground="{StaticResource LabelTextBrush}"
                                    Text="{Binding Notes}" 
                                    VerticalAlignment="Center"
                                    FontSize="10"/>
 
                         <Label Grid.Row="2" Grid.Column="0" Content="SQL" Foreground="{StaticResource AccentColorBrush}"/>
                         <TextBlock Grid.Row="2" Grid.Column ="1" Grid.ColumnSpan="4" 
+                                   Foreground="{StaticResource LabelTextBrush}"
                                    Text="{Binding SqlStatement}" 
                                    FontSize="10" ToolTip="{Binding SqlStatement}"/>
                     </Grid>
