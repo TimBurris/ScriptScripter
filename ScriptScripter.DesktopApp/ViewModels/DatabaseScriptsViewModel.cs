@@ -301,10 +301,10 @@ namespace ScriptScripter.DesktopApp.ViewModels
 
             this.ServerConnectionInfo = "deserver\\SQL (sa ********)";
             DatabaseName = "SampleDatabase";
-            ScriptFileLastRevisionDate = DateTime.UtcNow.AddDays(-37).ToString();
+            ScriptFileLastRevisionDate = DateTimeOffset.Now.AddDays(-37).ToString();
             ScriptFileLastRevisionByDeveloper = "Cpt. Jack Sparrow";
 
-            DatabaseLastRevisionDate = DateTime.UtcNow.AddDays(-3).ToString();
+            DatabaseLastRevisionDate = DateTimeOffset.Now.AddDays(-3).ToString();
             DatabaseLastRevisionByDeveloper = "Jimmy James";
 
         }

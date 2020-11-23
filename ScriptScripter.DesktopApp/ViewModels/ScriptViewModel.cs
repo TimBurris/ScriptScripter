@@ -107,7 +107,7 @@ namespace ScriptScripter.DesktopApp.ViewModels
                     SqlStatement = this.SqlStatement,
                     Notes = this.Comments,
                     DeveloperName = _configurationRepository.GetDeveloperName(),
-                    ScriptDate = DateTime.UtcNow
+                    ScriptDate = DateTimeOffset.Now
                 });
             }
             else

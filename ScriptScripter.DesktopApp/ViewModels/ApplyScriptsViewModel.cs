@@ -325,7 +325,7 @@ namespace ScriptScripter.DesktopApp.ViewModels
             LineItems.Add(new LineItem()
             {
                 ScriptId = Guid.NewGuid(),
-                ScriptDate = DateTime.UtcNow.ToString(),
+                ScriptDate = DateTimeOffset.Now.ToString(),
                 DeveloperName = "Cpt. Jack Sparrow",
                 SqlStatement = DesignTimeData.SqlStatements.Items[0],
                 Notes = @"Creating the new table"
@@ -333,7 +333,7 @@ namespace ScriptScripter.DesktopApp.ViewModels
             LineItems.Add(new LineItem()
             {
                 ScriptId = Guid.NewGuid(),
-                ScriptDate = DateTime.UtcNow.AddSeconds(-456879873).ToString(),
+                ScriptDate = DateTimeOffset.Now.AddSeconds(-456879873).ToString(),
                 DeveloperName = "Cpt. Jack Sparrow",
                 SqlStatement = DesignTimeData.SqlStatements.Items[1],
                 IsBeingProcessed = true,
@@ -342,7 +342,7 @@ namespace ScriptScripter.DesktopApp.ViewModels
             LineItems.Add(new LineItem()
             {
                 ScriptId = Guid.NewGuid(),
-                ScriptDate = DateTime.UtcNow.AddSeconds(-9456879873).ToString(),
+                ScriptDate = DateTimeOffset.Now.AddSeconds(-9456879873).ToString(),
                 DeveloperName = "Benny Jet",
                 SqlStatement = DesignTimeData.SqlStatements.Items[2],
                 HasBeenProcessed = true,

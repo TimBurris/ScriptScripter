@@ -192,14 +192,14 @@ namespace ScriptScripter.DesktopApp.ViewModels
                 ScriptFile = @"C:\Code\MyProject\Database\Scripts\DBScripts_SampleDatabase.xml",
                 DatabaseName = "SampleData",
                 DeveloperName = "Cpt. Jack Sparrow",
-                ScriptDate = DateTime.UtcNow.AddHours(-5498797).ToString(),
+                ScriptDate = DateTimeOffset.Now.AddHours(-5498797).ToString(),
             });
             LineItems.Add(new ViewModels.DatabaseListViewModel.LineItem
             {
                 ScriptFile = @"C:\Microsoft\Database\DBScripts_MailDB.xml",
                 DatabaseName = "MailDB",
                 DeveloperName = "Benny Jet",
-                ScriptDate = DateTime.UtcNow.AddHours(-54654).ToString(),
+                ScriptDate = DateTimeOffset.Now.AddHours(-54654).ToString(),
                 ServerConnectionInfo = "(local) Integrated Security",
                 TagNames = "Project A"
             });
@@ -208,14 +208,14 @@ namespace ScriptScripter.DesktopApp.ViewModels
                 ScriptFile = @"C:\Microsoft\Database\DBScripts_Northwind.xml",
                 DatabaseName = "Northwind",
                 DeveloperName = "Dumpster Ninja",
-                ScriptDate = DateTime.UtcNow.AddHours(-4545767).ToString(),
+                ScriptDate = DateTimeOffset.Now.AddHours(-4545767).ToString(),
             });
             LineItems.Add(new ViewModels.DatabaseListViewModel.LineItem
             {
                 ScriptFile = @"C:\Code\YourProject\Myproject\Database\Scripts\DBScripts_DatbaseX.xml",
                 DatabaseName = "DatbaseX",
                 DeveloperName = "Cpt. Jack Sparrow",
-                ScriptDate = DateTime.UtcNow.AddHours(-345).ToString(),
+                ScriptDate = DateTimeOffset.Now.AddHours(-345).ToString(),
                 ServerConnectionInfo = "Pizza\\ProdSQL sa ********",
                 TagNames = "Project A, Test, Production"
             });
