@@ -195,7 +195,7 @@ namespace ScriptScripter.Processor.IntegrationTests.Repositories
         }
 
         [TestMethod]
-        public void GetAll_returns_null()
+        public void GetAll_returns_empty()
         {
             /*************  arrange  ******************/
             var repo = new RevisionRepository();
@@ -204,7 +204,8 @@ namespace ScriptScripter.Processor.IntegrationTests.Repositories
             var result = repo.GetAll(_databaseConnectionParams);
 
             /*************  assert   ******************/
-            result.Should().BeNull();
+            result.Should().NotBeNull();
+            result.Should().BeEmpty();
         }
 
         [TestMethod]
