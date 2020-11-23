@@ -102,7 +102,7 @@ namespace ScriptScripter.Processor.IntegrationTests.Services
                                                                               ,[RunByDeveloperName]
                                                                               ,[RunOnMachineName]
                                                                               ,[RunDate]
-                                                                          FROM [ScriptScripter].[Revision] ", connection: con))
+                                                                          FROM [ScriptScripter].[AppliedRevision] ", connection: con))
                 {
                     var reader = cmd.ExecuteReader();
                     while (reader.Read())
@@ -146,7 +146,7 @@ namespace ScriptScripter.Processor.IntegrationTests.Services
             {
                 con.Open();
                 using (var cmd = new System.Data.SqlClient.SqlCommand(@"SELECT [ScriptDeveloperName]
-                                                                          FROM [ScriptScripter].[Revision] ", connection: con))
+                                                                          FROM [ScriptScripter].[AppliedRevision] ", connection: con))
                 {
                     var reader = cmd.ExecuteReader();
                     while (reader.Read())
@@ -181,7 +181,7 @@ namespace ScriptScripter.Processor.IntegrationTests.Services
             {
                 con.Open();
                 using (var cmd = new System.Data.SqlClient.SqlCommand(@"SELECT [RunByDeveloperName]
-                                                                          FROM [ScriptScripter].[Revision] ", connection: con))
+                                                                          FROM [ScriptScripter].[AppliedRevision] ", connection: con))
                 {
                     var reader = cmd.ExecuteReader();
                     while (reader.Read())
@@ -267,7 +267,7 @@ namespace ScriptScripter.Processor.IntegrationTests.Services
             _updater.CreateScriptingSupportObjects();
 
             /*************  assert   ******************/
-            this.ExecuteExistsSql("SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[ScriptScripter].[Revision]') AND type in (N'U')")
+            this.ExecuteExistsSql("SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[ScriptScripter].[AppliedRevision]') AND type in (N'U')")
                 .Should().BeTrue();
         }
 

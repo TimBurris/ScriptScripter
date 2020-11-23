@@ -70,9 +70,9 @@ namespace ScriptScripter.Processor.Services
                              end
 
                             /* our table to log what revisions have been applied and by who */
-                            IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[ScriptScripter].[Revision]') AND type in (N'U'))
+                            IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[ScriptScripter].[AppliedRevision]') AND type in (N'U'))
                             BEGIN
-	                            CREATE TABLE [ScriptScripter].[Revision] (
+	                            CREATE TABLE [ScriptScripter].[AppliedRevision] (
 		                            [ScriptId] [Uniqueidentifier] NOT NULL DEFAULT(newid()),
 		                            [SqlStatement] [varchar](MAX),
 		                           
@@ -84,7 +84,7 @@ namespace ScriptScripter.Processor.Services
 		                            [RunOnMachineName] [varchar](255),
 		                            [RunDate] [datetimeoffset](7) NOT NULL ,
 
-		                            CONSTRAINT [PK_ScriptScripter_Revision] PRIMARY KEY  CLUSTERED 
+		                            CONSTRAINT [PK_ScriptScripter_AppliedRevision] PRIMARY KEY  CLUSTERED 
 		                            (
 			                            [ScriptId]
 		                            )
@@ -110,7 +110,7 @@ namespace ScriptScripter.Processor.Services
             //why am i not worries about sql injection?  well because this whole tool is you executing whatever you want against the database.  
             //    therefore, you don't need a sql injection to F things up, just freaking run whatever you want
             string sql = $@"
-                    INSERT INTO [ScriptScripter].[Revision]
+                    INSERT INTO [ScriptScripter].[AppliedRevision]
                         ([ScriptId]
                         ,[SqlStatement]
                         ,[ScriptDeveloperName]

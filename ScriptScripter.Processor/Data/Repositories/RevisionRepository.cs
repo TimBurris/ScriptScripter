@@ -10,7 +10,7 @@ namespace ScriptScripter.Processor.Data.Repositories
 {
     public class RevisionRepository : Contracts.IRevisionRepository
     {
-        private const string _tableNameWithSchema = "[ScriptScripter].[Revision]";
+        private const string _tableNameWithSchema = "[ScriptScripter].[AppliedRevision]";
 
         private IDbConnection GetConnection(Data.Models.DatabaseConnectionParameters databaseConnectionParms)
         {
