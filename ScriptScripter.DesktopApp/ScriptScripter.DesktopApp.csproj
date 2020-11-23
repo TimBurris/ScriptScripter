@@ -148,7 +148,7 @@
     </Compile>
     <Compile Include="Converters\NegativeBooleanConverter.cs" />
     <Compile Include="Converters\NegativeBooleanToVisibilityConverter.cs" />
-    <Compile Include="DesignTimeData\SQLStatements.cs" />
+    <Compile Include="DesignTimeData\SqlStatements.cs" />
     <Compile Include="DialogWindow.xaml.cs">
       <DependentUpon>DialogWindow.xaml</DependentUpon>
     </Compile>

@@ -6,12 +6,23 @@ using System.Threading.Tasks;
 
 namespace ScriptScripter.Processor.Data.Models
 {
+    /// <summary>
+    /// A scripte is a sql script that comes from the repository of scripts (a script file)
+    /// </summary>
     public class Script
     {
-        public int RevisionNumber { get; set; }
-        public string SQLStatement { get; set; }
+        public Guid ScriptId { get; set; }
+        public string SqlStatement { get; set; }
         public string DeveloperName { get; set; }
         public string Notes { get; set; }
-        public DateTime ScriptDate { get; set; }
+        [System.Xml.Serialization.XmlIgnore]
+        public DateTimeOffset ScriptDate { get; set; }
+
+        [System.Xml.Serialization.XmlElement("ScriptDate")]
+        public string XScriptDateForXml // format: 2011-11-11T15:05:46.4733406+01:00
+        {
+            get { return ScriptDate.ToString("o"); } // o = yyyy-MM-ddTHH:mm:ss.fffffffzzz
+            set { ScriptDate = DateTimeOffset.Parse(value); }
+        }
     }
 }

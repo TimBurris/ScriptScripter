@@ -37,7 +37,7 @@ namespace ScriptScripter.Processor.IntegrationTests.Services
             /*************  arrange  ******************/
             var script = new Data.Models.Script()
             {
-                SQLStatement = @"create table TestTable(id int);",
+                SqlStatement = @"create table TestTable(id int);",
             };
 
             /*************    act    ******************/
@@ -56,7 +56,7 @@ namespace ScriptScripter.Processor.IntegrationTests.Services
             /*************  arrange  ******************/
             var script = new Data.Models.Script()
             {
-                SQLStatement = @"create table TestTable(id int);",
+                SqlStatement = @"create table TestTable(id int);",
             };
 
             /*************    act    ******************/
@@ -78,9 +78,9 @@ namespace ScriptScripter.Processor.IntegrationTests.Services
             var script = new Data.Models.Script()
             {
                 DeveloperName = "Cpt. Jack Sparrow",
-                RevisionNumber = 71,
-                ScriptDate = DateTime.Now.AddDays(-10),// using a date in the past to prevent false pass if scriptdate and rundate are accidentally misused (i'm making sure they are different)
-                SQLStatement = "Select 1",
+                ScriptId = new Guid("7672f7fc-ce08-4dfe-83fa-369beb361993"),
+                ScriptDate = DateTime.UtcNow.AddDays(-10),// using a date in the past to prevent false pass if scriptdate and rundate are accidentally misused (i'm making sure they are different)
+                SqlStatement = "Select 1",
                 Notes = "Some Notes",
             };
             _updater.CreateScriptingSupportObjects();
@@ -94,29 +94,27 @@ namespace ScriptScripter.Processor.IntegrationTests.Services
             using (var con = new System.Data.SqlClient.SqlConnection(connString))
             {
                 con.Open();
-                using (var cmd = new System.Data.SqlClient.SqlCommand(@"SELECT [RevisionId]
-                                                                              ,[RevisionNumber]
-                                                                              ,[SQLStatement]
+                using (var cmd = new System.Data.SqlClient.SqlCommand(@"SELECT [ScriptId]
+                                                                              ,[SqlStatement]
                                                                               ,[ScriptDeveloperName]
                                                                               ,[ScriptNotes]
                                                                               ,[ScriptDate]
                                                                               ,[RunByDeveloperName]
                                                                               ,[RunOnMachineName]
                                                                               ,[RunDate]
-                                                                          FROM [ScriptScripter].[Revision] ", connection: con))
+                                                                          FROM [ScriptScripter].[AppliedRevision] ", connection: con))
                 {
                     var reader = cmd.ExecuteReader();
                     while (reader.Read())
                     {
-                        reader.GetInt32(0).Should().BeGreaterThan(0);
-                        reader.GetInt32(1).Should().Be(71);
-                        reader.GetString(2).Should().Be("Select 1");
-                        reader.GetString(3).Should().Be("Cpt. Jack Sparrow");
-                        reader.GetString(4).Should().Be("Some Notes");
-                        reader.GetDateTime(5).Should().BeCloseTo(script.ScriptDate, precision: 999); //closeto instead of exact because of precision that might get lost
-                        reader.GetString(6).Should().Be("Dumpster Ninja");
-                        reader.GetString(7).Should().Be(Environment.MachineName);
-                        reader.GetDateTime(8).Should().BeCloseTo(DateTime.Now, precision: 5000); //we are expecting there to be less than 5 sends between when we logged and when we hit this line.  if that's not enough, might need a new computer
+                        reader.GetGuid(0).Should().Be(new Guid("7672f7fc-ce08-4dfe-83fa-369beb361993"));
+                        reader.GetString(1).Should().Be("Select 1");
+                        reader.GetString(2).Should().Be("Cpt. Jack Sparrow");
+                        reader.GetString(3).Should().Be("Some Notes");
+                        reader.GetDateTimeOffset(4).Should().BeCloseTo(script.ScriptDate, precision: 999); //closeto instead of exact because of precision that might get lost
+                        reader.GetString(5).Should().Be("Dumpster Ninja");
+                        reader.GetString(6).Should().Be(Environment.MachineName);
+                        reader.GetDateTimeOffset(7).Should().BeCloseTo(DateTime.UtcNow, precision: 5000); //we are expecting there to be less than 5 sends between when we logged and when we hit this line.  if that's not enough, might need a new computer
 
                     }
                 }
@@ -131,9 +129,9 @@ namespace ScriptScripter.Processor.IntegrationTests.Services
             var script = new Data.Models.Script()
             {
                 DeveloperName = new string('x', count: 300),
-                RevisionNumber = 71,
-                ScriptDate = DateTime.Now.AddDays(-10),// using a date in the past to prevent false pass if scriptdate and rundate are accidentally misused (i'm making sure they are different)
-                SQLStatement = "Select 1",
+                ScriptId = new Guid("7672f7fc-ce08-4dfe-83fa-369beb361993"),
+                ScriptDate = DateTime.UtcNow.AddDays(-10),// using a date in the past to prevent false pass if scriptdate and rundate are accidentally misused (i'm making sure they are different)
+                SqlStatement = "Select 1",
                 Notes = "Some Notes",
             };
             _updater.CreateScriptingSupportObjects();
@@ -148,7 +146,7 @@ namespace ScriptScripter.Processor.IntegrationTests.Services
             {
                 con.Open();
                 using (var cmd = new System.Data.SqlClient.SqlCommand(@"SELECT [ScriptDeveloperName]
-                                                                          FROM [ScriptScripter].[Revision] ", connection: con))
+                                                                          FROM [ScriptScripter].[AppliedRevision] ", connection: con))
                 {
                     var reader = cmd.ExecuteReader();
                     while (reader.Read())
@@ -166,9 +164,9 @@ namespace ScriptScripter.Processor.IntegrationTests.Services
             var script = new Data.Models.Script()
             {
                 DeveloperName = "Cpt. Jack Sparrow",
-                RevisionNumber = 71,
-                ScriptDate = DateTime.Now.AddDays(-10),// using a date in the past to prevent false pass if scriptdate and rundate are accidentally misused (i'm making sure they are different)
-                SQLStatement = "Select 1",
+                ScriptId = new Guid("7672f7fc-ce08-4dfe-83fa-369beb361993"),
+                ScriptDate = DateTime.UtcNow.AddDays(-10),// using a date in the past to prevent false pass if scriptdate and rundate are accidentally misused (i'm making sure they are different)
+                SqlStatement = "Select 1",
                 Notes = "Some Notes",
             };
             _updater.CreateScriptingSupportObjects();
@@ -183,7 +181,7 @@ namespace ScriptScripter.Processor.IntegrationTests.Services
             {
                 con.Open();
                 using (var cmd = new System.Data.SqlClient.SqlCommand(@"SELECT [RunByDeveloperName]
-                                                                          FROM [ScriptScripter].[Revision] ", connection: con))
+                                                                          FROM [ScriptScripter].[AppliedRevision] ", connection: con))
                 {
                     var reader = cmd.ExecuteReader();
                     while (reader.Read())
@@ -211,7 +209,7 @@ namespace ScriptScripter.Processor.IntegrationTests.Services
             /*************  arrange  ******************/
             var script = new Data.Models.Script()
             {
-                SQLStatement = @"create table TestTable(id int);",
+                SqlStatement = @"create table TestTable(id int);",
             };
 
             /*************    act    ******************/
@@ -228,7 +226,7 @@ namespace ScriptScripter.Processor.IntegrationTests.Services
             /*************  arrange  ******************/
             var script = new Data.Models.Script()
             {
-                SQLStatement = @"create table TestTable(id int);
+                SqlStatement = @"create table TestTable(id int);
                                     GO
                                     create view v1 as select * from testtable;",
             };
@@ -269,7 +267,7 @@ namespace ScriptScripter.Processor.IntegrationTests.Services
             _updater.CreateScriptingSupportObjects();
 
             /*************  assert   ******************/
-            this.ExecuteExistsSql("SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[ScriptScripter].[Revision]') AND type in (N'U')")
+            this.ExecuteExistsSql("SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[ScriptScripter].[AppliedRevision]') AND type in (N'U')")
                 .Should().BeTrue();
         }
 

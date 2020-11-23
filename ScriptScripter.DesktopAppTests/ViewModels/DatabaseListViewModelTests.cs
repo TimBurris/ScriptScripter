@@ -25,11 +25,12 @@ namespace ScriptScripter.DesktopApp.ViewModels.Tests
                  .Returns(containers);
 
             this.RepoMocks.RegisterNewScriptRepoMocks(containers);
-
+            var d1 = DateTimeOffset.UtcNow;
+            var d2 = DateTimeOffset.UtcNow.AddDays(1);
             RepoMocks.MockScriptsRepos[0].Setup(m => m.GetLastScript())
-                .Returns(new Processor.Data.Models.Script() { DeveloperName = "D1", ScriptDate = DateTime.Today, RevisionNumber = 3 });
+                .Returns(new Processor.Data.Models.Script() { DeveloperName = "D1", ScriptDate = d1, ScriptId = new Guid("4f058d66-92a8-4c02-8620-48e8a73768f5") });
             RepoMocks.MockScriptsRepos[1].Setup(m => m.GetLastScript())
-                .Returns(new Processor.Data.Models.Script() { DeveloperName = "D2", ScriptDate = DateTime.Today.AddDays(1), RevisionNumber = 5 });
+                .Returns(new Processor.Data.Models.Script() { DeveloperName = "D2", ScriptDate = d2, ScriptId = new Guid("fdee992d-7ae3-45ef-bd91-0270074ca457") });
             RepoMocks.MockScriptsRepos[2].Setup(m => m.GetLastScript())
                 .Returns((Processor.Data.Models.Script)null); //makes usre it's fine wiht NULL (meaning no scripts in the file yet)
 
@@ -44,16 +45,13 @@ namespace ScriptScripter.DesktopApp.ViewModels.Tests
 
             vm.LineItems.Count.Should().Be(3);
             vm.LineItems[0].DatabaseName.Should().Be("DB1");
-            vm.LineItems[0].ScriptDate.Should().Be(DateTime.Today.ToString());
-            vm.LineItems[0].RevisionNumber.Should().Be("3");
+            vm.LineItems[0].ScriptDate.Should().Be(d1.LocalDateTime.ToString());
 
             vm.LineItems[1].DatabaseName.Should().Be("DB2");
-            vm.LineItems[1].ScriptDate.Should().Be(DateTime.Today.AddDays(1).ToString());
-            vm.LineItems[1].RevisionNumber.Should().Be("5");
+            vm.LineItems[1].ScriptDate.Should().Be(d2.LocalDateTime.ToString());
 
             vm.LineItems[2].DatabaseName.Should().Be("DB3");
             vm.LineItems[2].ScriptDate.Should().BeNull();
-            vm.LineItems[2].RevisionNumber.Should().BeNull();
 
             VerifyAllMocks();
         }

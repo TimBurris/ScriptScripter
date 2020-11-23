@@ -11,21 +11,18 @@ namespace ScriptScripter.Processor.Data.Models
     /// </summary>
     public class Revision
     {
-        /// <summary>
-        /// RevisionNumber of Script
-        /// </summary>
-        public int RevisionNumber { get; set; }
-        public string SQLStatement { get; set; }
+        public Guid ScriptId { get; set; }
+        public string SqlStatement { get; set; }
         public string ScriptDeveloperName { get; set; }
         public string ScriptNotes { get; set; }
-        public DateTime ScriptDate { get; set; }
+        public DateTimeOffset ScriptDate { get; set; }
         public string RunByDeveloperName { get; set; }
         public string RunOnMachineName { get; set; }
-        public DateTime RunDate { get; set; }
+        public DateTimeOffset RunDate { get; set; }
 
         /// <summary>
         /// unique key identifying the revision
         /// </summary>
-        public int RevisionId { get; set; }
+        //public int RevisionId { get; set; }
     }
 }

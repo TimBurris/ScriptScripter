@@ -15,9 +15,6 @@ namespace ScriptScripter.Processor.Services.Contracts
 
         void LogScript(Data.Models.Script script, string executedByDeveloperName);
 
-        //do we just use log? yes i think we will just read the max revision
-        //void StampDatabaseWithRevisionNumber(int revisionNumber);
-
         //maybe transaciton should be separte?
         void BeginTransaction();
         void RollbackTransaction();

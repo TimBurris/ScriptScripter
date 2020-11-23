@@ -19,13 +19,9 @@ namespace ScriptScripter.Processor.Data.Repositories
 
         public Models.Script AddNewScript(Models.Script script)
         {
-            int revNumber = 0;
             var data = this.ReadScripts();
-            if (data.Any())
-                revNumber = data.Max(d => d.RevisionNumber);
 
-            revNumber++;
-            script.RevisionNumber = revNumber;
+            script.ScriptId = Guid.NewGuid();
             data.Add(script);
 
             this.WriteScripts(data);
@@ -41,7 +37,7 @@ namespace ScriptScripter.Processor.Data.Repositories
             int index;
             for (index = 0; index < data.Count; index++)
             {
-                if (data[index].RevisionNumber == script.RevisionNumber)
+                if (data[index].ScriptId == script.ScriptId)
                 {
                     found = true;
                     break;
@@ -49,7 +45,7 @@ namespace ScriptScripter.Processor.Data.Repositories
             }
 
             if (!found)
-                throw new ApplicationException($"Could not locate script with revision number {script.RevisionNumber}.");
+                throw new ApplicationException($"Could not locate script with ScriptId {script.ScriptId}.");
 
             //replace existing script with the updated one
             data[index] = script;
@@ -64,22 +60,11 @@ namespace ScriptScripter.Processor.Data.Repositories
             return this.ScriptContainerData.ToList();
         }
 
-        public IEnumerable<Models.Script> GetAllScriptsAfterRevisionNumber(int revisionNumber)
-        {
-            return this.ScriptContainerData.Where(s => s.RevisionNumber > revisionNumber).ToList();
-        }
-
         public Models.Script GetLastScript()
         {
             return this.OrderedScriptContainerData.LastOrDefault();
         }
 
-        public Models.Script GetScriptByRevisionNumber(int revisionNumber)
-        {
-            return this.ScriptContainerData.SingleOrDefault(s => s.RevisionNumber == revisionNumber);
-        }
-
-        //private List<Models.Script> _allScripts;
         private List<Models.Script> ScriptContainerData
         {
             get
@@ -101,7 +86,7 @@ namespace ScriptScripter.Processor.Data.Repositories
         {
             get
             {
-                return this.ScriptContainerData.OrderBy(s => s.RevisionNumber).ToList();
+                return this.ScriptContainerData.OrderBy(s => s.ScriptDate).ToList();
             }
         }
 

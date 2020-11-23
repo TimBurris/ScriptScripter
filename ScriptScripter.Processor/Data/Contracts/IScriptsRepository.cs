@@ -11,10 +11,8 @@ namespace ScriptScripter.Processor.Data.Contracts
         string ScriptFilePath { get; set; }
 
         IEnumerable<Models.Script> GetAllScripts();
-        IEnumerable<Models.Script> GetAllScriptsAfterRevisionNumber(int revisionNumber);
 
         Models.Script GetLastScript();
-        Models.Script GetScriptByRevisionNumber(int revisionNumber);
 
         Models.Script AddNewScript(Models.Script script);
         Models.Script UpdateScript(Models.Script script);

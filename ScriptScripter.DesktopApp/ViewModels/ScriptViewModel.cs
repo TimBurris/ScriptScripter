@@ -46,12 +46,12 @@ namespace ScriptScripter.DesktopApp.ViewModels
             _scriptInEdit = script;
 
             this.Comments = script.Notes;
-            this.SQLStatement = script.SQLStatement;
+            this.SqlStatement = script.SqlStatement;
         }
 
 
 
-        public string SQLStatement
+        public string SqlStatement
         {
             get { return GetField<string>(); }
             set { SetField(value); }
@@ -102,15 +102,15 @@ namespace ScriptScripter.DesktopApp.ViewModels
             {
                 repo.AddNewScript(new Processor.Data.Models.Script()
                 {
-                    SQLStatement = this.SQLStatement,
+                    SqlStatement = this.SqlStatement,
                     Notes = this.Comments,
                     DeveloperName = _configurationRepository.GetDeveloperName(),
-                    ScriptDate = DateTime.Now
+                    ScriptDate = DateTime.UtcNow
                 });
             }
             else
             {
-                _scriptInEdit.SQLStatement = this.SQLStatement;
+                _scriptInEdit.SqlStatement = this.SqlStatement;
                 _scriptInEdit.Notes = this.Comments;
 
                 //i debate on this... do we change the developer name?  i think so.
@@ -155,7 +155,7 @@ namespace ScriptScripter.DesktopApp.ViewModels
         protected override void OnLoadDesignData()
         {
             Comments = "new Table for storing mail accounts item #5495";
-            SQLStatement = DesignTimeData.SQLStatements.Items[0];
+            SqlStatement = DesignTimeData.SqlStatements.Items[0];
         }
 
         #endregion
@@ -167,7 +167,7 @@ namespace ScriptScripter.DesktopApp.ViewModels
             public NewScriptViewModelValidator()
             {
 
-                RuleFor(obj => obj.SQLStatement).NotEmpty();
+                RuleFor(obj => obj.SqlStatement).NotEmpty();
                 RuleFor(obj => obj.Comments).NotEmpty();
             }
         }

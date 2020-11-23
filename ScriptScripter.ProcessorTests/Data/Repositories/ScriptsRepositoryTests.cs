@@ -20,33 +20,34 @@ namespace ScriptScripter.Processor.Data.Repositories.Tests
                 new Models.Script(){
                     DeveloperName ="Sam Harris",
                     Notes="Create the Sysmail account table",
-                    RevisionNumber=87,
+                    ScriptId=new Guid("4f058d66-92a8-4c02-8620-48e8a73768f5"),
                     ScriptDate=new DateTime(month:5, day:11,year:2000, hour:15, minute:37, second:23),
-                    SQLStatement=                @"Select 1"
+                    SqlStatement=                @"Select 1"
                 },
 
                 new Models.Script(){
                     DeveloperName ="Richard Dawkins",
                     Notes="Create the add alert sp",
-                    RevisionNumber=88,
+                    ScriptId=new Guid("fdee992d-7ae3-45ef-bd91-0270074ca457"),
                     ScriptDate=new DateTime(month:3, day:29,year:2001, hour:4, minute:59, second:00),
-                    SQLStatement= @"Select 2",
+                    SqlStatement= @"Select 2",
                 },
 
+                //this script is inserted in position 3, BUT, it's date makes it the LAST script
                 new Models.Script(){
                     DeveloperName ="Bill Nye",
                     Notes="insert some data into the sys mail account",
-                    RevisionNumber=89,
-                    ScriptDate=new DateTime(month:12, day:1,year:2001, hour:1, minute:7, second:3),
-                    SQLStatement=@"Select 3"
+                    ScriptId=new Guid("86111dff-6e26-4641-b83a-5cfe961d3e46"),
+                    ScriptDate=new DateTime(month:12, day:31,year:2001, hour:1, minute:7, second:3),
+                    SqlStatement=@"Select 3"
                  },
 
                 new Models.Script(){
                     DeveloperName ="Christopher Hitchens",
                     Notes="make a very important change",
-                    RevisionNumber=90,
+                    ScriptId=new Guid("3343ae7d-f44d-4089-ba62-6c3c182e768a"),
                     ScriptDate=new DateTime(month:12, day:1,year:2001, hour:1, minute:7, second:3),
-                    SQLStatement=@"Select 4"
+                    SqlStatement=@"Select 4"
                 },
             };
         }
@@ -120,24 +121,25 @@ namespace ScriptScripter.Processor.Data.Repositories.Tests
             {
                 DeveloperName = "Dev Name",
                 Notes = "My Note",
-                RevisionNumber = 35,
-                ScriptDate = new DateTime(month: 12, day: 1, year: 2001, hour: 1, minute: 7, second: 3),
-                SQLStatement = "Select 1",
+                ScriptId = new Guid("a8693068-e251-41ca-8afe-5ae6badeeaad"),
+                ScriptDate = new DateTimeOffset(month: 12, day: 1, year: 2001, hour: 1, minute: 7, second: 3, offset: TimeSpan.FromHours(-5)),
+                SqlStatement = "Select 1",
             };
 
             /*************    act    ******************/
             repo.WriteScripts(stringWriter, new Models.Script[] { script });
             var result = stringWriter.ToString();
 
+
             /*************  assert   ******************/
             result.Should().Be(@"<?xml version=""1.0"" encoding=""utf-16""?>
 <Scripts xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"">
   <Script>
-    <RevisionNumber>35</RevisionNumber>
-    <SQLStatement>Select 1</SQLStatement>
+    <ScriptId>a8693068-e251-41ca-8afe-5ae6badeeaad</ScriptId>
+    <SqlStatement>Select 1</SqlStatement>
     <DeveloperName>Dev Name</DeveloperName>
     <Notes>My Note</Notes>
-    <ScriptDate>2001-12-01T01:07:03</ScriptDate>
+    <ScriptDate>2001-12-01T01:07:03.0000000-05:00</ScriptDate>
   </Script>
 </Scripts>");
         }
@@ -183,33 +185,33 @@ namespace ScriptScripter.Processor.Data.Repositories.Tests
                 new Models.Script(){
                     DeveloperName ="Sam Harris",
                     Notes="Create the Sysmail account table",
-                    RevisionNumber=87,
+                    ScriptId=new Guid("4f058d66-92a8-4c02-8620-48e8a73768f5"),
                     ScriptDate=new DateTime(month:5, day:11,year:2000, hour:15, minute:37, second:23),
-                    SQLStatement=                @"Select 1"
+                    SqlStatement=                @"Select 1"
                 },
 
                 new Models.Script(){
                     DeveloperName ="Richard Dawkins",
                     Notes="Create the add alert sp",
-                    RevisionNumber=88,
+                    ScriptId=new Guid("fdee992d-7ae3-45ef-bd91-0270074ca457"),
                     ScriptDate=new DateTime(month:3, day:29,year:2001, hour:4, minute:59, second:00),
-                    SQLStatement= @"Select 2",
+                    SqlStatement= @"Select 2",
                 },
 
                 new Models.Script(){
                     DeveloperName ="Bill Nye",
                     Notes="insert some data into the sys mail account",
-                    RevisionNumber=89,
-                    ScriptDate=new DateTime(month:12, day:1,year:2001, hour:1, minute:7, second:3),
-                    SQLStatement=@"Select 3"
+                    ScriptId=new Guid("86111dff-6e26-4641-b83a-5cfe961d3e46"),
+                    ScriptDate=new DateTime(month:12, day:1,year:2002, hour:4, minute:58, second:1),
+                    SqlStatement=@"Select 3"
                  },
 
                 new Models.Script(){
                     DeveloperName ="Christopher Hitchens",
                     Notes="make a very important change",
-                    RevisionNumber=90,
+                    ScriptId=new Guid("3343ae7d-f44d-4089-ba62-6c3c182e768a"),
                     ScriptDate=new DateTime(month:12, day:1,year:2001, hour:1, minute:7, second:3),
-                    SQLStatement=@"Select 4"
+                    SqlStatement=@"Select 4"
                 },
             };
 
@@ -238,32 +240,9 @@ namespace ScriptScripter.Processor.Data.Repositories.Tests
             var results = _repo.GetAllScripts();
 
             /*************  assert   ******************/
-            results.Select(s => s.RevisionNumber).Should().BeEquivalentTo(new int[] { 87, 88, 89, 90 });
+            results.Select(s => s.ScriptId).Should().BeEquivalentTo(new Guid[] { new Guid("4f058d66-92a8-4c02-8620-48e8a73768f5"), new Guid("fdee992d-7ae3-45ef-bd91-0270074ca457"), new Guid("3343ae7d-f44d-4089-ba62-6c3c182e768a"), new Guid("86111dff-6e26-4641-b83a-5cfe961d3e46") });
         }
 
-        [TestMethod]
-        public void GetAllScriptsAfterRevisionNumber_returns_later_scripts()
-        {
-            /*************  arrange  ******************/
-
-            /*************    act    ******************/
-            var results = _repo.GetAllScriptsAfterRevisionNumber(revisionNumber: 88);
-
-            /*************  assert   ******************/
-            results.Select(s => s.RevisionNumber).Should().BeEquivalentTo(new int[] { 89, 90 });
-        }
-
-        [TestMethod]
-        public void GetAllScriptsAfterRevisionNumber_returns_empty_when_none_after()
-        {
-            /*************  arrange  ******************/
-
-            /*************    act    ******************/
-            var results = _repo.GetAllScriptsAfterRevisionNumber(revisionNumber: 90);
-
-            /*************  assert   ******************/
-            results.Should().BeEmpty();
-        }
 
         [TestMethod]
         public void GetLastScriptTest()
@@ -274,46 +253,9 @@ namespace ScriptScripter.Processor.Data.Repositories.Tests
             var result = _repo.GetLastScript();
 
             /*************  assert   ******************/
-            result.RevisionNumber.Should().Be(90);
+            result.ScriptId.Should().Be(new Guid("86111dff-6e26-4641-b83a-5cfe961d3e46"));
         }
 
-        [TestMethod]
-        public void GetScriptByRevisionNumber_returns_script()
-        {
-            /*************  arrange  ******************/
-
-            /*************    act    ******************/
-            var result = _repo.GetScriptByRevisionNumber(89);
-
-            /*************  assert   ******************/
-            result.RevisionNumber.Should().Be(89);
-        }
-
-        [TestMethod]
-        public void GetScriptByRevisionNumber_returns_null_when_not_found()
-        {
-            /*************  arrange  ******************/
-
-            /*************    act    ******************/
-            var result = _repo.GetScriptByRevisionNumber(95);
-
-            /*************  assert   ******************/
-            result.Should().BeNull();
-        }
-
-        [TestMethod]
-        public void AddNewScript_sets_revision_number()
-        {
-            /*************  arrange  ******************/
-            var newScript = new Models.Script();
-
-            /*************    act    ******************/
-            var result = _repo.AddNewScript(newScript);
-
-            /*************  assert   ******************/
-            result.RevisionNumber.Should().Be(91);
-
-        }
 
         [TestMethod]
         public void AddNewScript_writes_to_file()
@@ -337,8 +279,8 @@ namespace ScriptScripter.Processor.Data.Repositories.Tests
 
             var script = new Models.Script()
             {
-                RevisionNumber = orginalScript.RevisionNumber,
-                SQLStatement = "My Updated Script"
+                ScriptId = orginalScript.ScriptId,
+                SqlStatement = "My Updated Script"
             };
 
             /*************    act    ******************/
@@ -347,7 +289,7 @@ namespace ScriptScripter.Processor.Data.Repositories.Tests
             /*************  assert   ******************/
             _savedScriptList.Should().NotContain(orginalScript);
             _savedScriptList.Should().Contain(result);
-            result.SQLStatement.Should().Be("My Updated Script");
+            result.SqlStatement.Should().Be("My Updated Script");
         }
     }
 
@@ -390,18 +332,6 @@ namespace ScriptScripter.Processor.Data.Repositories.Tests
         }
 
         [TestMethod]
-        public void GetAllScriptsAfterRevisionNumber_returns_empty()
-        {
-            /*************  arrange  ******************/
-
-            /*************    act    ******************/
-            var results = _repo.GetAllScriptsAfterRevisionNumber(revisionNumber: 88);
-
-            /*************  assert   ******************/
-            results.Should().BeEmpty();
-        }
-
-        [TestMethod]
         public void GetLastScript_returns_null()
         {
             /*************  arrange  ******************/
@@ -413,32 +343,6 @@ namespace ScriptScripter.Processor.Data.Repositories.Tests
             result.Should().BeNull();
         }
 
-
-        [TestMethod]
-        public void GetScriptByRevisionNumber_returns_null()
-        {
-            /*************  arrange  ******************/
-
-            /*************    act    ******************/
-            var result = _repo.GetScriptByRevisionNumber(89);
-
-            /*************  assert   ******************/
-            result.Should().BeNull();
-        }
-
-        [TestMethod]
-        public void AddNewScript_sets_revision_number()
-        {
-            /*************  arrange  ******************/
-            var newScript = new Models.Script();
-
-            /*************    act    ******************/
-            var result = _repo.AddNewScript(newScript);
-
-            /*************  assert   ******************/
-            result.RevisionNumber.Should().Be(1);
-        }
-
         [TestMethod]
         public void AddNewScript_writes_to_file()
         {
@@ -446,12 +350,12 @@ namespace ScriptScripter.Processor.Data.Repositories.Tests
             var newScript = new Models.Script();
 
             /*************    act    ******************/
-            _repo.AddNewScript(newScript);
+            var result = _repo.AddNewScript(newScript);
 
 
             /*************  assert   ******************/
             _fs.File.ReadAllText(_mockedContainerFile)
-                .Should().Contain($"<RevisionNumber>1</RevisionNumber>");
+                .Should().Contain($"<ScriptId>{result.ScriptId}</ScriptId>");
 
         }
 
@@ -469,7 +373,7 @@ namespace ScriptScripter.Processor.Data.Repositories.Tests
                 System.Diagnostics.Debug.WriteLine("/***********************************************************************");
                 System.Diagnostics.Debug.WriteLine(s.Notes);
                 System.Diagnostics.Debug.WriteLine("***********************************************************************/");
-                System.Diagnostics.Debug.WriteLine(s.SQLStatement);
+                System.Diagnostics.Debug.WriteLine(s.SqlStatement);
                 System.Diagnostics.Debug.WriteLine(string.Empty);
                 System.Diagnostics.Debug.WriteLine(string.Empty);
                 System.Diagnostics.Debug.WriteLine(string.Empty);
