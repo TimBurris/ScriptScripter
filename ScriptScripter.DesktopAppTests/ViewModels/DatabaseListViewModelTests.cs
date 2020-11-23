@@ -39,9 +39,10 @@ namespace ScriptScripter.DesktopApp.ViewModels.Tests
                 viewModelFaultlessService: new ViewModelFaultlessService(navigator: null),
                 scriptsRepoFactory: RepoMocks.MockScriptRepositoryFactory.Object,
                 scriptsContainerRepository: RepoMocks.MockScriptContainerRepo.Object,
-                eventNotificationService: null);
+                eventNotificationService: null, 
+                logger: null);
 
-            vm.ReloadAsync().Wait();
+            vm.ReloadDataAsync().Wait();
 
             vm.LineItems.Count.Should().Be(3);
             vm.LineItems[0].DatabaseName.Should().Be("DB1");

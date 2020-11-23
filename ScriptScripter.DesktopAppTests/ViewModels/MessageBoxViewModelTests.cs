@@ -17,7 +17,9 @@ namespace ScriptScripter.DesktopApp.ViewModels.Tests
         [TestMethod()]
         public void InitTest()
         {
-            var vm = new MessageBoxViewModel();
+            var mockNavigator = new Mock<NinjaMvvm.Wpf.Abstractions.INavigator>();
+
+            var vm = new MessageBoxViewModel(mockNavigator.Object, logger:null);
             vm.Init(title: "title", message: "message", buttons: MessageBoxViewModel.MessageBoxButton.YesNo);
 
             Assert.AreEqual(expected: "title", actual: vm.ViewTitle);
@@ -32,7 +34,8 @@ namespace ScriptScripter.DesktopApp.ViewModels.Tests
         [TestMethod()]
         public void Init1()
         {
-            var vm = new MessageBoxViewModel();
+            var mockNavigator = new Mock<NinjaMvvm.Wpf.Abstractions.INavigator>();
+            var vm = new MessageBoxViewModel(mockNavigator.Object, logger:null);
             vm.Init(title: "title", message: "message", buttons: MessageBoxViewModel.MessageBoxButton.YesNo, icon: MessageBoxViewModel.MessageBoxImage.Warning);
 
             Assert.AreEqual(expected: "title", actual: vm.ViewTitle);
@@ -48,7 +51,8 @@ namespace ScriptScripter.DesktopApp.ViewModels.Tests
         [TestMethod()]
         public void Init2()
         {
-            var vm = new MessageBoxViewModel();
+            var mockNavigator = new Mock<NinjaMvvm.Wpf.Abstractions.INavigator>();
+            var vm = new MessageBoxViewModel(mockNavigator.Object, logger:null);
             vm.Init(title: "title", message: "message",
                 buttons: MessageBoxViewModel.MessageBoxButton.YesNo,
                 icon: MessageBoxViewModel.MessageBoxImage.Warning,
@@ -68,7 +72,8 @@ namespace ScriptScripter.DesktopApp.ViewModels.Tests
         [TestMethod()]
         public void MessageBoxViewModelDefaultsTest()
         {
-            var vm = new MessageBoxViewModel();
+            var mockNavigator = new Mock<NinjaMvvm.Wpf.Abstractions.INavigator>();
+            var vm = new MessageBoxViewModel(mockNavigator.Object, logger:null);
 
             Assert.AreEqual(expected: null, actual: vm.ViewTitle);
             Assert.AreEqual(expected: null, actual: vm.Message);
@@ -88,7 +93,7 @@ namespace ScriptScripter.DesktopApp.ViewModels.Tests
             bool closeCalled = false;
             var mockNavigator = new Mock<NinjaMvvm.Wpf.Abstractions.INavigator>();
 
-            var vm = new MessageBoxViewModel(mockNavigator.Object);
+            var vm = new MessageBoxViewModel(mockNavigator.Object, logger: null);
             mockNavigator.Setup(mck => mck.CloseDialog(vm))
                 .Callback(() => closeCalled = true);
 
@@ -104,7 +109,7 @@ namespace ScriptScripter.DesktopApp.ViewModels.Tests
             bool closeCalled = false;
             var mockNavigator = new Mock<NinjaMvvm.Wpf.Abstractions.INavigator>();
 
-            var vm = new MessageBoxViewModel(mockNavigator.Object);
+            var vm = new MessageBoxViewModel(mockNavigator.Object, logger: null);
             mockNavigator.Setup(mck => mck.CloseDialog(vm))
                 .Callback(() => closeCalled = true);
 
@@ -120,7 +125,7 @@ namespace ScriptScripter.DesktopApp.ViewModels.Tests
             bool closeCalled = false;
             var mockNavigator = new Mock<NinjaMvvm.Wpf.Abstractions.INavigator>();
 
-            var vm = new MessageBoxViewModel(mockNavigator.Object);
+            var vm = new MessageBoxViewModel(mockNavigator.Object, logger: null);
             mockNavigator.Setup(mck => mck.CloseDialog(vm))
                 .Callback(() => closeCalled = true);
 
@@ -136,7 +141,7 @@ namespace ScriptScripter.DesktopApp.ViewModels.Tests
             bool closeCalled = false;
             var mockNavigator = new Mock<NinjaMvvm.Wpf.Abstractions.INavigator>();
 
-            var vm = new MessageBoxViewModel(mockNavigator.Object);
+            var vm = new MessageBoxViewModel(mockNavigator.Object, logger: null);
             mockNavigator.Setup(mck => mck.CloseDialog(vm))
                 .Callback(() => closeCalled = true);
 
@@ -149,7 +154,8 @@ namespace ScriptScripter.DesktopApp.ViewModels.Tests
         [TestMethod()]
         public void ShowMoreDetailsTest()
         {
-            var vm = new MessageBoxViewModel();
+            var mockNavigator = new Mock<NinjaMvvm.Wpf.Abstractions.INavigator>();
+            var vm = new MessageBoxViewModel(navigator: mockNavigator.Object, logger: null);
 
             Assert.IsFalse(vm.DisplayMoreDetails, "DisplayMoreDetails should be false until ShowMoreDetails is fired");
             vm.ShowMoreDetails();
@@ -160,7 +166,8 @@ namespace ScriptScripter.DesktopApp.ViewModels.Tests
         [TestMethod()]
         public void IconSourceIsSetTest()
         {
-            var vm = new MessageBoxViewModel();
+            var mockNavigator = new Mock<NinjaMvvm.Wpf.Abstractions.INavigator>();
+            var vm = new MessageBoxViewModel(navigator: mockNavigator.Object, logger: null);
 
             Assert.IsNull(vm.IconSource, "IconSource should be null until Icon is set");
             vm.Icon = MessageBoxImage.Exclamation;

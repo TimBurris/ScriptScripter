@@ -12,9 +12,11 @@ namespace ScriptScripter.DesktopApp.ViewModels
     {
         private readonly NinjaMvvm.Wpf.Abstractions.INavigator _navigator;
 
-        public RetryActionViewModel() { }//designer only
+        //public RetryActionViewModel() { }//designer only   //removed because for somereason IoC is using this ctor instead of the correct one
 
-        public RetryActionViewModel(NinjaMvvm.Wpf.Abstractions.INavigator navigator)
+        public RetryActionViewModel(NinjaMvvm.Wpf.Abstractions.INavigator navigator,
+            NLog.ILogger logger)
+            : base(logger)
         {
             ViewTitle = "Failed to execute";
             this._navigator = navigator;

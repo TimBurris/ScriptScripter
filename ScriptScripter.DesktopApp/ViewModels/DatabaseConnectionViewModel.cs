@@ -16,14 +16,14 @@ namespace ScriptScripter.DesktopApp.ViewModels
         private readonly Processor.Data.Contracts.IConfigurationRepository _configurationRepository;
         private readonly Processor.Services.Contracts.IScriptingService _scriptingService;
 
-    //   public DatabaseConnectionViewModel() { }//designer only  //removed because for somereason IoC is using this ctor instead of the correct one
+        //   public DatabaseConnectionViewModel() { }//designer only  //removed because for somereason IoC is using this ctor instead of the correct one
 
-        //HACK: i hate doing this, but without it Ninject seems to be choosing the wrong freaking constructor!
-        [Ninject.Inject]
         public DatabaseConnectionViewModel(NinjaMvvm.Wpf.Abstractions.INavigator navigator,
             Processor.Data.Contracts.IConfigurationRepository configurationRepository,
             Processor.Services.Contracts.IScriptingService scriptingService,
-             DatabaseConnectionControlViewModel databaseConnectionControlVM)
+             DatabaseConnectionControlViewModel databaseConnectionControlVM,
+             NLog.ILogger logger)
+            : base(logger)
         {
             ViewTitle = "Database Connection";
             this._navigator = navigator;

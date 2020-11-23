@@ -8,12 +8,11 @@ namespace ScriptScripter.DesktopApp.ViewModels
 {
     public class ErrorViewModel : MessageBoxViewModel
     {
-        private readonly NLog.ILogger _logger;
-
-        public ErrorViewModel() { }//designer only
-        public ErrorViewModel(NLog.ILogger logger)
+        //public ErrorViewModel() { }//designer only   //removed because for somereason IoC is using this ctor instead of the correct one
+        public ErrorViewModel(NinjaMvvm.Wpf.Abstractions.INavigator navigator, NLog.ILogger logger)
+            : base(navigator, logger)
         {
-            this._logger = logger;
+
         }
 
         public void LoadFromException(Exception ex)

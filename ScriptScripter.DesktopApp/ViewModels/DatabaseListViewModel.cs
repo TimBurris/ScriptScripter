@@ -20,14 +20,16 @@ namespace ScriptScripter.DesktopApp.ViewModels
         private readonly Processor.Services.Contracts.IEventNotificationService _eventNotificationService;
         private List<ViewModels.DatabaseListViewModel.LineItem> _allLineItems = new List<LineItem>();
 
-        public DatabaseListViewModel() { }//Designer only
+        //public DatabaseListViewModel() { }//Designer only   //removed because for somereason IoC is using this ctor instead of the correct one
 
         public DatabaseListViewModel(System.IO.Abstractions.IFileSystem fileSystem,
             NinjaMvvm.Wpf.Abstractions.INavigator navigator,
             Contracts.IViewModelFaultlessService viewModelFaultlessService,
             Processor.Data.Contracts.IScriptRepositoryFactory scriptsRepoFactory,
             Processor.Data.Contracts.IScriptContainerRepository scriptsContainerRepository,
-            Processor.Services.Contracts.IEventNotificationService eventNotificationService)
+            Processor.Services.Contracts.IEventNotificationService eventNotificationService,
+            NLog.ILogger logger)
+            : base(logger)
         {
             this._fileSystem = fileSystem;
             this._navigator = navigator;

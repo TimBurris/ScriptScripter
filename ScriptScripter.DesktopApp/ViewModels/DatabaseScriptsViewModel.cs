@@ -20,15 +20,16 @@ namespace ScriptScripter.DesktopApp.ViewModels
         private readonly Processor.Services.Contracts.IScriptingService _scriptingService;
         private readonly Contracts.IViewModelFaultlessService _viewModelFaultlessService;
 
-        public DatabaseScriptsViewModel() { }//designer only
+        //public DatabaseScriptsViewModel() { }//designer only   //removed because for somereason IoC is using this ctor instead of the correct one
         public DatabaseScriptsViewModel(NinjaMvvm.Wpf.Abstractions.INavigator navigator,
             Processor.Data.Contracts.IConfigurationRepository configurationRepository,
             Processor.Data.Contracts.IRevisionRepository revisionRepository,
             Processor.Data.Contracts.IScriptRepositoryFactory scriptRepoFactory,
             Processor.Services.Contracts.IScriptingService scriptingService,
             Contracts.IViewModelFaultlessService viewModelFaultlessService,
-            Processor.Services.Contracts.IEventNotificationService eventNotificationService
-)
+            Processor.Services.Contracts.IEventNotificationService eventNotificationService,
+            NLog.ILogger logger)
+            : base(logger)
         {
             this._navigator = navigator;
             this._configurationRepository = configurationRepository;

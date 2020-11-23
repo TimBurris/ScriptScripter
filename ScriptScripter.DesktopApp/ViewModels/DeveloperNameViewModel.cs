@@ -18,12 +18,14 @@ namespace ScriptScripter.DesktopApp.ViewModels
         private readonly Processor.Services.Contracts.IScriptingService _scriptingService;
         private readonly Processor.Data.Contracts.IConfigurationRepository _configurationRepository;
 
-        public DeveloperNameViewModel() { }//Designer use
+        //public DeveloperNameViewModel() { }//Designer use   //removed because for somereason IoC is using this ctor instead of the correct one
 
         public DeveloperNameViewModel(NinjaMvvm.Wpf.Abstractions.INavigator navigator,
             Contracts.IViewModelFaultlessService viewModelFaultlessService,
             Processor.Services.Contracts.IScriptingService scriptingService,
-            Processor.Data.Contracts.IConfigurationRepository configurationRepository)
+            Processor.Data.Contracts.IConfigurationRepository configurationRepository,
+            NLog.ILogger logger)
+            : base(logger)
         {
             ViewTitle = "Your Name";
             this._navigator = navigator;

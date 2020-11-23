@@ -19,7 +19,7 @@ namespace ScriptScripter.DesktopApp.ViewModels
         private readonly Contracts.IThemeService _themeService;
         private readonly Processor.Services.Contracts.IEventNotificationService _eventNotificationService;
 
-        public MainViewModel() { }//designer only
+        //public MainViewModel() { }//designer only   //removed because for somereason IoC is using this ctor instead of the correct one
 
         public MainViewModel(
             NinjaMvvm.Wpf.Abstractions.INavigator navigator,
@@ -28,7 +28,9 @@ namespace ScriptScripter.DesktopApp.ViewModels
             Contracts.IViewModelFaultlessService viewModelFaultlessService,
             Processor.Services.Contracts.IEventNotificationService eventNotificationService,
             Processor.Services.Contracts.IConfigurationFileUpgradeService configurationFileUpgradeService,
-            Contracts.IThemeService themeService)
+            Contracts.IThemeService themeService,
+            NLog.ILogger logger)
+            : base(logger)
         {
             ViewTitle = "ScriptScripter";
             this._navigator = navigator;

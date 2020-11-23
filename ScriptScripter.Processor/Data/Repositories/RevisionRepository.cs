@@ -23,11 +23,15 @@ namespace ScriptScripter.Processor.Data.Repositories
             using (var connection = this.GetConnection(databaseConnectionParms))
             {
                 if (!this.IsUnderControl(connection))
-                    return null;
+                {
+                    return new List<Models.Revision>();
+                }
                 else
+                {
                     return connection.Query<Data.Models.Revision>(
                         sql: $@"SELECT * 
                             FROM {_tableNameWithSchema}");
+                }
             }
         }
 

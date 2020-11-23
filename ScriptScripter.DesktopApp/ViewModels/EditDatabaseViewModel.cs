@@ -24,8 +24,9 @@ namespace ScriptScripter.DesktopApp.ViewModels
             NinjaMvvm.Wpf.Abstractions.INavigator navigator,
             Contracts.IViewModelFaultlessService viewModelFaultlessService,
             FileAndFolderDialog.Abstractions.IFileDialogService fileDialogService,
-            DatabaseConnectionControlViewModel databaseConnectionControlVM)
-            : base(navigator, fileDialogService, databaseConnectionControlVM)
+            DatabaseConnectionControlViewModel databaseConnectionControlVM,
+            NLog.ILogger logger)
+                : base(navigator, fileDialogService, databaseConnectionControlVM, logger)
         {
             ViewTitle = "Edit Database";
             this._scriptContainerRepository = scriptContainerRepository;

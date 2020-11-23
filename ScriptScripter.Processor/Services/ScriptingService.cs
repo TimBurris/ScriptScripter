@@ -117,7 +117,7 @@ namespace ScriptScripter.Processor.Services
                     }
                 }
             }
-            return scripts;
+            return scripts.OrderBy(x=>x.ScriptDate).ToList();
         }
 
         public Contracts.DatabaseScriptStates GetDatabaseScriptState(Data.Models.DatabaseConnectionParameters databaseConnectionParams, string scriptFilePath)

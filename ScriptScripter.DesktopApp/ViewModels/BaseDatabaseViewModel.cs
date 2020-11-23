@@ -10,11 +10,13 @@ namespace ScriptScripter.DesktopApp.ViewModels
         private readonly NinjaMvvm.Wpf.Abstractions.INavigator _navigator;
         private readonly FileAndFolderDialog.Abstractions.IFileDialogService _fileDialogService;
 
-        public BaseDatabaseViewModel() { }//designer use
+        //public BaseDatabaseViewModel() { }//designer use   //removed because for somereason IoC is using this ctor instead of the correct one
 
         public BaseDatabaseViewModel(NinjaMvvm.Wpf.Abstractions.INavigator navigator,
             FileAndFolderDialog.Abstractions.IFileDialogService fileDialogService,
-            DatabaseConnectionControlViewModel databaseConnectionControlVM)
+            DatabaseConnectionControlViewModel databaseConnectionControlVM,
+            NLog.ILogger logger)
+            : base(logger)
         {
             UseDefaultDatabaseConnection = true;
             this.Tags = new ObservableCollection<string>();

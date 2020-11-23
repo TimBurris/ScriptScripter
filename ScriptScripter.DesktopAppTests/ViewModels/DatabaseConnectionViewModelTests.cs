@@ -19,7 +19,7 @@ namespace ScriptScripter.DesktopApp.ViewModels.Tests
         public DatabaseConnectionViewModel CreateViewModel()
         {
 
-            var vm = new DatabaseConnectionViewModel(MockNavigator.Object, RepoMocks.MockConfigurationRepo.Object, ServiceMocks.MockScriptingService.Object, new DatabaseConnectionControlViewModel(_mockNavigator.Object, _mockScriptingService.Object));
+            var vm = new DatabaseConnectionViewModel(MockNavigator.Object, RepoMocks.MockConfigurationRepo.Object, ServiceMocks.MockScriptingService.Object, new DatabaseConnectionControlViewModel(_mockNavigator.Object, _mockScriptingService.Object, logger: null), logger: null);
             return vm;
         }
 
@@ -35,12 +35,12 @@ namespace ScriptScripter.DesktopApp.ViewModels.Tests
             MockNavigator.Setup(m => m.ShowDialog<MessageBoxViewModel>(It.IsAny<Action<MessageBoxViewModel>>()))
                 .Callback<Action<MessageBoxViewModel>>(a =>
                {
-                   var messageVM = new MessageBoxViewModel();
+                   var messageVM = new MessageBoxViewModel(navigator: null, logger: null);
                    a(messageVM);
 
                    messageVM.Message.Should().Be("all bus' up");
                })
-               .Returns(new MessageBoxViewModel());
+               .Returns(new MessageBoxViewModel(navigator: null, logger: null));
             //act
             vm.ConnectAsync().Wait();
 

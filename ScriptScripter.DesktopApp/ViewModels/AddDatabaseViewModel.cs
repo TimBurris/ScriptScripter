@@ -20,13 +20,14 @@ namespace ScriptScripter.DesktopApp.ViewModels
         public AddDatabaseViewModel(Processor.Data.Contracts.IScriptContainerRepository scriptContainerRepository,
             NinjaMvvm.Wpf.Abstractions.INavigator navigator,
             FileAndFolderDialog.Abstractions.IFileDialogService fileDialogService,
-            DatabaseConnectionControlViewModel databaseConnectionControlVM)
-        : base(navigator, fileDialogService, databaseConnectionControlVM)
+            DatabaseConnectionControlViewModel databaseConnectionControlVM,
+            NLog.ILogger logger)
+        : base(navigator, fileDialogService, databaseConnectionControlVM, logger)
         {
             ViewTitle = "Add Database";
             this._scriptContainerRepository = scriptContainerRepository;
             _navigator = navigator;
-            
+
         }
 
         /// <summary>

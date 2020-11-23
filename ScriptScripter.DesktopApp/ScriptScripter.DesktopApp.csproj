@@ -61,17 +61,17 @@
     <Reference Include="FluentAssertions, Version=5.10.3.0, Culture=neutral, PublicKeyToken=33f2691a05b67b6a, processorArchitecture=MSIL">
       <HintPath>..\packages\FluentAssertions.5.10.3\lib\net47\FluentAssertions.dll</HintPath>
     </Reference>
-    <Reference Include="FluentValidation, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7de548da2fbae0f0, processorArchitecture=MSIL">
-      <HintPath>..\packages\FluentValidation.8.6.2\lib\net45\FluentValidation.dll</HintPath>
+    <Reference Include="FluentValidation, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7de548da2fbae0f0, processorArchitecture=MSIL">
+      <HintPath>..\packages\FluentValidation.9.3.0\lib\net461\FluentValidation.dll</HintPath>
     </Reference>
     <Reference Include="MahApps.Metro, Version=1.6.5.1, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\MahApps.Metro.1.6.5\lib\net47\MahApps.Metro.dll</HintPath>
     </Reference>
-    <Reference Include="NinjaMvvm, Version=1.0.10.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\NinjaMvvm.Wpf.1.0.10.1\lib\net471\NinjaMvvm.dll</HintPath>
+    <Reference Include="NinjaMvvm, Version=1.1.1.1, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\NinjaMvvm.Wpf.1.1.1.1\lib\net472\NinjaMvvm.dll</HintPath>
     </Reference>
-    <Reference Include="NinjaMvvm.Wpf, Version=1.0.10.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\NinjaMvvm.Wpf.1.0.10.1\lib\net471\NinjaMvvm.Wpf.dll</HintPath>
+    <Reference Include="NinjaMvvm.Wpf, Version=1.1.1.1, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\NinjaMvvm.Wpf.1.1.1.1\lib\net472\NinjaMvvm.Wpf.dll</HintPath>
     </Reference>
     <Reference Include="NinjaMvvm.Wpf.Ninject, Version=1.0.0.1, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\NinjaMvvm.Wpf.Ninject.1.0.0.1\lib\net471\NinjaMvvm.Wpf.Ninject.dll</HintPath>

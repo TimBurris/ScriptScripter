@@ -15,10 +15,12 @@ namespace ScriptScripter.DesktopApp.ViewModels
         private readonly NinjaMvvm.Wpf.Abstractions.INavigator _navigator;
         private readonly Processor.Services.Contracts.IScriptingService _scriptingService;
 
-     //   public DatabaseConnectionControlViewModel() { }//designer only  //removed because for somereason IoC is using this ctor instead of the correct one
+        //   public DatabaseConnectionControlViewModel() { }//designer only  //removed because for somereason IoC is using this ctor instead of the correct one
 
         public DatabaseConnectionControlViewModel(NinjaMvvm.Wpf.Abstractions.INavigator navigator,
-            Processor.Services.Contracts.IScriptingService scriptingService)
+            Processor.Services.Contracts.IScriptingService scriptingService,
+            NLog.ILogger logger)
+            : base(logger)
         {
             this._navigator = navigator;
             this._scriptingService = scriptingService;

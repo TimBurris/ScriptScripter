@@ -20,12 +20,14 @@ namespace ScriptScripter.DesktopApp.ViewModels
         private readonly Contracts.IViewModelFaultlessService _viewModelFaultlessService;
         private readonly Contracts.IThemeService _themeService;
 
-        public SelectThemeViewModel() { }//designer only
+        //public SelectThemeViewModel() { }//designer only   //removed because for somereason IoC is using this ctor instead of the correct one
         public SelectThemeViewModel(
             NinjaMvvm.Wpf.Abstractions.INavigator navigator,
             Processor.Data.Contracts.IConfigurationRepository configurationRepository,
             Contracts.IViewModelFaultlessService viewModelFaultlessService,
-            Contracts.IThemeService themeService)
+            Contracts.IThemeService themeService,
+            NLog.ILogger logger)
+            : base(logger)
         {
             ViewTitle = "Select Theme";
             this._navigator = navigator;

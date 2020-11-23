@@ -18,12 +18,14 @@ namespace ScriptScripter.DesktopApp.ViewModels
         private readonly Processor.Services.Contracts.IScriptingService _scriptingService;
         private readonly Processor.Data.Contracts.IConfigurationRepository _configurationRepository;
 
-        public ApplyScriptsViewModel() { }//Designer use
+        //public ApplyScriptsViewModel() { }//Designer use   //removed because for somereason IoC is using this ctor instead of the correct one
 
         public ApplyScriptsViewModel(NinjaMvvm.Wpf.Abstractions.INavigator navigator,
             Contracts.IViewModelFaultlessService viewModelFaultlessService,
             Processor.Services.Contracts.IScriptingService scriptingService,
-            Processor.Data.Contracts.IConfigurationRepository configurationRepository)
+            Processor.Data.Contracts.IConfigurationRepository configurationRepository,
+            NLog.ILogger logger)
+            : base(logger)
         {
             this._navigator = navigator;
             this._viewModelFaultlessService = viewModelFaultlessService;
