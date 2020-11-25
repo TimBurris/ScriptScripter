@@ -89,7 +89,7 @@ namespace ScriptScripter.Processor.IntegrationTests.Repositories
             result.ScriptNotes.Should().Be("here are some notes");
             result.SqlStatement.Should().Be("select 1");
             result.RunByDeveloperName.Should().Be("Sam Harris");
-            result.RunDate.Should().BeCloseTo(DateTime.UtcNow, precision: 10000);
+            result.RunDate.Should().BeCloseTo(DateTimeOffset.Now, precision: 10000);
             result.RunOnMachineName.Should().Be(Environment.MachineName);
         }
 
@@ -124,7 +124,7 @@ namespace ScriptScripter.Processor.IntegrationTests.Repositories
             result.ScriptNotes.Should().Be("here are some notes");
             result.SqlStatement.Should().Be("select 1");
             result.RunByDeveloperName.Should().Be("Sam Harris");
-            result.RunDate.Should().BeCloseTo(DateTime.UtcNow, precision: 10000);
+            result.RunDate.Should().BeCloseTo(DateTimeOffset.Now, precision: 10000);
             result.RunOnMachineName.Should().Be(Environment.MachineName);
         }
 
@@ -133,7 +133,7 @@ namespace ScriptScripter.Processor.IntegrationTests.Repositories
         {
             /*************  arrange  ******************/
             var repo = new RevisionRepository();
-            var baseDateTime = DateTime.UtcNow;
+            var baseDateTime = DateTimeOffset.Now;
 
             _databaseUpdater.LogScript(new Data.Models.Script()
             {

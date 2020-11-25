@@ -105,7 +105,7 @@ namespace ScriptScripter.Processor.Services
 
             string runByDeveloperName = SqlSafeString(executedByDeveloperName, maxLength: 255);
             string runOnMachineName = SqlSafeString(Environment.MachineName, maxLength: 255);
-            string runDate = DateTime.UtcNow.ToString();
+            string runDate = DateTimeOffset.Now.ToString();
 
             //why am i not worries about sql injection?  well because this whole tool is you executing whatever you want against the database.  
             //    therefore, you don't need a sql injection to F things up, just freaking run whatever you want
