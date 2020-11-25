@@ -20,7 +20,10 @@ namespace ScriptScripter.DesktopApp.ViewModels
         private readonly Processor.Services.Contracts.IScriptingService _scriptingService;
         private readonly Contracts.IViewModelFaultlessService _viewModelFaultlessService;
 
-        //public DatabaseScriptsViewModel() { }//designer only   //removed because for somereason IoC is using this ctor instead of the correct one
+#if DEBUG //exclude for release becasue for somereason IoC is using this ctor instead of the correct one
+        public DatabaseScriptsViewModel() : base(null) { }//Designer only   
+#endif
+
         public DatabaseScriptsViewModel(NinjaMvvm.Wpf.Abstractions.INavigator navigator,
             Processor.Data.Contracts.IConfigurationRepository configurationRepository,
             Processor.Data.Contracts.IRevisionRepository revisionRepository,

@@ -125,7 +125,9 @@ namespace ScriptScripter.DesktopApp.ViewModels
         private readonly NinjaMvvm.Wpf.Abstractions.INavigator _navigator;
 
 
-        //public MessageBoxViewModel() { }//designer only   //removed because for somereason IoC is using this ctor instead of the correct one
+#if DEBUG //exclude for release becasue for somereason IoC is using this ctor instead of the correct one
+        public MessageBoxViewModel() : base(null) { }//Designer only   
+#endif
 
         public MessageBoxViewModel(NinjaMvvm.Wpf.Abstractions.INavigator navigator,
             NLog.ILogger logger)

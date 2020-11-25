@@ -139,16 +139,21 @@ namespace ScriptScripter.DesktopApp.ViewModels
         /// <summary>
         /// Executes the Commit command 
         /// </summary>
-        public void Commit()
+        public bool Commit()
         {
             if (this.GetValidationResult().IsValid)
             {
 
                 _viewModelFaultlessService.TryExecuteSyncAsAsync(() => this.ExecuteCommit())
                     .OnSuccessAsync(() => _navigator.CloseDialog(this));
+
+                return true;
             }
             else
+            {
                 ShowErrors = true;
+                return false;
+            }
         }
         private void ExecuteCommit()
         {
@@ -203,6 +208,40 @@ namespace ScriptScripter.DesktopApp.ViewModels
         public void Cancel()
         {
             _navigator.CloseDialog(this);
+        }
+
+        #endregion
+
+
+        #region CommitAndApply Command
+
+        private RelayCommand _commitAndApplyCommand;
+        public RelayCommand CommitAndApplyCommand
+        {
+            get
+            {
+                if (_commitAndApplyCommand == null)
+                    _commitAndApplyCommand = new RelayCommand((param) => this.CommitAndApply(), (param) => this.CanCommitAndApply());
+                return _commitAndApplyCommand;
+            }
+        }
+
+        public bool CanCommitAndApply()
+        {
+            return true;
+        }
+
+        /// <summary>
+        /// Executes the CommitAndApply command 
+        /// </summary>
+        public void CommitAndApply()
+        {
+            if (this.Commit())
+            {
+                _navigator.ShowDialog<ApplyScriptsViewModel>(vm => vm.Init(_scriptContainer));
+
+                _navigator.CloseDialog(this);
+            }
         }
 
         #endregion
