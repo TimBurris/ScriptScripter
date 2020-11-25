@@ -20,7 +20,9 @@ namespace ScriptScripter.DesktopApp.ViewModels
         private readonly Processor.Services.Contracts.IEventNotificationService _eventNotificationService;
         private List<ViewModels.DatabaseListViewModel.LineItem> _allLineItems = new List<LineItem>();
 
-        //public DatabaseListViewModel() { }//Designer only   //removed because for somereason IoC is using this ctor instead of the correct one
+#if DEBUG //exclude for release becasue for somereason IoC is using this ctor instead of the correct one
+        public DatabaseListViewModel() : base(null) { }//Designer only   
+#endif
 
         public DatabaseListViewModel(System.IO.Abstractions.IFileSystem fileSystem,
             NinjaMvvm.Wpf.Abstractions.INavigator navigator,
@@ -97,6 +99,7 @@ namespace ScriptScripter.DesktopApp.ViewModels
                    {
                        var lineItem = this.BuildLineItem(scriptContainer, script: null);
                        lineItem.IsFailed = true;
+                       lineItem.FailMessage = "Failed to get script from file";
                        _allLineItems.Add(lineItem);
                    })
                    ;
@@ -125,7 +128,12 @@ namespace ScriptScripter.DesktopApp.ViewModels
                 DeveloperName = script?.DeveloperName,
                 ScriptDate = script == null ? null : script.ScriptDate.LocalDateTime.ToString(),
                 ServerConnectionInfo = this.GetConnectionDisplayText(scriptContainer.CustomServerConnectionParameters),
+                IsFailed = script != null && script.ScriptId == Guid.Empty,
             };
+            if (item.IsFailed)
+            {
+                item.FailMessage = "ScriptId is empty, old version of script file?";
+            }
 
             if (scriptContainer.Tags != null)
                 item.TagNames = string.Join(", ", scriptContainer.Tags);
@@ -452,6 +460,12 @@ namespace ScriptScripter.DesktopApp.ViewModels
             public bool IsFailed
             {
                 get { return GetField<bool>(); }
+                set { SetField(value); }
+            }
+
+            public string FailMessage
+            {
+                get { return GetField<string>(); }
                 set { SetField(value); }
             }
 

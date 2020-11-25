@@ -4,9 +4,12 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:ScriptScripter.DesktopApp.Views"
-                 xmlns:c="clr-namespace:ScriptScripter.DesktopApp.Controls"
+             xmlns:c="clr-namespace:ScriptScripter.DesktopApp.Controls"
              xmlns:u="clr-namespace:ScriptScripter.DesktopApp"
              mc:Ignorable="d" 
+             xmlns:designViewModel="clr-namespace:ScriptScripter.DesktopApp.ViewModels"
+             d:DataContext ="{d:DesignInstance {x:Type designViewModel:DatabaseListViewModel}, IsDesignTimeCreatable=True}" 
+         
              d:DesignHeight="700" d:DesignWidth="500">
     <u:BoundViewBase.Resources>
         <FrameworkElement x:Key="ProxyElement" DataContext="{Binding}"/>
@@ -67,7 +70,10 @@
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
-                            <Label Grid.Column="0" Grid.Row="0" Content="{Binding DatabaseName}" FontSize="18"/>
+                            <StackPanel Grid.Column="0" Grid.Row="0" Orientation="Horizontal">
+                            <Label Content="{Binding DatabaseName}" FontSize="18"/>
+                                <Label Content="{Binding FailMessage}" FontSize="14" FontWeight="Bold" Foreground="{StaticResource ErrorDarkColorBrush}"/>
+                            </StackPanel>
 
                             <StackPanel Grid.Row="0" 
                                     Grid.Column="1" 
