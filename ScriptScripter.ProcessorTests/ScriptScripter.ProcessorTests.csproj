@@ -103,6 +103,7 @@
     <Compile Include="Services\ConfigurationFileUpgradeServiceTests.cs" />
     <Compile Include="Services\CryptoServiceTests.cs" />
     <Compile Include="Services\ScriptContainerWatcherServiceTests.cs" />
+    <Compile Include="Services\ScriptWarningServiceTests.cs" />
     <Compile Include="Services\ScriptingServiceTests.cs" />
   </ItemGroup>
   <ItemGroup>

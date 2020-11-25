@@ -18,13 +18,18 @@ namespace ScriptScripter.DesktopApp.ViewModels
         private readonly Contracts.IViewModelFaultlessService _viewModelFaultlessService;
         private readonly Processor.Data.Contracts.IConfigurationRepository _configurationRepository;
         private readonly Processor.Data.Contracts.IScriptRepositoryFactory _scriptsRepoFactory;
+        private readonly Processor.Services.Contracts.IScriptWarningService _scriptWarningService;
 
-        //public ScriptViewModel() { }//Designer use   //removed because for somereason IoC is using this ctor instead of the correct one
+
+#if DEBUG //exclude for release becasue for somereason IoC is using this ctor instead of the correct one
+        public ScriptViewModel() : base(null) { }//Designer only   
+#endif
 
         public ScriptViewModel(NinjaMvvm.Wpf.Abstractions.INavigator navigator,
             Contracts.IViewModelFaultlessService viewModelFaultlessService,
             Processor.Data.Contracts.IConfigurationRepository configurationRepository,
             Processor.Data.Contracts.IScriptRepositoryFactory scriptsRepoFactory,
+            Processor.Services.Contracts.IScriptWarningService scriptWarningService,
             NLog.ILogger logger)
             : base(logger)
         {
@@ -32,8 +37,18 @@ namespace ScriptScripter.DesktopApp.ViewModels
             this._viewModelFaultlessService = viewModelFaultlessService;
             this._configurationRepository = configurationRepository;
             this._scriptsRepoFactory = scriptsRepoFactory;
+            _scriptWarningService = scriptWarningService;
+
+            this.PropertyChanged += ScriptViewModel_PropertyChanged;
         }
 
+        private void ScriptViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(SqlStatement))
+            {
+                this.CheckForWarnings();
+            }
+        }
 
         public void Init(Processor.Data.Models.ScriptContainer scriptContainer)
         {
@@ -54,6 +69,12 @@ namespace ScriptScripter.DesktopApp.ViewModels
             this.DatabaseName = scriptContainer.DatabaseName;
         }
 
+        protected override void OnUnloaded()
+        {
+            this.PropertyChanged -= ScriptViewModel_PropertyChanged;
+            base.OnUnloaded();
+        }
+
         public string DatabaseName
         {
             get { return GetField<string>(); }
@@ -65,12 +86,38 @@ namespace ScriptScripter.DesktopApp.ViewModels
             set { SetField(value); }
         }
 
-        public string Comments
+        public bool HasSqlWarnings
+        {
+            get { return GetField<bool>(); }
+            set { SetField(value); }
+        }
+
+        public string SqlWarnings
         {
             get { return GetField<string>(); }
             set { SetField(value); }
         }
 
+        public string Comments
+        {
+            get { return GetField<string>(); }
+            set { SetField(value); }
+        }
+        private void CheckForWarnings()
+        {
+            var scriptWarnings = _scriptWarningService.CheckSql(this.SqlStatement);
+            if (scriptWarnings.Any())
+            {
+                this.HasSqlWarnings = true;
+                this.SqlWarnings = string.Join("\r\n", scriptWarnings);
+            }
+            else
+            {
+                this.HasSqlWarnings = false;
+                this.SqlWarnings = null;
+            }
+
+        }
         #region Commit Command
 
         private RelayCommand _commitCommand;
@@ -96,6 +143,7 @@ namespace ScriptScripter.DesktopApp.ViewModels
         {
             if (this.GetValidationResult().IsValid)
             {
+
                 _viewModelFaultlessService.TryExecuteSyncAsAsync(() => this.ExecuteCommit())
                     .OnSuccessAsync(() => _navigator.CloseDialog(this));
             }
@@ -164,6 +212,9 @@ namespace ScriptScripter.DesktopApp.ViewModels
         {
             Comments = "new Table for storing mail accounts item #5495";
             SqlStatement = DesignTimeData.SqlStatements.Items[0];
+
+            //SqlWarnings = "";
+            //HasSqlWarnings = true;
         }
 
         #endregion

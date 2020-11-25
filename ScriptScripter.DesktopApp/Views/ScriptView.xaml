@@ -6,7 +6,9 @@
              xmlns:u="clr-namespace:ScriptScripter.DesktopApp"
              xmlns:local="clr-namespace:ScriptScripter.DesktopApp.Views"
              mc:Ignorable="d" 
-             d:DesignHeight="400" d:DesignWidth="400" InitialDialogHeight="500" InitialDialogWidth="800">
+             xmlns:designViewModel="clr-namespace:ScriptScripter.DesktopApp.ViewModels"
+             d:DataContext ="{d:DesignInstance {x:Type designViewModel:ScriptViewModel}, IsDesignTimeCreatable=True}" 
+             d:DesignHeight="500" d:DesignWidth="800" InitialDialogHeight="500" InitialDialogWidth="800">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -16,17 +18,41 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
+
         <Label Grid.Row="0" Content="{Binding DatabaseName}" 
                FontSize="28" 
                HorizontalAlignment="Center"
                Foreground="{StaticResource AccentColorBrush}"
                FontWeight="Bold"/>
-        
-        <Label Grid.Row="1" Content="SQL Statement(s)"/>
+
+        <StackPanel Grid.Row="1" Orientation="Horizontal">
+            <Label Content="SQL Statement(s)"/>
+            <Rectangle Width="20"
+                       Height="20"
+                       ToolTip="{Binding SqlWarnings}"
+                       Fill="{StaticResource WarningDarkColorBrush}"
+                       Visibility="{Binding HasSqlWarnings, Converter={StaticResource BoolToVis}}">
+                <Rectangle.OpacityMask>
+                    <VisualBrush Stretch="Fill"
+                                         Visual="{StaticResource appbar_warning}" />
+                </Rectangle.OpacityMask>
+            </Rectangle>
+        </StackPanel>
         <TextBox Grid.Row="2" TextWrapping="Wrap" AcceptsReturn="True" 
                  Text="{Binding SqlStatement, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged,NotifyOnValidationError=True, ValidatesOnDataErrors=True}" 
                  ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                 ScrollViewer.VerticalScrollBarVisibility="Auto"/>
+                 ScrollViewer.VerticalScrollBarVisibility="Auto">
+            <TextBox.Style>
+                <Style TargetType="{x:Type TextBox}">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding HasSqlWarnings}" Value="True" >
+                            <Setter Property="Background" Value="{StaticResource WarningColorBrush}"/>
+                            <Setter Property="BorderBrush" Value="{StaticResource WarningDarkColorBrush}"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </TextBox.Style>
+        </TextBox>
 
         <Label Grid.Row="3" Content="Comments"/>
         <TextBox Grid.Row="4" Height="40" TextWrapping="Wrap" AcceptsReturn="True"
