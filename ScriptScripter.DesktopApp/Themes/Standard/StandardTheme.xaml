@@ -22,7 +22,7 @@
         <GradientStop Color="{StaticResource GrayBrush10}" Offset="0"/>
         <GradientStop Color="DarkGray" Offset="1"/>
     </LinearGradientBrush>
-    
+
     <SolidColorBrush x:Key="ValidColorBrush" Color="#dff0d8"/>
     <SolidColorBrush x:Key="ValidDarkColorBrush" Color="#3c763d"/>
 
@@ -34,7 +34,19 @@
 
     <SolidColorBrush x:Key="ErrorColorBrush" Color="#FFBABA"/>
     <SolidColorBrush x:Key="ErrorDarkColorBrush"  Color="#D8000C"/>
-
+    <!--if do not have this style, the problem will appear.-->
+    <Style TargetType="ToolTip" BasedOn="{StaticResource MetroToolTip}">
+        <Setter Property="Background" Value="{DynamicResource GrayBrush1}"/>
+        <Setter Property="Foreground" Value="{StaticResource IdealForegroundColorBrush}"/>
+    </Style>
+    <Style TargetType="Button" BasedOn="{StaticResource MetroButton}" >
+        <!-- one minute-->
+        <Setter Property="ToolTipService.ShowDuration" Value="60000"/>
+    </Style>
+    <Style TargetType="Rectangle">
+        <!-- one minute-->
+        <Setter Property="ToolTipService.ShowDuration" Value="60000"/>
+    </Style>
     <Style x:Key="MessagePanel" TargetType="{x:Type Border}">
         <Setter Property="BorderThickness" Value="5"/>
         <Setter Property="CornerRadius" Value="8"/>
@@ -42,7 +54,7 @@
     </Style>
 
     <Style x:Key="ValidBox" BasedOn="{StaticResource MessagePanel}" TargetType="{x:Type Border}">
-       <Setter Property="Background" Value="{StaticResource ValidColorBrush}"/>
+        <Setter Property="Background" Value="{StaticResource ValidColorBrush}"/>
         <Setter Property="BorderBrush" Value="{StaticResource ValidDarkColorBrush}"/>
 
         <Style.Resources>
