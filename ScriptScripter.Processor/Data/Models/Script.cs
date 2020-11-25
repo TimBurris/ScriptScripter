@@ -15,9 +15,13 @@ namespace ScriptScripter.Processor.Data.Models
         public string SqlStatement { get; set; }
         public string DeveloperName { get; set; }
         public string Notes { get; set; }
+
         [System.Xml.Serialization.XmlIgnore]
         public DateTimeOffset ScriptDate { get; set; }
 
+        /// <summary>
+        /// this property exists only as a hack to solve xml serializer's inability to serialize datetimeoffset
+        /// </summary>
         [System.Xml.Serialization.XmlElement("ScriptDate")]
         public string XScriptDateForXml // format: 2011-11-11T15:05:46.4733406+01:00
         {
