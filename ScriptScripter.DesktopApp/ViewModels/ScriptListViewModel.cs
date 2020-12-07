@@ -1,4 +1,5 @@
-﻿using NinjaMvvm;
+﻿
+using NinjaMvvm;
 using NinjaMvvm.Wpf;
 using System;
 using System.Collections.Generic;
@@ -16,13 +17,14 @@ namespace ScriptScripter.DesktopApp.ViewModels
         private readonly Processor.Data.Contracts.IScriptRepositoryFactory _scriptRepoFactory;
         private readonly Processor.Services.Contracts.IScriptingService _scriptingService;
         private readonly Processor.Data.Contracts.IConfigurationRepository _configurationRepository;
-
+        private readonly FaultlessExecution.Abstractions.IFaultlessExecutionService _faultlessExecutionService;
 
         public ScriptListViewModel(NinjaMvvm.Wpf.Abstractions.INavigator navigator,
             Contracts.IViewModelFaultlessService viewModelFaultlessService,
             Processor.Data.Contracts.IScriptRepositoryFactory scriptRepoFactory,
             Processor.Services.Contracts.IScriptingService scriptingService,
             Processor.Data.Contracts.IConfigurationRepository configurationRepository,
+            FaultlessExecution.Abstractions.IFaultlessExecutionService faultlessExecutionService,
             NLog.ILogger logger)
             : base(logger)
         {
@@ -31,6 +33,7 @@ namespace ScriptScripter.DesktopApp.ViewModels
             _scriptRepoFactory = scriptRepoFactory;
             this._scriptingService = scriptingService;
             this._configurationRepository = configurationRepository;
+            _faultlessExecutionService = faultlessExecutionService;
         }
 
         public void Init(Processor.Data.Models.ScriptContainer scriptContainer)
@@ -78,8 +81,12 @@ namespace ScriptScripter.DesktopApp.ViewModels
                 return false;
             var allScripts = scriptsResult.ReturnValue;
 
-            var toRunResult = await _viewModelFaultlessService
+            //not going to show any connection error, just try it, if it's no there, no worries we can move forward without it
+            var toRunResult = await _faultlessExecutionService
                                     .TryExecuteSyncAsAsync(() => _scriptingService.GetScriptsThatNeedRun(this.GetDatabaseConnectionParameters(), _scriptContainer.ScriptFilePath));
+
+            if (cancellationToken.IsCancellationRequested)
+                return false;
 
             HashSet<Guid> scriptsToRun;
             //it's ok if we don't have this, we can continue without it
