@@ -160,7 +160,8 @@ namespace ScriptScripter.Processor.Services
 
         public Dto.ActionResult TryCreateScriptContainer(string scriptFilePath)
         {
-            if (_fileSystem.File.Exists(scriptFilePath))
+            var fle = _fileSystem.FileInfo.FromFileName(scriptFilePath);
+            if (fle.Exists)
             {
                 return Dto.ActionResult.FailedResult("The file already exists");
             }
@@ -168,6 +169,11 @@ namespace ScriptScripter.Processor.Services
             {
                 try
                 {
+                    if (!fle.Directory.Exists)
+                    {
+                        fle.Directory.Create();
+                    }
+
                     using (var stream = _fileSystem.File.Create(scriptFilePath))
                     {
 
