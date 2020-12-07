@@ -31,5 +31,8 @@ namespace ScriptScripter.Processor.Services.Contracts
         Task<Dto.ActionResult> TestServerConnectionAsync(Data.Models.ServerConnectionParameters connectionParameters);
         Task<Dto.ActionResult> TestServerConnectionAsync(Data.Models.ServerConnectionParameters connectionParameters, System.Threading.CancellationToken cancellationToken);
 
+        Dto.ActionResult TestScriptContainerExists(string scriptFilePath);
+
+        Dto.ActionResult TryCreateScriptContainer(string scriptFilePath);
     }
 }

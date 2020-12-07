@@ -25,6 +25,7 @@ namespace ScriptScripter.Processor.Services.Tests
         private Mock<Processor.Data.Contracts.IRevisionRepository> _mockRevisionRepo = new Mock<Data.Contracts.IRevisionRepository>();
         private Mock<Processor.Data.Contracts.IScriptRepositoryFactory> _mockScriptRepoFactory = new Mock<Data.Contracts.IScriptRepositoryFactory>();
         private Mock<Processor.Data.Contracts.IScriptsRepository> _mockScriptRepo = new Mock<Data.Contracts.IScriptsRepository>();
+        private Mock<System.IO.Abstractions.IFileSystem> _mockFileSystem = new Mock<System.IO.Abstractions.IFileSystem>();
 
 
         //in y our tests, simply fill these two lists with data to test against
@@ -48,7 +49,7 @@ namespace ScriptScripter.Processor.Services.Tests
             _mockScriptRepo.Setup(m => m.GetAllScripts())
                 .Returns(() => _scripts);
 
-            _service = new ScriptingService(dbupdaterFactory: null, scriptRepoFactory: _mockScriptRepoFactory.Object, configurationRepository: null, revisionRepository: _mockRevisionRepo.Object);
+            _service = new ScriptingService(dbupdaterFactory: null, scriptRepoFactory: _mockScriptRepoFactory.Object, configurationRepository: null, revisionRepository: _mockRevisionRepo.Object, fileSystem: _mockFileSystem.Object);
 
             //go ahed and prime the lists to have equal rev and scripts
             this.FillEqualScriptsAndRevisions();

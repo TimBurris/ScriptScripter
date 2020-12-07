@@ -19,6 +19,7 @@ namespace ScriptScripter.DesktopApp.ViewModels
         private readonly Processor.Data.Contracts.IConfigurationRepository _configurationRepository;
         private readonly Processor.Data.Contracts.IScriptRepositoryFactory _scriptsRepoFactory;
         private readonly Processor.Services.Contracts.IScriptWarningService _scriptWarningService;
+        private readonly Processor.Services.Contracts.IScriptingService _scriptingService;
 
 
 #if DEBUG //exclude for release becasue for somereason IoC is using this ctor instead of the correct one
@@ -30,6 +31,7 @@ namespace ScriptScripter.DesktopApp.ViewModels
             Processor.Data.Contracts.IConfigurationRepository configurationRepository,
             Processor.Data.Contracts.IScriptRepositoryFactory scriptsRepoFactory,
             Processor.Services.Contracts.IScriptWarningService scriptWarningService,
+            Processor.Services.Contracts.IScriptingService scriptingService,
             NLog.ILogger logger)
             : base(logger)
         {
@@ -38,7 +40,7 @@ namespace ScriptScripter.DesktopApp.ViewModels
             this._configurationRepository = configurationRepository;
             this._scriptsRepoFactory = scriptsRepoFactory;
             _scriptWarningService = scriptWarningService;
-
+            _scriptingService = scriptingService;
             this.PropertyChanged += ScriptViewModel_PropertyChanged;
         }
 
@@ -143,6 +145,36 @@ namespace ScriptScripter.DesktopApp.ViewModels
         {
             if (this.GetValidationResult().IsValid)
             {
+                if (!_scriptingService.TestScriptContainerExists(_scriptContainer.ScriptFilePath).WasSuccessful)
+                {
+                    var result = _navigator.ShowDialog<MessageBoxViewModel>(vm =>
+                    {
+                        vm.ViewTitle = "Script Container Missing";
+                        vm.Message = $"The Script Container '{_scriptContainer.ScriptFilePath}' does not exist, would you like to create it?";
+                        vm.SetButtons(MessageBoxViewModel.MessageBoxButton.YesNo);
+                    });
+
+                    if (result.ViewResult == MessageBoxViewModel.MessageBoxResult.Yes)
+                    {
+                        var createResult = _scriptingService.TryCreateScriptContainer(_scriptContainer.ScriptFilePath);
+
+                        if (!createResult.WasSuccessful)
+                        {
+                            _navigator.ShowDialog<MessageBoxViewModel>(vm =>
+                            {
+                                vm.ViewTitle = "Failed";
+                                vm.Message = "Could not create the script container";
+                                vm.SetButtons(MessageBoxViewModel.MessageBoxButton.OK);
+                            });
+
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
 
                 _viewModelFaultlessService.TryExecuteSyncAsAsync(() => this.ExecuteCommit())
                     .OnSuccessAsync(() => _navigator.CloseDialog(this));
@@ -157,6 +189,7 @@ namespace ScriptScripter.DesktopApp.ViewModels
         }
         private void ExecuteCommit()
         {
+
             var repo = _scriptsRepoFactory.GetScriptsRepository(_scriptContainer.ScriptFilePath);
 
             if (_scriptInEdit == null)

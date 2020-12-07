@@ -11,17 +11,20 @@ namespace ScriptScripter.Processor.Services
         private Contracts.IDatabaseUpdaterFactory _databaseUpdaterFactory;
         private Data.Contracts.IScriptRepositoryFactory _scriptRepoFactory;
         private Data.Contracts.IConfigurationRepository _configurationRepository;
+        private System.IO.Abstractions.IFileSystem _fileSystem;
         private Data.Contracts.IRevisionRepository _revisionRepository;
 
         public ScriptingService(Contracts.IDatabaseUpdaterFactory dbupdaterFactory,
             Data.Contracts.IScriptRepositoryFactory scriptRepoFactory,
             Data.Contracts.IRevisionRepository revisionRepository,
-            Data.Contracts.IConfigurationRepository configurationRepository)
+            Data.Contracts.IConfigurationRepository configurationRepository,
+            System.IO.Abstractions.IFileSystem fileSystem)
         {
             _databaseUpdaterFactory = dbupdaterFactory;
             _scriptRepoFactory = scriptRepoFactory;
             _revisionRepository = revisionRepository;
             _configurationRepository = configurationRepository;
+            _fileSystem = fileSystem;
         }
 
         //TODO: tests for apply scripts
@@ -117,7 +120,7 @@ namespace ScriptScripter.Processor.Services
                     }
                 }
             }
-            return scripts.OrderBy(x=>x.ScriptDate).ToList();
+            return scripts.OrderBy(x => x.ScriptDate).ToList();
         }
 
         public Contracts.DatabaseScriptStates GetDatabaseScriptState(Data.Models.DatabaseConnectionParameters databaseConnectionParams, string scriptFilePath)
@@ -141,6 +144,42 @@ namespace ScriptScripter.Processor.Services
             //ok, all that's left then is that they are equal, so it's up to date
 
             return Contracts.DatabaseScriptStates.UpToDate;
+        }
+
+        public Dto.ActionResult TestScriptContainerExists(string scriptFilePath)
+        {
+            if (_fileSystem.File.Exists(scriptFilePath))
+            {
+                return Dto.ActionResult.SuccessResult();
+            }
+            else
+            {
+                return Dto.ActionResult.FailedResult("Script Container file does not exist");
+            }
+        }
+
+        public Dto.ActionResult TryCreateScriptContainer(string scriptFilePath)
+        {
+            if (_fileSystem.File.Exists(scriptFilePath))
+            {
+                return Dto.ActionResult.FailedResult("The file already exists");
+            }
+            else
+            {
+                try
+                {
+                    using (var stream = _fileSystem.File.Create(scriptFilePath))
+                    {
+
+                    }
+                }
+                catch
+                {
+                    return Dto.ActionResult.FailedResult("Failed to create Script Container file");
+                }
+
+                return Dto.ActionResult.SuccessResult();
+            }
         }
 
         public async Task<Dto.ActionResult> TestServerConnectionAsync(Data.Models.ServerConnectionParameters connectionParameters)
