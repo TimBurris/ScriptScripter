@@ -164,7 +164,11 @@ namespace ScriptScripter.DesktopApp.ViewModels
             var script = _scriptsToRun.Single(s => s.ScriptId == lineItem.ScriptId);
 
 
-            _navigator.ShowDialog<ScriptViewModel>(vm => vm.Init(_scriptContainer, script));
+            _navigator.ShowDialog<ScriptViewModel>(vm =>
+            {
+                vm.Init(_scriptContainer, script);
+                vm.AllowApplyScripts = false;//we are already in apply, so if we allow this button they get into a popup nightmare
+            });
 
             this.ReloadDataAsync();
         }

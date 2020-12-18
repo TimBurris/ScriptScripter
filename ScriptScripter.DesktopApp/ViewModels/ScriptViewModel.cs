@@ -42,6 +42,8 @@ namespace ScriptScripter.DesktopApp.ViewModels
             _scriptWarningService = scriptWarningService;
             _scriptingService = scriptingService;
             this.PropertyChanged += ScriptViewModel_PropertyChanged;
+
+            this.AllowApplyScripts = true;//default is on, but some peeps might want to disable that (like if you are editing a script from the apply scripts view)
         }
 
         private void ScriptViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -75,6 +77,13 @@ namespace ScriptScripter.DesktopApp.ViewModels
         {
             this.PropertyChanged -= ScriptViewModel_PropertyChanged;
             base.OnUnloaded();
+        }
+
+
+        public bool AllowApplyScripts
+        {
+            get { return GetField<bool>(); }
+            set { SetField(value); }
         }
 
         public string DatabaseName
@@ -261,7 +270,7 @@ namespace ScriptScripter.DesktopApp.ViewModels
 
         public bool CanCommitAndApply()
         {
-            return true;
+            return this.AllowApplyScripts;
         }
 
         /// <summary>
