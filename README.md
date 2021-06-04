@@ -23,30 +23,34 @@ It is not magic.  SS only changes the database in the ways you tell it to. SS do
 #Screen Shots
 ##Home
 Shows a list of databases/script files you use (can be as many as you want)
-![image.png](/.attachments/image-19114b42-e491-4a5d-aa3d-480a85884557.png)
+![image](https://user-images.githubusercontent.com/34189654/120796506-e35f0e80-c508-11eb-9db7-b6972abcec82.png)
+
 
 ##Status (Up to date)
 Shows whether or not a particular database is up to date
-![image.png](/.attachments/image-d1b575d3-d059-4e2b-86d2-40cf8a9d68d6.png)
+![image](https://user-images.githubusercontent.com/34189654/120796532-eb1eb300-c508-11eb-9d59-4ad84697e0dc.png)
+
 
 ##New Script
 Record a new script
-![image.png](/.attachments/image-df52b8f0-d2c0-4402-943c-6c65d968c1b1.png)
+![image](https://user-images.githubusercontent.com/34189654/120796546-efe36700-c508-11eb-95dd-9a3df96960ef.png)
+
 
 ##Status (Out of Date)
 Shows that you have one or more scripts that need to be applied
-![image.png](/.attachments/image-20f6f54e-bbdc-4fc3-9d43-c74022e3fe77.png)
+![image](https://user-images.githubusercontent.com/34189654/120796567-f5d94800-c508-11eb-9fde-140efcbe03f7.png)
+
 
 ##Prepare to apply scripts (aka 'Release the Ninja')
 Shows the scripts that will be applied 
-![image.png](/.attachments/image-2855cae0-ba32-4924-b67a-58fc929beb10.png)
+![image](https://user-images.githubusercontent.com/34189654/120796577-f96ccf00-c508-11eb-85d5-ed9a0d5b3680.png)
 
 ##Progress
 as scripts are applied, they show green
-![image.png](/.attachments/image-1566e14b-ee0c-4e7b-93f2-6ca2a41ac8e6.png)
+![image](https://user-images.githubusercontent.com/34189654/120796593-fe318300-c508-11eb-88c1-ca10c32eb908.png)
 
 ##All done
-![image.png](/.attachments/image-f60c88b9-a4d2-4e00-b38b-7846d6fc9407.png)
+![image](https://user-images.githubusercontent.com/34189654/120796621-05589100-c509-11eb-973d-58e2abd48633.png)
 
 #Sql Server 
 SS uses Microsoft Sql Server SMO libraries to execute scripts, this means that you can use the exact same query syntax that you use in Sql Server Management Studio, including "GO" 
@@ -102,7 +106,9 @@ A command line tool is available for automating the act of applying the scripts 
 If you've used SS to apply scripts, you have probably run across our mascot, "The Dumpster Ninja".
 This Ninja was discovered on a website in the early 2000's (I think around 2004) and immediately added to ScriptScripter.  Without him, we are pretty sure a black hole will swallow this planet, or worse your database scripts will absolutely fail to run.
 The original web source of The Dumpster Ninja is not being revealed for fear he may unleash his real, ultimate power.
-![image.png](/.attachments/image-f83df442-65c3-44f9-bca7-0d3e6da072c7.png)
+![image](https://user-images.githubusercontent.com/34189654/120796651-0d183580-c509-11eb-8380-1cf8e05cb234.png)
+
+
 #Contributers
 Shout out to two other developers who played a huge role in ScriptScripter over the past 2 decades: 
 Jeff Ciucci and Jay Collins!
