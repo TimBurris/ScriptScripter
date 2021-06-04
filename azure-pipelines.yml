@@ -60,5 +60,5 @@ steps:
 - task: PublishBuildArtifacts@1
   inputs:
     PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-    ArtifactName: 'ScripScripter_'
+    ArtifactName: '$(Build.BuildNumber)'
     publishLocation: 'Container'
