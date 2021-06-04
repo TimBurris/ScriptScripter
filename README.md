@@ -1,7 +1,7 @@
 [![Build Status](https://burristech.visualstudio.com/ScriptScripter/_apis/build/status/ScriptScripter.DesktopApp?branchName=master)](https://burristech.visualstudio.com/ScriptScripter/_build/latest?definitionId=1&branchName=master)
 [[_TOC_]]
 
-#What is ScriptScripter?
+# What is ScriptScripter?
 ScriptScripter (SS) is a utility built to assist developers with database versioning when using a database first approach.  The idea is simple, any change that you want to make to a database's structure/schema, you write T-Sql and commit it via SS. Using SS, scripts get applied to databases, in the order they were recorded.  The database keeps track of which scripts have been applied, allowing subsequent executions of SS to only apply new scripts.
 
 #Simple Workflow Example
