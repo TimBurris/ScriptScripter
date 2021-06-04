@@ -4,7 +4,7 @@
 # What is ScriptScripter?
 ScriptScripter (SS) is a utility built to assist developers with database versioning when using a database first approach.  The idea is simple, any change that you want to make to a database's structure/schema, you write T-Sql and commit it via SS. Using SS, scripts get applied to databases, in the order they were recorded.  The database keeps track of which scripts have been applied, allowing subsequent executions of SS to only apply new scripts.
 
-#Simple Workflow Example
+# Simple Workflow Example
 In its most simple form the workflow looks like this:
 - Write the T-Sql to alter your database
 - Record in Script File using SS
@@ -14,45 +14,45 @@ In its most simple form the workflow looks like this:
 - Use SS to apply scripts(s) to dev DB to stay up to date with the team
 - Use SS to apply Scripts to Test/Production database during Deployment
 
-#Who is it for?
+# Who is it for?
 Software Developers who want complete and total control over how their database changes throughout the development of a software product.  Developers must be interested and willing to write (or generate) the t-sql required to add or change the capabilities of the database.  
 
-#What is it not?
+# What is it not?
 It is not magic.  SS only changes the database in the ways you tell it to. SS doesn't _figure out_ how the database should be changed. 
 
-#Screen Shots
-##Home
+# Screen Shots
+## Home
 Shows a list of databases/script files you use (can be as many as you want)
 ![image](https://user-images.githubusercontent.com/34189654/120796506-e35f0e80-c508-11eb-9db7-b6972abcec82.png)
 
 
-##Status (Up to date)
+## Status (Up to date)
 Shows whether or not a particular database is up to date
 ![image](https://user-images.githubusercontent.com/34189654/120796532-eb1eb300-c508-11eb-9d59-4ad84697e0dc.png)
 
 
-##New Script
+## New Script
 Record a new script
 ![image](https://user-images.githubusercontent.com/34189654/120796546-efe36700-c508-11eb-95dd-9a3df96960ef.png)
 
 
-##Status (Out of Date)
+## Status (Out of Date)
 Shows that you have one or more scripts that need to be applied
 ![image](https://user-images.githubusercontent.com/34189654/120796567-f5d94800-c508-11eb-9fde-140efcbe03f7.png)
 
 
-##Prepare to apply scripts (aka 'Release the Ninja')
+## Prepare to apply scripts (aka 'Release the Ninja')
 Shows the scripts that will be applied 
 ![image](https://user-images.githubusercontent.com/34189654/120796577-f96ccf00-c508-11eb-85d5-ed9a0d5b3680.png)
 
-##Progress
+## Progress
 as scripts are applied, they show green
 ![image](https://user-images.githubusercontent.com/34189654/120796593-fe318300-c508-11eb-88c1-ca10c32eb908.png)
 
-##All done
+## All done
 ![image](https://user-images.githubusercontent.com/34189654/120796621-05589100-c509-11eb-973d-58e2abd48633.png)
 
-#Sql Server 
+# Sql Server 
 SS uses Microsoft Sql Server SMO libraries to execute scripts, this means that you can use the exact same query syntax that you use in Sql Server Management Studio, including "GO" 
 
 #Other Database Engines
@@ -92,23 +92,23 @@ GO
 alter table Test alter column MyCol bit NOT NULL
 ```
 
-#Multiple Databases
+# Multiple Databases
 The SS desktop app lets you manage multiple database script files, but the script files and databases are managed completely independent of one another.  You apply scripts to one database at a time, the fact that SS lets you manage multiple databases is just mean to be a convenience, so that you can run SS on your PC and see all the databases you work with.
 
 #Why XML instead of Json
 The issue with Json is that it makes a much less friendly file for Text Editors because Json doesn't allow line breaks in property values.  This means that a multi-line sql statement has to be written on a single line with \r\n literals, this makes it almost impossible to actually read the sql statements in a text editor.  As a result, we have continued to use Xml.
  
-#Command Line Tool
+# Command Line Tool
 A command line tool is available for automating the act of applying the scripts to a database; useful in an Azure Devops Deployment Pipeline or any other automated deployment script
 [Using scriptscripter.command.exe](/CommandLine)
 
-#Our Mascot
+# Our Mascot
 If you've used SS to apply scripts, you have probably run across our mascot, "The Dumpster Ninja".
 This Ninja was discovered on a website in the early 2000's (I think around 2004) and immediately added to ScriptScripter.  Without him, we are pretty sure a black hole will swallow this planet, or worse your database scripts will absolutely fail to run.
 The original web source of The Dumpster Ninja is not being revealed for fear he may unleash his real, ultimate power.
 ![image](https://user-images.githubusercontent.com/34189654/120796651-0d183580-c509-11eb-8380-1cf8e05cb234.png)
 
 
-#Contributers
+# Contributers
 Shout out to two other developers who played a huge role in ScriptScripter over the past 2 decades: 
 Jeff Ciucci and Jay Collins!
