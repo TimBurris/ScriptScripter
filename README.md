@@ -100,7 +100,7 @@ The issue with Json is that it makes a much less friendly file for Text Editors 
  
 # Command Line Tool
 A command line tool is available for automating the act of applying the scripts to a database; useful in an Azure Devops Deployment Pipeline or any other automated deployment script
-[Using scriptscripter.command.exe](/CommandLine)
+[Using scriptscripter.command.exe](/Wiki/CommandLine)
 
 # Our Mascot
 If you've used SS to apply scripts, you have probably run across our mascot, "The Dumpster Ninja".
