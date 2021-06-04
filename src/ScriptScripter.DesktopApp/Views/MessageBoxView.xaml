@@ -1,0 +1,67 @@
+﻿<u:BoundViewBase x:Class="ScriptScripter.DesktopApp.Views.MessageBoxView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:u="clr-namespace:ScriptScripter.DesktopApp"
+             xmlns:local="clr-namespace:ScriptScripter.DesktopApp.Views"
+             mc:Ignorable="d" 
+             xmlns:designViewModel="clr-namespace:ScriptScripter.DesktopApp.ViewModels"
+             d:DataContext ="{d:DesignInstance {x:Type designViewModel:MessageBoxViewModel}, IsDesignTimeCreatable=True}" 
+             MinHeight="150"
+            MinWidth="250"
+            MaxWidth="600"
+             InitialDialogHeight="200" InitialDialogWidth="600">
+    <Grid>
+        <!--Content-->
+        <DockPanel VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="3,3,3,3">
+            <Image DockPanel.Dock="Left" VerticalAlignment="top" HorizontalAlignment="Left" Margin="10,10,0,1" Stretch="Uniform" 
+                           MaxHeight="32" MaxWidth="32" Source="{Binding IconSource}"/>
+            <TextBlock DockPanel.Dock="Top" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="10,10,10,10"
+                               Text="{Binding Message, Mode=OneTime}" TextWrapping="Wrap"/>
+            <DockPanel  VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Margin="0,0,3,3" 
+                                DockPanel.Dock="Bottom">
+                <Button Margin="5" 
+                        Width="100"
+                        DockPanel.Dock="Right" Focusable="True" 
+                            Style="{StaticResource AccentButton}" 
+                                Command="{Binding CancelCommand}"      
+                                Visibility="{Binding CanCancel, Converter={StaticResource BoolToVis}}" Content="Cancel"/>
+
+                <Button Margin="5" 
+                        Width="100"
+                        DockPanel.Dock="Right" Focusable="True" 
+                            Style="{StaticResource AccentButton}" 
+                                Command="{Binding OKCommand}"      
+                                Visibility="{Binding CanOK, Converter={StaticResource BoolToVis}}" Content="OK"/>
+
+                <Button Margin="5" 
+                        Width="100"
+                        DockPanel.Dock="Right" Focusable="True" 
+                            Style="{StaticResource AccentButton}" 
+                                Command="{Binding NoCommand}"      
+                                Visibility="{Binding CanNo, Converter={StaticResource BoolToVis}}" Content="No"/>
+
+                <Button Margin="5" 
+                        Width="100"
+                        DockPanel.Dock="Right" Focusable="True"  
+                            Style="{StaticResource AccentButton}" 
+                                Command="{Binding YesCommand}"      
+                                Visibility="{Binding CanYes, Converter={StaticResource BoolToVis}}" Content="Yes"/>
+
+                <Label Padding="5,5,5,5" Margin="3,0,3,0" DockPanel.Dock="Left" Focusable="True"
+                               Visibility="{Binding CanShowMoreDetails, Converter={StaticResource BoolToVis}}">
+                    <Hyperlink Command="{Binding ShowMoreDetailsCommand}" >
+                        <TextBlock Text="{Binding MoreDetailsCaption}"/>
+                    </Hyperlink>
+                </Label>
+
+            </DockPanel>
+            <ScrollViewer Visibility="{Binding DisplayMoreDetails, Converter={StaticResource BoolToVis}}">
+                <TextBlock VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="10,10,10,10"
+                           Text="{Binding MoreDetailsMessage, Mode=OneTime}" TextWrapping="Wrap"/>
+            </ScrollViewer>
+        </DockPanel>
+    </Grid>
+
+</u:BoundViewBase>

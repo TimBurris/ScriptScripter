@@ -1,0 +1,79 @@
+﻿<Application x:Class="ScriptScripter.DesktopApp.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:ScriptScripter.DesktopApp"
+             xmlns:v="clr-namespace:ScriptScripter.DesktopApp.Views"
+             xmlns:vm="clr-namespace:ScriptScripter.DesktopApp.ViewModels"
+             xmlns:Converters="clr-namespace:ScriptScripter.DesktopApp.Converters"
+             Startup="Application_Startup">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+               
+                <ResourceDictionary Source="Themes/Standard/StandardTheme.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
+
+            <BooleanToVisibilityConverter x:Key="BoolToVis"/>
+            <Converters:NegativeBooleanToVisibilityConverter x:Key="NegativeBoolToVis"/>
+            <Converters:NegativeBooleanConverter x:Key="NegativeBool"/>
+
+            <Style x:Key="EnhancedDataGridStyle" TargetType="DataGrid" BasedOn="{StaticResource ThemedDataGrid}">
+                <Setter Property="TextOptions.TextFormattingMode" Value="Display"/>
+                <Setter Property="RenderOptions.ClearTypeHint" Value="Enabled"/>
+                <Setter Property="Margin" Value="5"/>
+                <Setter Property="SelectionUnit" Value="FullRow"/>
+                <Setter Property="GridLinesVisibility" Value="All"/>
+                <Setter Property="AutoGenerateColumns" Value="False"/>
+                <Setter Property="CanUserAddRows" Value="False"/>
+                <Setter Property="CanUserDeleteRows" Value="False"/>
+                <Setter Property="CanUserReorderColumns" Value="False"/>
+                <Setter Property="IsReadOnly" Value="True"/>
+                <Setter Property="RowHeaderWidth" Value="0"/>
+                <Setter Property="SelectionMode" Value="Single"/>
+                <!--<Setter Property="AlternatingRowBackground" Value="{StaticResource GrayBrush10}" />-->
+                <!--<Setter Property="SelectionMode" Value="Single"/> took this off so easy copy/paste to excel-->
+            </Style>
+
+
+            <!-- ViewModel to views-->
+            <DataTemplate DataType="{x:Type vm:ScriptViewModel}">
+                <v:ScriptView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:DatabaseScriptsViewModel}">
+                <v:DatabaseScriptsView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:ApplyScriptsViewModel}">
+                <v:ApplyScriptsView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:DatabaseListViewModel}">
+                <v:DatabaseListView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:DatabaseConnectionViewModel}">
+                <v:DatabaseConnectionView/>
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:MessageBoxViewModel}">
+                <v:MessageBoxView/>
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:DeveloperNameViewModel}">
+                <v:DeveloperNameView/>
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:AddDatabaseViewModel}">
+                <v:AddEditDatabaseView/>
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:EditDatabaseViewModel}">
+                <v:AddEditDatabaseView/>
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:RetryActionViewModel}">
+                <v:RetryActionView/>
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:SelectThemeViewModel}">
+                <v:SelectThemeView/>
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:ScriptListViewModel}">
+                <v:ScriptListView/>
+            </DataTemplate>
+
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

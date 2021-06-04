@@ -1,0 +1,66 @@
+﻿<u:BoundViewBase x:Class="ScriptScripter.DesktopApp.Views.AddEditDatabaseView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:u="clr-namespace:ScriptScripter.DesktopApp"
+             xmlns:controls="clr-namespace:ScriptScripter.DesktopApp.Controls"
+             xmlns:local="clr-namespace:ScriptScripter.DesktopApp.Views"
+             mc:Ignorable="d" 
+             xmlns:designViewModel="clr-namespace:ScriptScripter.DesktopApp.ViewModels"
+             d:DataContext ="{d:DesignInstance {x:Type designViewModel:AddDatabaseViewModel}, IsDesignTimeCreatable=True}" 
+             d:DesignHeight="420" d:DesignWidth="550" InitialDialogWidth="550">
+    <StackPanel>
+        <Label  Content="Database Name"/>
+        <TextBox Text="{Binding DatabaseName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=True, ValidatesOnDataErrors=True}" />
+
+        <Label  Content="Script File"/>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <TextBox x:Name="ScriptFileBox" 
+                     Grid.Column="0"
+                     VerticalAlignment="Center"
+                     Text="{Binding ScriptFile, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=True, ValidatesOnDataErrors=True}" 
+                 />
+            <TextBlock IsHitTestVisible="False" 
+                       Text="Type, Drag/drop or select file" 
+                       VerticalAlignment="Center" 
+                       HorizontalAlignment="Left" Margin="5,0,0,0" Foreground="DarkGray">
+                <TextBlock.Style>
+                    <Style TargetType="{x:Type TextBlock}">
+                        <Setter Property="Visibility" Value="Collapsed"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Text, ElementName=ScriptFileBox}" Value="">
+                                <Setter Property="Visibility" Value="Visible"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
+
+            <Button Grid.Column="1" Content="..." 
+                    Margin="5,0,0,0" Width="25"
+                    Command="{Binding SelectFileCommand}"
+                    />
+        </Grid>
+
+        <Label  Content="Tags"/>
+        <controls:TextToTagControl TagListSource="{Binding Tags}"/>
+        
+        <Label  Content="Database Connection"/>
+        <CheckBox Content="Use application default" 
+                  IsChecked="{Binding UseDefaultDatabaseConnection}"/>
+        <GroupBox Header="Custom Connection Info" 
+                  Margin="10"
+                  Visibility="{Binding UseDefaultDatabaseConnection, Converter={StaticResource NegativeBoolToVis}}">
+            <controls:DatabaseConnectionControl DataContext="{Binding DatabaseConnectionControlVM}"           />
+        </GroupBox>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,0">
+            <Button Content="Save" Width="100" IsDefault="True" Command="{Binding SaveCommand}" Style="{StaticResource AccentButton}" Margin="5"/>
+            <Button Content="Cancel"  Width="100" IsCancel="True" Command="{Binding CancelCommand}" Margin="5"/>
+        </StackPanel>
+    </StackPanel>
+</u:BoundViewBase>

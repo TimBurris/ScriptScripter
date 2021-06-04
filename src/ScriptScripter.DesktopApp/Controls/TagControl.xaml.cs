@@ -1,0 +1,61 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
+
+namespace ScriptScripter.DesktopApp.Controls
+{
+    /// <summary>
+    /// Interaction logic for TagControl.xaml
+    /// </summary>
+    public partial class TagControl : UserControl
+    {
+        public TagControl()
+        {
+            InitializeComponent();
+            this.MouseUp += TagControl_MouseUp;
+        }
+
+        private void TagControl_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            this.IsSelected = !this.IsSelected;
+        }
+
+        public bool IsSelected
+        {
+            get { return (bool)GetValue(IsSelectedProperty); }
+            set { SetValue(IsSelectedProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for IsSelected.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty IsSelectedProperty =
+            DependencyProperty.Register("IsSelected", typeof(bool), typeof(TagControl), new FrameworkPropertyMetadata()
+            {
+                BindsTwoWayByDefault = true,
+                DefaultValue = false
+            });
+
+
+        public string Text
+        {
+            get { return (string)GetValue(TextProperty); }
+            set { SetValue(TextProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for Text.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty TextProperty =
+            DependencyProperty.Register("Text", typeof(string), typeof(TagControl), new PropertyMetadata(""));
+
+
+    }
+}
