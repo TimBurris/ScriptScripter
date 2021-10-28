@@ -49,15 +49,15 @@ namespace ScriptScripter.Processor.Services.Tests
                         ScriptContainers: [
                                                 {
                                                     DatabaseName: ""SampleData"",
-                                                    ScriptFilePath: ""C:\\Code\\MyProject\\Database\\Scripts\\DBScripts_SampleDatabase.xml"",
+                                                    ScriptContainerPath: ""C:\\Code\\MyProject\\Database\\Scripts\\DBScripts_SampleDatabase.xml"",
                                                 },
                                                 {
                                                     DatabaseName: ""NorthWind"",
-                                                    ScriptFilePath: ""C:\\Microsoft\\Database\\DBScripts_Northwind.xml"",
+                                                    ScriptContainerPath: ""C:\\Microsoft\\Database\\DBScripts_Northwind.xml"",
                                                 },
                                                 {
                                                     DatabaseName: ""CreditCardInfo"",
-                                                    ScriptFilePath: ""C:\\Microsoft\\Database\\DBScripts_CreditCardInfo.xml"",
+                                                    ScriptContainerPath: ""C:\\Microsoft\\Database\\DBScripts_CreditCardInfo.xml"",
                                                 }
                                             ]
                         }";
@@ -98,17 +98,17 @@ namespace ScriptScripter.Processor.Services.Tests
                                                 {
                                                     ContainerUid: ""B659FE94-2FF2-409C-82ED-7CBBD70EAD38"",
                                                     DatabaseName: ""SampleData"",
-                                                    ScriptFilePath: ""C:\\Code\\MyProject\\Database\\Scripts\\DBScripts_SampleDatabase.xml"",
+                                                    ScriptContainerPath: ""C:\\Code\\MyProject\\Database\\Scripts\\DBScripts_SampleDatabase.xml"",
                                                 },
                                                 {
                                                     ContainerUid: ""9188DE9F-C4FC-400E-B8ED-E6AC892231B9"",
                                                     DatabaseName: ""NorthWind"",
-                                                    ScriptFilePath: ""C:\\Microsoft\\Database\\DBScripts_Northwind.xml"",
+                                                    ScriptContainerPath: ""C:\\Microsoft\\Database\\DBScripts_Northwind.xml"",
                                                 },
                                                 {
                                                     ContainerUid: ""2DD4ABEF-FE59-47B4-86C5-5ECB12B1857C"",
                                                     DatabaseName: ""CreditCardInfo"",
-                                                    ScriptFilePath: ""C:\\Microsoft\\Database\\DBScripts_CreditCardInfo.xml"",
+                                                    ScriptContainerPath: ""C:\\Microsoft\\Database\\DBScripts_CreditCardInfo.xml"",
                                                 }
                                             ]
                         }";

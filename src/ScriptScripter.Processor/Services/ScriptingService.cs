@@ -102,11 +102,11 @@ namespace ScriptScripter.Processor.Services
             }
             return message;
         }
-        public IEnumerable<Data.Models.Script> GetScriptsThatNeedRun(Data.Models.DatabaseConnectionParameters databaseConnectionParams, string scriptFilePath)
+        public IEnumerable<Data.Models.Script> GetScriptsThatNeedRun(Data.Models.DatabaseConnectionParameters databaseConnectionParams, string scriptContainerPath)
         {
             //Simple, get all the scripts, get all the revisions.  whichever scripts don't exist in the revision list, well that's what you need to run :)
 
-            var repo = _scriptRepoFactory.GetScriptsRepository(scriptFilePath);
+            var repo = _scriptRepoFactory.GetScriptsRepository(scriptContainerPath);
             var revisionsByScriptId = _revisionRepository.GetAll(databaseConnectionParams).ToDictionary(x => x.ScriptId);
             List<Data.Models.Script> scripts = repo.GetAllScripts().ToList();
 
@@ -123,9 +123,9 @@ namespace ScriptScripter.Processor.Services
             return scripts.OrderBy(x => x.ScriptDate).ToList();
         }
 
-        public Contracts.DatabaseScriptStates GetDatabaseScriptState(Data.Models.DatabaseConnectionParameters databaseConnectionParams, string scriptFilePath)
+        public Contracts.DatabaseScriptStates GetDatabaseScriptState(Data.Models.DatabaseConnectionParameters databaseConnectionParams, string scriptContainerPath)
         {
-            var repo = _scriptRepoFactory.GetScriptsRepository(scriptFilePath);
+            var repo = _scriptRepoFactory.GetScriptsRepository(scriptContainerPath);
             var revisionsByScriptId = _revisionRepository.GetAll(databaseConnectionParams).ToDictionary(x => x.ScriptId);
             var scriptsById = repo.GetAllScripts().ToDictionary(x => x.ScriptId);
 
@@ -146,21 +146,21 @@ namespace ScriptScripter.Processor.Services
             return Contracts.DatabaseScriptStates.UpToDate;
         }
 
-        public Dto.ActionResult TestScriptContainerExists(string scriptFilePath)
+        public Dto.ActionResult TestScriptContainerExists(string scriptContainerPath)
         {
-            if (_fileSystem.File.Exists(scriptFilePath))
+            if (_fileSystem.File.Exists(scriptContainerPath) || _fileSystem.Directory.Exists(scriptContainerPath))
             {
                 return Dto.ActionResult.SuccessResult();
             }
             else
             {
-                return Dto.ActionResult.FailedResult("Script Container file does not exist");
+                return Dto.ActionResult.FailedResult("Script Container does not exist");
             }
         }
 
-        public Dto.ActionResult TryCreateScriptContainer(string scriptFilePath)
+        public Dto.ActionResult TryCreateScriptContainer(string scriptContainerPath)
         {
-            var fle = _fileSystem.FileInfo.FromFileName(scriptFilePath);
+            var fle = _fileSystem.FileInfo.FromFileName(scriptContainerPath);
             if (fle.Exists)
             {
                 return Dto.ActionResult.FailedResult("The file already exists");
@@ -174,7 +174,7 @@ namespace ScriptScripter.Processor.Services
                         fle.Directory.Create();
                     }
 
-                    using (var stream = _fileSystem.File.Create(scriptFilePath))
+                    using (var stream = _fileSystem.File.Create(scriptContainerPath))
                     {
 
                     }

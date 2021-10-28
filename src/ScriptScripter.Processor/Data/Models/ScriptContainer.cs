@@ -10,7 +10,10 @@ namespace ScriptScripter.Processor.Data.Models
     {
         public Guid ContainerUid { get; set; }
         public string DatabaseName { get; set; }
-        public string ScriptFilePath { get; set; }
+        /// <summary>
+        /// file or folder where all the scripts are held
+        /// </summary>
+        public string ScriptContainerPath { get; set; }
         public ServerConnectionParameters CustomServerConnectionParameters { get; set; }
         public List<string> Tags { get; set; }
     }

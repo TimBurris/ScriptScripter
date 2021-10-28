@@ -34,7 +34,7 @@ namespace ScriptScripter.Processor.Services.Tests
 
 
         //path and params don't matter, we've mocked the repos
-        private string _inputScriptFilePath = "mypath";
+        private string _inputScriptContainerPath = "mypath";
         private Processor.Data.Models.DatabaseConnectionParameters _inputConnectionParams = new Processor.Data.Models.DatabaseConnectionParameters();
 
         [TestInitialize]
@@ -43,7 +43,7 @@ namespace ScriptScripter.Processor.Services.Tests
             _mockRevisionRepo.Setup(m => m.GetAll(_inputConnectionParams))
                 .Returns(() => _revisions);
 
-            _mockScriptRepoFactory.Setup(m => m.GetScriptsRepository(_inputScriptFilePath))
+            _mockScriptRepoFactory.Setup(m => m.GetScriptsRepository(_inputScriptContainerPath))
                 .Returns(() => _mockScriptRepo.Object);
 
             _mockScriptRepo.Setup(m => m.GetAllScripts())
@@ -57,7 +57,7 @@ namespace ScriptScripter.Processor.Services.Tests
 
         public Contracts.DatabaseScriptStates Act()
         {
-            return _service.GetDatabaseScriptState(databaseConnectionParams: _inputConnectionParams, scriptFilePath: _inputScriptFilePath);
+            return _service.GetDatabaseScriptState(databaseConnectionParams: _inputConnectionParams, scriptContainerPath: _inputScriptContainerPath);
         }
         private void FillEqualScriptsAndRevisions()
         {

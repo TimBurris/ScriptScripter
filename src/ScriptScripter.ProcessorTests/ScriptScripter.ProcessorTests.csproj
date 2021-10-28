@@ -98,7 +98,7 @@
     <Compile Include="Data\Repositories\ConfigFileBaseTests.cs" />
     <Compile Include="Data\Repositories\ConfigurationRepositoryTests.cs" />
     <Compile Include="Data\Repositories\ScriptContainerRepositoryTests.cs" />
-    <Compile Include="Data\Repositories\ScriptsRepositoryTests.cs" />
+    <Compile Include="Data\Repositories\ScriptFileRepositoryTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\ConfigurationFileUpgradeServiceTests.cs" />
     <Compile Include="Services\CryptoServiceTests.cs" />

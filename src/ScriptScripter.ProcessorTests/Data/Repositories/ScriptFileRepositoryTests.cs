@@ -11,7 +11,7 @@ using FluentAssertions;
 namespace ScriptScripter.Processor.Data.Repositories.Tests
 {
     [TestClass()]
-    public class ScriptsRepositoryTests
+    public class ScriptFileRepositoryTests
     {
         private List<Models.Script> GetTestScripts()
         {
@@ -62,8 +62,8 @@ namespace ScriptScripter.Processor.Data.Repositories.Tests
 
             var fileSystem = new System.IO.Abstractions.TestingHelpers.MockFileSystem(x);
 
-            var repo = new ScriptsRepository(fileSystem);
-            repo.ScriptFilePath = @"C:\myfile.xml";
+            var repo = new ScriptFileRepository(fileSystem);
+            repo.ScriptContainerPath = @"C:\myfile.xml";
 
             /*************    act    ******************/
             /*************  assert   ******************/
@@ -83,8 +83,8 @@ namespace ScriptScripter.Processor.Data.Repositories.Tests
 
             var fileSystem = new System.IO.Abstractions.TestingHelpers.MockFileSystem(x);
 
-            var repo = new ScriptsRepository(fileSystem);
-            repo.ScriptFilePath = @"C:\myfile.xml";
+            var repo = new ScriptFileRepository(fileSystem);
+            repo.ScriptContainerPath = @"C:\myfile.xml";
 
             /*************    act    ******************/
             /*************  assert   ******************/
@@ -101,8 +101,8 @@ namespace ScriptScripter.Processor.Data.Repositories.Tests
             {
             });
 
-            var repo = new ScriptsRepository(fileSystem);
-            repo.ScriptFilePath = @"C:\myfile.xml";
+            var repo = new ScriptFileRepository(fileSystem);
+            repo.ScriptContainerPath = @"C:\myfile.xml";
 
             /*************    act    ******************/
             var results = repo.ReadScripts();
@@ -115,7 +115,7 @@ namespace ScriptScripter.Processor.Data.Repositories.Tests
         public void WriteScripts_simpletest()
         {
             /*************  arrange  ******************/
-            var repo = new ScriptsRepository(fileSystem: null);
+            var repo = new ScriptFileRepository(fileSystem: null);
             var stringWriter = new System.IO.StringWriter();
             var script = new Models.Script()
             {
@@ -148,7 +148,7 @@ namespace ScriptScripter.Processor.Data.Repositories.Tests
         public void Write_then_ReadScriptsTest()
         {
             /*************  arrange  ******************/
-            var repo = new ScriptsRepository(fileSystem: null);
+            var repo = new ScriptFileRepository(fileSystem: null);
             var stringWriter = new System.IO.StringWriter();
             List<Models.Script> originalScripts = this.GetTestScripts();
             List<Models.Script> reloadedScripts;
@@ -172,8 +172,8 @@ namespace ScriptScripter.Processor.Data.Repositories.Tests
     [TestClass]
     public class given_file_has_data
     {
-        private Mock<ScriptsRepository> _mockRepo;
-        private ScriptsRepository _repo;
+        private Mock<ScriptFileRepository> _mockRepo;
+        private ScriptFileRepository _repo;
         private List<Models.Script> _scriptList;
         private List<Models.Script> _savedScriptList;
 
@@ -218,7 +218,7 @@ namespace ScriptScripter.Processor.Data.Repositories.Tests
             //we are going to mock to prevent actual use of the filesystem, so we don't need to set it up
             System.IO.Abstractions.IFileSystem fileSystem = null;
 
-            _mockRepo = new Mock<ScriptsRepository>(fileSystem);
+            _mockRepo = new Mock<ScriptFileRepository>(fileSystem);
             _repo = _mockRepo.Object;
             _mockRepo.CallBase = true;
 
@@ -297,15 +297,15 @@ namespace ScriptScripter.Processor.Data.Repositories.Tests
     public class given_file_has_no_data
     {
         private System.IO.Abstractions.IFileSystem _fs;
-        private ScriptsRepository _repo;
+        private ScriptFileRepository _repo;
         private string _mockedContainerFile = @"c:\temp\myfolder\myscripts.xml";
 
         [TestInitialize]
         public void Init()
         {
             _fs = this.GetMockedFileSystem();
-            _repo = new ScriptsRepository(fileSystem: _fs);
-            _repo.ScriptFilePath = _mockedContainerFile;
+            _repo = new ScriptFileRepository(fileSystem: _fs);
+            _repo.ScriptContainerPath = _mockedContainerFile;
         }
 
         private System.IO.Abstractions.IFileSystem GetMockedFileSystem()
@@ -364,8 +364,8 @@ namespace ScriptScripter.Processor.Data.Repositories.Tests
         public void ExportScripts()
         {
             //*************  arrange  ******************
-            _repo = new ScriptsRepository(new System.IO.Abstractions.FileSystem());
-            _repo.ScriptFilePath = @"C:\Code\ClientProjects\CinemaInventory\DBScripts_MovieMunchDB.xml";
+            _repo = new ScriptFileRepository(new System.IO.Abstractions.FileSystem());
+            _repo.ScriptContainerPath = @"C:\Code\ClientProjects\CinemaInventory\DBScripts_MovieMunchDB.xml";
             var scripts = _repo.GetAllScripts();
 
             foreach (var s in scripts)

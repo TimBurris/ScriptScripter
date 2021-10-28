@@ -21,9 +21,9 @@ namespace ScriptScripter.Processor.Services.Contracts
 
         Task<Dto.ActionResult> ApplyScriptsToDatabaseAsync(Data.Models.DatabaseConnectionParameters databaseConnectionParams, IEnumerable<Data.Models.Script> scripts, IProgress<Dto.ApplyScriptProgress> progress);
 
-        DatabaseScriptStates GetDatabaseScriptState(Data.Models.DatabaseConnectionParameters databaseConnectionParams, string scriptFilePath);
+        DatabaseScriptStates GetDatabaseScriptState(Data.Models.DatabaseConnectionParameters databaseConnectionParams, string scriptContainerPath);
 
-        IEnumerable<Data.Models.Script> GetScriptsThatNeedRun(Data.Models.DatabaseConnectionParameters databaseConnectionParams, string scriptFilePath);
+        IEnumerable<Data.Models.Script> GetScriptsThatNeedRun(Data.Models.DatabaseConnectionParameters databaseConnectionParams, string scriptContainerPath);
 
         Task<Dto.ActionResult> TestDatabaseConnectionAsync(Data.Models.DatabaseConnectionParameters databaseConnectionParams);
         Task<Dto.ActionResult> TestDatabaseConnectionAsync(Data.Models.DatabaseConnectionParameters databaseConnectionParams, System.Threading.CancellationToken cancellationToken);
@@ -31,8 +31,8 @@ namespace ScriptScripter.Processor.Services.Contracts
         Task<Dto.ActionResult> TestServerConnectionAsync(Data.Models.ServerConnectionParameters connectionParameters);
         Task<Dto.ActionResult> TestServerConnectionAsync(Data.Models.ServerConnectionParameters connectionParameters, System.Threading.CancellationToken cancellationToken);
 
-        Dto.ActionResult TestScriptContainerExists(string scriptFilePath);
+        Dto.ActionResult TestScriptContainerExists(string scriptContainerPath);
 
-        Dto.ActionResult TryCreateScriptContainer(string scriptFilePath);
+        Dto.ActionResult TryCreateScriptContainer(string scriptContainerPath);
     }
 }

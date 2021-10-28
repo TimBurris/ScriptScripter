@@ -88,7 +88,7 @@ namespace ScriptScripter.DesktopApp.ViewModels
 
                 await _viewModelFaultlessService.TryExecuteSyncAsAsync(() =>
                    {
-                       var repo = _scriptsRepoFactory.GetScriptsRepository(scriptContainer.ScriptFilePath);
+                       var repo = _scriptsRepoFactory.GetScriptsRepository(scriptContainer.ScriptContainerPath);
                        return repo.GetLastScript();
                    })
                    .OnSuccessAsync(result =>
@@ -123,7 +123,7 @@ namespace ScriptScripter.DesktopApp.ViewModels
             var item = new ViewModels.DatabaseListViewModel.LineItem
             {
                 ScriptContainer = scriptContainer,
-                ScriptFile = scriptContainer.ScriptFilePath,
+                ScriptFile = scriptContainer.ScriptContainerPath,
                 DatabaseName = scriptContainer.DatabaseName,
                 DeveloperName = script?.DeveloperName,
                 ScriptDate = script == null ? null : script.ScriptDate.LocalDateTime.ToString(),

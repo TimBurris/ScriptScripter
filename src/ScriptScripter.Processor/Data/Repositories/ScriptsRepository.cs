@@ -1,169 +1,81 @@
-﻿using System;
+﻿using ScriptScripter.Processor.Data.Models;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.IO.Abstractions;
 using System.Threading.Tasks;
 
 namespace ScriptScripter.Processor.Data.Repositories
 {
+
+    /// <summary>
+    /// a file/folder implementation which uses the assigned ScriptContainerPath to decide whehter or not to use <see cref="ScriptFolderRepository"/> or the <see cref="ScriptFileRepository"/>
+    /// </summary>
     public class ScriptsRepository : Contracts.IScriptsRepository
     {
-        private System.IO.Abstractions.IFileSystem _fileSystem;
+        private readonly ScriptFolderRepository _scriptFolderRepository;
+        private readonly ScriptFileRepository _scriptFileRepository;
+        private readonly IFileSystem _fileSystem;
+        private string _scriptContainerPath;
 
-        public ScriptsRepository(System.IO.Abstractions.IFileSystem fileSystem)
+        public ScriptsRepository(ScriptFolderRepository scriptFolderRepository, ScriptFileRepository scriptFileRepository, System.IO.Abstractions.IFileSystem fileSystem)
         {
+            _scriptFolderRepository = scriptFolderRepository;
+            _scriptFileRepository = scriptFileRepository;
             _fileSystem = fileSystem;
         }
-
-        public string ScriptFilePath { get; set; }
-
-        public Models.Script AddNewScript(Models.Script script)
+        public string ScriptContainerPath
         {
-            var data = this.ReadScripts();
-
-            script.ScriptId = Guid.NewGuid();
-            data.Add(script);
-
-            this.WriteScripts(data);
-
-            return script;
-        }
-
-        public Models.Script UpdateScript(Models.Script script)
-        {
-            var data = this.ReadScripts();
-            bool found = false;
-
-            int index;
-            for (index = 0; index < data.Count; index++)
+            get => _scriptContainerPath; set
             {
-                if (data[index].ScriptId == script.ScriptId)
-                {
-                    found = true;
-                    break;
-                }
-            }
-
-            if (!found)
-                throw new ApplicationException($"Could not locate script with ScriptId {script.ScriptId}.");
-
-            //replace existing script with the updated one
-            data[index] = script;
-
-            this.WriteScripts(data);
-
-            return script;
-        }
-
-        public IEnumerable<Models.Script> GetAllScripts()
-        {
-            return this.ScriptContainerData.ToList();
-        }
-
-        public Models.Script GetLastScript()
-        {
-            return this.OrderedScriptContainerData.LastOrDefault();
-        }
-
-        private List<Models.Script> ScriptContainerData
-        {
-            get
-            {
-                //should we cache? or load everytime?
-                ///   problem with cache is, if we return a instance to them, and they modify it in memory... that will affect future calls that return the list (because it's the same instance)
-                ///   but that would only occur for calls using the exact same repo...
-                //if (_allScripts == null)
-                //    _allScripts = this.ReadScripts();
-
-                return this.ReadScripts();
+                _scriptContainerPath = value;
+                _scriptFileRepository.ScriptContainerPath = value;
+                _scriptFolderRepository.ScriptContainerPath = value;
             }
         }
 
-        /// <summary>
-        /// just a shorthand method for getting the scripts already ordered... we could implement caching in here if performance ever becomes an issues
-        /// </summary>
-        private List<Models.Script> OrderedScriptContainerData
+        private bool? ScriptPathIsAFolder()
         {
-            get
+            var path = this.ScriptContainerPath;
+
+            if (_fileSystem.File.Exists(path))
+                return true;
+            else if (_fileSystem.Directory.Exists(path))
+                return true;
+            else
+                return null;// unknown
+        }
+
+        private Contracts.IScriptsRepository ResolvedRepository()
+        {
+            var isFolder = this.ScriptPathIsAFolder();
+
+            if (isFolder == true)
             {
-                return this.ScriptContainerData.OrderBy(s => s.ScriptDate).ToList();
+                return _scriptFolderRepository;
+            }
+            else // we return file repo even if NULL, if the thing does not exists (null filepath) we'll just let the file repo handle however it handles missing files
+            {
+                return _scriptFileRepository;
             }
         }
 
-        #region Read and Write file
-
-        public virtual List<Models.Script> ReadScripts()
+        public Script AddNewScript(Script script)
         {
-            var fileName = this.ScriptFilePath;
-
-            if (!_fileSystem.File.Exists(fileName))
-                return new List<Models.Script>();
-
-            var sb = new StringBuilder();
-
-            //you can't use a simple _fileSystem.File.ReadAllText(fileName) because if it's locked by another app it will bomb
-            //    I saw the issue occuring when i was testing filesystem changes, if i changed the file in notepadd++ after a save or 2 there would be locked file error
-            //TODO: there is still an issue where if the file is in use/locked we get no data, so maybe we delay the firing of the event from filewatcher? and do a couple retrys in here?
-            using (var fileStream = _fileSystem.File.Open(fileName, mode: System.IO.FileMode.Open, access: System.IO.FileAccess.Read, share: System.IO.FileShare.ReadWrite))
-            {
-                using (var reader = new System.IO.StreamReader(fileStream))
-                {
-                    while (!reader.EndOfStream)
-                    {
-                        sb.AppendLine(reader.ReadLine());
-                    }
-                }
-            }
-
-            var txt = sb.ToString();
-
-            if (string.IsNullOrEmpty(txt))
-                return new List<Models.Script>();
-
-            using (var x = new System.IO.StringReader(txt))
-            {
-                return this.ReadScripts(x);
-            }
+            return this.ResolvedRepository().AddNewScript(script);
         }
 
-        public virtual List<Models.Script> ReadScripts(System.IO.TextReader reader)
+        public IEnumerable<Script> GetAllScripts()
         {
-            try
-            {
-                var serializer = new System.Xml.Serialization.XmlSerializer(typeof(List<Models.Script>), new System.Xml.Serialization.XmlRootAttribute("Scripts"));
-                return (List<Models.Script>)serializer.Deserialize(reader);
-            }
-            catch (InvalidOperationException ex)
-            {
-                throw new InvalidScriptContainterContentsException(message: "Failed to read scripts", innerException: ex);
-            }
+            return this.ResolvedRepository().GetAllScripts();
         }
 
-        public virtual void WriteScripts(IEnumerable<Models.Script> scripts)
+        public Script GetLastScript()
         {
-            using (var x = new System.IO.StringWriter())
-            {
-                this.WriteScripts(x, scripts);
-
-                _fileSystem.File.WriteAllText(this.ScriptFilePath, x.ToString());
-            }
+            return this.ResolvedRepository().GetLastScript();
         }
 
-        public virtual void WriteScripts(System.IO.TextWriter writer, IEnumerable<Models.Script> scripts)
+        public Script UpdateScript(Script script)
         {
-            var serializer = new System.Xml.Serialization.XmlSerializer(typeof(List<Models.Script>), new System.Xml.Serialization.XmlRootAttribute("Scripts"));
-
-            //this newlinehandling settings is required for newlines to be written as \r\n instead of just \n
-            //     see here:   https://social.msdn.microsoft.com/Forums/en-US/5a81f838-a89f-4f48-899c-1c3973222c53/xml-serializationdeserializtion-turns-rn-to-n-only?forum=xmlandnetfx
-            var ws = new System.Xml.XmlWriterSettings();
-            ws.NewLineHandling = System.Xml.NewLineHandling.Entitize;
-            ws.Indent = true;
-            using (var wr = System.Xml.XmlWriter.Create(writer, ws))
-            {
-                serializer.Serialize(wr, scripts.ToList());
-            }
+            return this.ResolvedRepository().UpdateScript(script);
         }
-
-        #endregion
     }
 }
