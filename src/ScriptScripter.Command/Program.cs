@@ -34,6 +34,9 @@ namespace ScriptScripter.Command
             //fire up our scripting service so we can get to work
             _service = Ninjector.Container.Get<Processor.Services.Contracts.IScriptingService>();
 
+            //confirm source exist
+            ConfirmContainerExistsExitIfInvalid();
+
             //test the database connection
             await TestDatabaseConnectionExitIfFailAsync();
 
@@ -143,11 +146,6 @@ namespace ScriptScripter.Command
                 _logger.Error("scriptcontainerpath is missing");
                 Environment.Exit(5002);
             }
-            if (!System.IO.File.Exists(_scriptContainerPath))
-            {
-                _logger.Error($"{_scriptContainerPath} does not exist on disk");
-                Environment.Exit(5003);
-            }
         }
 
         private static void InitIoc()
@@ -171,6 +169,15 @@ namespace ScriptScripter.Command
             _connectionParams.Password = pw;
         }
 
+        private static void ConfirmContainerExistsExitIfInvalid()
+        {
+            var result = _service.TestScriptContainerExists(_scriptContainerPath);
+            if (!result.WasSuccessful)
+            {
+                _logger.Info($"Script container '{_scriptContainerPath}' does not exist");
+                Environment.Exit(5003);
+            }
+        }
         private static void Progress_ProgressChanged(object sender, Processor.Dto.ApplyScriptProgress e)
         {
             if (e.IsStarting)
