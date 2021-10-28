@@ -25,14 +25,14 @@ namespace ScriptScripter.Processor.Data.Repositories
             return settings.ScriptContainers ?? new List<Models.ScriptContainer>();
         }
 
-        public Dto.ActionResult AddNew(string databaseName, string scriptFilePath,
+        public Dto.ActionResult AddNew(string databaseName, string scriptContainerPath,
             Models.ServerConnectionParameters customConnectionParameters, IEnumerable<string> tags)
         {
             var newContainer = new Models.ScriptContainer()
             {
                 ContainerUid = Guid.NewGuid(),
                 DatabaseName = databaseName,
-                ScriptFilePath = scriptFilePath,
+                ScriptContainerPath = scriptContainerPath,
                 CustomServerConnectionParameters = customConnectionParameters,
                 Tags = tags?.ToList()
             };

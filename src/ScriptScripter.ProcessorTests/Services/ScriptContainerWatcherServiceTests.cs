@@ -41,7 +41,7 @@ namespace ScriptScripter.Processor.Services.Tests
             {
                 ContainerUid = new Guid("9A92D3F5-144E-4554-9E4D-596216BC8471"),
                 DatabaseName = "TestDb",
-                ScriptFilePath = @"c:\temp\testdb.xml"
+                ScriptContainerPath = @"c:\temp\testdb.xml"
             };
 
             _service = new ScriptContainerWatcherService(_mockScriptContainerRepo.Object, _mockEventNotificationService.Object, _mockFileSystemWatcherFactory.Object);
@@ -249,7 +249,7 @@ namespace ScriptScripter.Processor.Services.Tests
             {
                 ContainerUid = _container.ContainerUid,
                 DatabaseName = "origina",
-                ScriptFilePath = @"c:\temp\originaldb.xml"
+                ScriptContainerPath = @"c:\temp\originaldb.xml"
             });
 
             _service.BeginWatchingAllContainers();

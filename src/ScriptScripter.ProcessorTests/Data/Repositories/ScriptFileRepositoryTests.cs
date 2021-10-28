@@ -63,7 +63,7 @@ namespace ScriptScripter.Processor.Data.Repositories.Tests
             var fileSystem = new System.IO.Abstractions.TestingHelpers.MockFileSystem(x);
 
             var repo = new ScriptFileRepository(fileSystem);
-            repo.ScriptFilePath = @"C:\myfile.xml";
+            repo.ScriptContainerPath = @"C:\myfile.xml";
 
             /*************    act    ******************/
             /*************  assert   ******************/
@@ -84,7 +84,7 @@ namespace ScriptScripter.Processor.Data.Repositories.Tests
             var fileSystem = new System.IO.Abstractions.TestingHelpers.MockFileSystem(x);
 
             var repo = new ScriptFileRepository(fileSystem);
-            repo.ScriptFilePath = @"C:\myfile.xml";
+            repo.ScriptContainerPath = @"C:\myfile.xml";
 
             /*************    act    ******************/
             /*************  assert   ******************/
@@ -102,7 +102,7 @@ namespace ScriptScripter.Processor.Data.Repositories.Tests
             });
 
             var repo = new ScriptFileRepository(fileSystem);
-            repo.ScriptFilePath = @"C:\myfile.xml";
+            repo.ScriptContainerPath = @"C:\myfile.xml";
 
             /*************    act    ******************/
             var results = repo.ReadScripts();
@@ -305,7 +305,7 @@ namespace ScriptScripter.Processor.Data.Repositories.Tests
         {
             _fs = this.GetMockedFileSystem();
             _repo = new ScriptFileRepository(fileSystem: _fs);
-            _repo.ScriptFilePath = _mockedContainerFile;
+            _repo.ScriptContainerPath = _mockedContainerFile;
         }
 
         private System.IO.Abstractions.IFileSystem GetMockedFileSystem()
@@ -365,7 +365,7 @@ namespace ScriptScripter.Processor.Data.Repositories.Tests
         {
             //*************  arrange  ******************
             _repo = new ScriptFileRepository(new System.IO.Abstractions.FileSystem());
-            _repo.ScriptFilePath = @"C:\Code\ClientProjects\CinemaInventory\DBScripts_MovieMunchDB.xml";
+            _repo.ScriptContainerPath = @"C:\Code\ClientProjects\CinemaInventory\DBScripts_MovieMunchDB.xml";
             var scripts = _repo.GetAllScripts();
 
             foreach (var s in scripts)

@@ -4,7 +4,10 @@ namespace ScriptScripter.Command
 {
     public class IncomingOptions
     {
-        [Option('f', "scriptfilepath", Required = true, HelpText = "The full path to the script file that is to be applied")]
+        [Option('f', "scriptcontainerpath", Required = false, HelpText = "The full path to the script file or folder that is to be applied")]
+        public string ScriptContainerPath { get; set; }
+
+        [Option('z', "scriptfilepath", Required = false, HelpText = "[Obsolete:Use f:ScriptContainerPath instead] The full path to the script file that is to be applied")]
         public string ScriptFilePath { get; set; }
 
         [Option('s', "server", Required = true, HelpText = "The server name (with instance) to connect to")]

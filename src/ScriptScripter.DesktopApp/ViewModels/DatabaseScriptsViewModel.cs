@@ -86,7 +86,7 @@ namespace ScriptScripter.DesktopApp.ViewModels
             //if they have customconnection show it, else show null
             this.ServerConnectionInfo = _scriptContainer.CustomServerConnectionParameters?.ToString();
 
-            var scriptRepo = _scriptRepoFactory.GetScriptsRepository(_scriptContainer.ScriptFilePath);
+            var scriptRepo = _scriptRepoFactory.GetScriptsRepository(_scriptContainer.ScriptContainerPath);
             var databaseConnectionParams = this.GetDatabaseConnectionParameters();
             var t = _viewModelFaultlessService.TryExecuteSyncAsAsync(() => scriptRepo.GetLastScript());
             var t3 = _viewModelFaultlessService.TryExecuteAsync(() => _scriptingService.TestDatabaseConnectionAsync(databaseConnectionParams));
@@ -129,7 +129,7 @@ namespace ScriptScripter.DesktopApp.ViewModels
             }
             else
             {
-                var state = _scriptingService.GetDatabaseScriptState(databaseConnectionParams, _scriptContainer.ScriptFilePath);
+                var state = _scriptingService.GetDatabaseScriptState(databaseConnectionParams, _scriptContainer.ScriptContainerPath);
                 switch (state)
                 {
                     case Processor.Services.Contracts.DatabaseScriptStates.Newer:

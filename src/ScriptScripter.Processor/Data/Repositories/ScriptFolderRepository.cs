@@ -17,7 +17,7 @@ namespace ScriptScripter.Processor.Data.Repositories
             _logger = logger;
         }
 
-        public string ScriptFilePath { get; set; }
+        public string ScriptContainerPath { get; set; }
 
         public Models.Script AddNewScript(Models.Script script)
         {
@@ -82,12 +82,12 @@ namespace ScriptScripter.Processor.Data.Repositories
         #region Read and Write file
         private string BuildFilePathForScriptId(Guid scriptId)
         {
-            return _fileSystem.Path.Combine(this.ScriptFilePath, scriptId.ToString() + ".xml");
+            return _fileSystem.Path.Combine(this.ScriptContainerPath, scriptId.ToString() + ".xml");
         }
         public virtual List<Models.Script> ReadAllScriptFiles()
         {
             var results = new List<Models.Script>();
-            var folderPath = this.ScriptFilePath;
+            var folderPath = this.ScriptContainerPath;
 
             if (!_fileSystem.Directory.Exists(folderPath))
                 return new List<Models.Script>();

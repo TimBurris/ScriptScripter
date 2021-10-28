@@ -154,18 +154,18 @@ namespace ScriptScripter.DesktopApp.ViewModels
         {
             if (this.GetValidationResult().IsValid)
             {
-                if (!_scriptingService.TestScriptContainerExists(_scriptContainer.ScriptFilePath).WasSuccessful)
+                if (!_scriptingService.TestScriptContainerExists(_scriptContainer.ScriptContainerPath).WasSuccessful)
                 {
                     var result = _navigator.ShowDialog<MessageBoxViewModel>(vm =>
                     {
                         vm.ViewTitle = "Script Container Missing";
-                        vm.Message = $"The Script Container '{_scriptContainer.ScriptFilePath}' does not exist, would you like to create it?";
+                        vm.Message = $"The Script Container '{_scriptContainer.ScriptContainerPath}' does not exist, would you like to create it?";
                         vm.SetButtons(MessageBoxViewModel.MessageBoxButton.YesNo);
                     });
 
                     if (result.ViewResult == MessageBoxViewModel.MessageBoxResult.Yes)
                     {
-                        var createResult = _scriptingService.TryCreateScriptContainer(_scriptContainer.ScriptFilePath);
+                        var createResult = _scriptingService.TryCreateScriptContainer(_scriptContainer.ScriptContainerPath);
 
                         if (!createResult.WasSuccessful)
                         {
@@ -199,7 +199,7 @@ namespace ScriptScripter.DesktopApp.ViewModels
         private void ExecuteCommit()
         {
 
-            var repo = _scriptsRepoFactory.GetScriptsRepository(_scriptContainer.ScriptFilePath);
+            var repo = _scriptsRepoFactory.GetScriptsRepository(_scriptContainer.ScriptContainerPath);
 
             if (_scriptInEdit == null)
             {

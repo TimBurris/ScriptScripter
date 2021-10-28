@@ -9,10 +9,10 @@ namespace ScriptScripter.Processor.Data.Repositories
 {
     public class ScriptRepositoryFactory : Contracts.IScriptRepositoryFactory
     {
-        public Contracts.IScriptsRepository GetScriptsRepository(string scriptFilePath)
+        public Contracts.IScriptsRepository GetScriptsRepository(string scriptContainerPath)
         {
             var repo = Ninjector.Container.Get<Contracts.IScriptsRepository>();
-            repo.ScriptFilePath = scriptFilePath;
+            repo.ScriptContainerPath = scriptContainerPath;
 
             return repo;
         }

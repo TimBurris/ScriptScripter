@@ -44,7 +44,7 @@ namespace ScriptScripter.DesktopApp.ViewModels
             var connectionParams = this.UseDefaultDatabaseConnection ? null : this.DatabaseConnectionControlVM.BuildConnectionParameters();
 
             var result = _scriptContainerRepository.AddNew(databaseName: this.DatabaseName,
-                scriptFilePath: this.ScriptFile,
+                scriptContainerPath: this.ScriptFile,
                 customConnectionParameters: connectionParams,
                 tags: this.Tags);
 

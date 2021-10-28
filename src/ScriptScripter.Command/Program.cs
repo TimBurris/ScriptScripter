@@ -11,7 +11,7 @@ namespace ScriptScripter.Command
     {
         //these variables will be setup based on input parameters
         private static bool _verbose;
-        private static string _scriptFilePath;
+        private static string _scriptContainerPath;
         private static Processor.Data.Models.DatabaseConnectionParameters _connectionParams;
 
         //these will come from our IoC Container
@@ -94,7 +94,7 @@ namespace ScriptScripter.Command
             IEnumerable<Processor.Data.Models.Script> scriptsToRun = null;
             try
             {
-                scriptsToRun = _service.GetScriptsThatNeedRun(_connectionParams, _scriptFilePath);
+                scriptsToRun = _service.GetScriptsThatNeedRun(_connectionParams, _scriptContainerPath);
             }
             catch (Exception ex)
             {
@@ -110,7 +110,7 @@ namespace ScriptScripter.Command
                          .WithParsed<IncomingOptions>(o =>
                          {
                              _verbose = o.Verbose;
-                             _scriptFilePath = o.ScriptFilePath;
+                             _scriptContainerPath = o.ScriptContainerPath ?? o.ScriptFilePath;//supporting scriptfilepath for backwards compatability
                              _connectionParams = new Processor.Data.Models.DatabaseConnectionParameters()
                              {
                                  DatabaseName = o.DatabaseName,
@@ -138,14 +138,14 @@ namespace ScriptScripter.Command
                 _logger.Error("connection parameters wer now received");
                 Environment.Exit(5001);
             }
-            if (_scriptFilePath == null)
+            if (_scriptContainerPath == null)
             {
-                _logger.Error("scriptfilepath is missing");
+                _logger.Error("scriptcontainerpath is missing");
                 Environment.Exit(5002);
             }
-            if (!System.IO.File.Exists(_scriptFilePath))
+            if (!System.IO.File.Exists(_scriptContainerPath))
             {
-                _logger.Error($"{_scriptFilePath} does not exist on disk");
+                _logger.Error($"{_scriptContainerPath} does not exist on disk");
                 Environment.Exit(5003);
             }
         }
@@ -160,7 +160,7 @@ namespace ScriptScripter.Command
 
         private static void LogParamState()
         {
-            _logger.Info($"ScriptFilePath: {_scriptFilePath}");
+            _logger.Info($"ScriptContainerPath: {_scriptContainerPath}");
 
             var pw = _connectionParams.Password;
             if (!string.IsNullOrEmpty(pw))

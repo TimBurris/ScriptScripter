@@ -116,7 +116,7 @@ namespace ScriptScripter.Processor.Services
             //TODO: change this to abstractions so that tests don't require actual folder to exist
 
             //you can't watch a folder that does not exist, so just bail
-            var fle = new System.IO.FileInfo(container.ScriptFilePath);
+            var fle = new System.IO.FileInfo(container.ScriptContainerPath);
             if (!fle.Directory.Exists)
                 return;
 

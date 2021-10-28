@@ -74,7 +74,7 @@ namespace ScriptScripter.DesktopApp.ViewModels
         protected override async Task<bool> OnReloadDataAsync(CancellationToken cancellationToken)
         {
             var result = await _viewModelFaultlessService
-                .TryExecuteSyncAsAsync(() => _scriptingService.GetScriptsThatNeedRun(this.GetDatabaseConnectionParameters(), _scriptContainer.ScriptFilePath));
+                .TryExecuteSyncAsAsync(() => _scriptingService.GetScriptsThatNeedRun(this.GetDatabaseConnectionParameters(), _scriptContainer.ScriptContainerPath));
 
             if (!result.WasSuccessful) return false;
 
@@ -225,7 +225,7 @@ namespace ScriptScripter.DesktopApp.ViewModels
             {
                 var databaseParams = this.GetDatabaseConnectionParameters();
 
-                var scripts = _scriptingService.GetScriptsThatNeedRun(databaseParams, _scriptContainer.ScriptFilePath);
+                var scripts = _scriptingService.GetScriptsThatNeedRun(databaseParams, _scriptContainer.ScriptContainerPath);
 
                 var result = await _scriptingService.ApplyScriptsToDatabaseAsync(databaseParams, scripts, progress);
 

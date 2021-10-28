@@ -14,10 +14,10 @@ namespace ScriptScripter.Processor.Data.Contracts
         /// 
         /// </summary>
         /// <param name="databaseName"></param>
-        /// <param name="scriptFilePath"></param>
+        /// <param name="scriptContainerPath"></param>
         /// <param name="customConnectionParameters">Optionally override the server connection params</param>
         /// <returns></returns>
-        Dto.ActionResult AddNew(string databaseName, string scriptFilePath, Models.ServerConnectionParameters customConnectionParameters, IEnumerable<string> tags);
+        Dto.ActionResult AddNew(string databaseName, string scriptContainerPath, Models.ServerConnectionParameters customConnectionParameters, IEnumerable<string> tags);
 
         Dto.ActionResult Update(Models.ScriptContainer scriptContainer);
 

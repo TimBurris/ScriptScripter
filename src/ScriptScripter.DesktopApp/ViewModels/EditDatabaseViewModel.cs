@@ -58,7 +58,7 @@ namespace ScriptScripter.DesktopApp.ViewModels
             _scriptContainer = result.ReturnValue;
 
             this.DatabaseName = _scriptContainer.DatabaseName;
-            this.ScriptFile = _scriptContainer.ScriptFilePath;
+            this.ScriptFile = _scriptContainer.ScriptContainerPath;
 
             var connectionParams = _scriptContainer.CustomServerConnectionParameters;
 
@@ -84,7 +84,7 @@ namespace ScriptScripter.DesktopApp.ViewModels
             var connectionParams = this.UseDefaultDatabaseConnection ? null : this.DatabaseConnectionControlVM.BuildConnectionParameters();
 
             _scriptContainer.DatabaseName = this.DatabaseName;
-            _scriptContainer.ScriptFilePath = this.ScriptFile;
+            _scriptContainer.ScriptContainerPath = this.ScriptFile;
             _scriptContainer.CustomServerConnectionParameters = connectionParams;
             _scriptContainer.Tags = this.Tags.ToList();
 

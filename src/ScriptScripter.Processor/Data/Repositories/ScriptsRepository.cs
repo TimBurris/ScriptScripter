@@ -7,14 +7,14 @@ namespace ScriptScripter.Processor.Data.Repositories
 {
 
     /// <summary>
-    /// a file/folder implementation which uses the assigned ScriptFilePath to decide whehter or not to use <see cref="ScriptFolderRepository"/> or the <see cref="ScriptFileRepository"/>
+    /// a file/folder implementation which uses the assigned ScriptContainerPath to decide whehter or not to use <see cref="ScriptFolderRepository"/> or the <see cref="ScriptFileRepository"/>
     /// </summary>
     public class ScriptsRepository : Contracts.IScriptsRepository
     {
         private readonly ScriptFolderRepository _scriptFolderRepository;
         private readonly ScriptFileRepository _scriptFileRepository;
         private readonly IFileSystem _fileSystem;
-        private string _scriptFilePath;
+        private string _scriptContainerPath;
 
         public ScriptsRepository(ScriptFolderRepository scriptFolderRepository, ScriptFileRepository scriptFileRepository, System.IO.Abstractions.IFileSystem fileSystem)
         {
@@ -22,19 +22,19 @@ namespace ScriptScripter.Processor.Data.Repositories
             _scriptFileRepository = scriptFileRepository;
             _fileSystem = fileSystem;
         }
-        public string ScriptFilePath
+        public string ScriptContainerPath
         {
-            get => _scriptFilePath; set
+            get => _scriptContainerPath; set
             {
-                _scriptFilePath = value;
-                _scriptFileRepository.ScriptFilePath = value;
-                _scriptFolderRepository.ScriptFilePath = value;
+                _scriptContainerPath = value;
+                _scriptFileRepository.ScriptContainerPath = value;
+                _scriptFolderRepository.ScriptContainerPath = value;
             }
         }
 
         private bool? ScriptPathIsAFolder()
         {
-            var path = this.ScriptFilePath;
+            var path = this.ScriptContainerPath;
 
             if (_fileSystem.File.Exists(path))
                 return true;

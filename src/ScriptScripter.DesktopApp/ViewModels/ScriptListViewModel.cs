@@ -74,7 +74,7 @@ namespace ScriptScripter.DesktopApp.ViewModels
 
         protected override async Task<bool> OnReloadDataAsync(CancellationToken cancellationToken)
         {
-            var scriptRepo = _scriptRepoFactory.GetScriptsRepository(_scriptContainer.ScriptFilePath);
+            var scriptRepo = _scriptRepoFactory.GetScriptsRepository(_scriptContainer.ScriptContainerPath);
             var scriptsResult = await _viewModelFaultlessService.TryExecuteSyncAsAsync(() => scriptRepo.GetAllScripts());
 
             if (!scriptsResult.WasSuccessful)
@@ -83,7 +83,7 @@ namespace ScriptScripter.DesktopApp.ViewModels
 
             //not going to show any connection error, just try it, if it's no there, no worries we can move forward without it
             var toRunResult = await _faultlessExecutionService
-                                    .TryExecuteSyncAsAsync(() => _scriptingService.GetScriptsThatNeedRun(this.GetDatabaseConnectionParameters(), _scriptContainer.ScriptFilePath));
+                                    .TryExecuteSyncAsAsync(() => _scriptingService.GetScriptsThatNeedRun(this.GetDatabaseConnectionParameters(), _scriptContainer.ScriptContainerPath));
 
             if (cancellationToken.IsCancellationRequested)
                 return false;
