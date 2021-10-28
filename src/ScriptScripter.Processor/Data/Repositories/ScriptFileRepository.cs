@@ -20,7 +20,20 @@ namespace ScriptScripter.Processor.Data.Repositories
         {
             var data = this.ReadScripts();
 
-            script.ScriptId = Guid.NewGuid();
+            if (script.ScriptId == Guid.Empty)
+            {
+                script.ScriptId = Guid.NewGuid();
+            }
+            else
+            {
+                //make sure it doesn't already exists
+                var existing = data.FirstOrDefault(x => x.ScriptId == script.ScriptId);
+                if (existing != null)
+                {
+                    throw new ApplicationException($"Script '{script.ScriptId}' already exists in the ScriptContainer.");
+                }
+            }
+
             data.Add(script);
 
             this.WriteScripts(data);

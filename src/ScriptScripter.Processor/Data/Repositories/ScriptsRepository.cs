@@ -37,7 +37,7 @@ namespace ScriptScripter.Processor.Data.Repositories
             var path = this.ScriptContainerPath;
 
             if (_fileSystem.File.Exists(path))
-                return true;
+                return false;
             else if (_fileSystem.Directory.Exists(path))
                 return true;
             else

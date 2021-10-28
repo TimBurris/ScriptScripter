@@ -21,7 +21,19 @@ namespace ScriptScripter.Processor.Data.Repositories
 
         public Models.Script AddNewScript(Models.Script script)
         {
-            script.ScriptId = Guid.NewGuid();
+            if (script.ScriptId == Guid.Empty)
+            {
+                script.ScriptId = Guid.NewGuid();
+            }
+            else
+            {
+                //make sure it doesn't already exists
+                var existing = ReadScript(script.ScriptId);
+                if (existing != null)
+                {
+                    throw new ApplicationException($"Script '{script.ScriptId}' already exists in the ScriptContainer.");
+                }
+            }
 
             this.WriteScript(script, overwrite: false);//no overwrite, if it exists and you called addnew, then you've done something wrong
 
@@ -128,6 +140,11 @@ namespace ScriptScripter.Processor.Data.Repositories
 
         public virtual Models.Script ReadScript(string filePath)
         {
+            if (!_fileSystem.File.Exists(filePath))
+            {
+                return null;
+            }
+
             var sb = new StringBuilder();
             //you can't use a simple _fileSystem.File.ReadAllText(fileName) because if it's locked by another app it will bomb
             //    I saw the issue occuring when i was testing filesystem changes, if i changed the file in notepadd++ after a save or 2 there would be locked file error
@@ -164,7 +181,7 @@ namespace ScriptScripter.Processor.Data.Repositories
             }
             catch (InvalidOperationException ex)
             {
-                throw new InvalidScriptContainterContentsException(message: "Failed to read scripts", innerException: ex);
+                throw new InvalidScriptContainterContentsException(message: "Failed to read script", innerException: ex);
             }
         }
 
