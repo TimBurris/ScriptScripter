@@ -146,15 +146,15 @@ namespace ScriptScripter.Processor.Services
             return Contracts.DatabaseScriptStates.UpToDate;
         }
 
-        public Dto.ActionResult TestScriptContainerExists(string scriptFilePath)
+        public Dto.ActionResult TestScriptContainerExists(string scriptContainerPath)
         {
-            if (_fileSystem.File.Exists(scriptFilePath))
+            if (_fileSystem.File.Exists(scriptContainerPath) || _fileSystem.Directory.Exists(scriptContainerPath))
             {
                 return Dto.ActionResult.SuccessResult();
             }
             else
             {
-                return Dto.ActionResult.FailedResult("Script Container file does not exist");
+                return Dto.ActionResult.FailedResult("Script Container does not exist");
             }
         }
 

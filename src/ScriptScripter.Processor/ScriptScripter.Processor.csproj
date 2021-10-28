@@ -118,6 +118,8 @@
     <Compile Include="Data\Models\ScriptContainer.cs" />
     <Compile Include="Data\Models\DatabaseConnectionParameters.cs" />
     <Compile Include="Data\Repositories\ConfigFileBase.cs" />
+    <Compile Include="Data\Repositories\ScriptFileRepository.cs" />
+    <Compile Include="Data\Repositories\ScriptFolderRepository.cs" />
     <Compile Include="Data\Repositories\ScriptsRepository.cs" />
     <Compile Include="Data\Repositories\RevisionRepository.cs" />
     <Compile Include="Data\Repositories\ScriptContainerRepository.cs" />
