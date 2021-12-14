@@ -56,6 +56,17 @@ steps:
     CleanTargetFolder: true
     OverWrite: true
     flattenFolders: true
+- task: CopyFiles@2
+  displayName: 'Copy Container Command Files to Artifacts'
+  inputs:
+    SourceFolder: '$(build.sourcesdirectory)'
+    Contents: |
+     **\ScriptScripter.Container.Command\bin\$(buildConfiguration)\*
+     **\ScriptScripter.Processor\smo_libs\v12.0\*
+    TargetFolder: '$(Build.ArtifactStagingDirectory)\ContainerCommand'
+    CleanTargetFolder: true
+    OverWrite: true
+    flattenFolders: true
 
 - task: PublishBuildArtifacts@1
   inputs:
