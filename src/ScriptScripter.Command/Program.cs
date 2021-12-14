@@ -113,7 +113,7 @@ namespace ScriptScripter.Command
                          .WithParsed<IncomingOptions>(o =>
                          {
                              _verbose = o.Verbose;
-                             _scriptContainerPath = o.ScriptContainerPath ?? o.ScriptFilePath;//supporting scriptfilepath for backwards compatability
+                             _scriptContainerPath = System.IO.Path.GetFullPath(o.ScriptContainerPath ?? o.ScriptFilePath);//supporting scriptfilepath for backwards compatability
                              _connectionParams = new Processor.Data.Models.DatabaseConnectionParameters()
                              {
                                  DatabaseName = o.DatabaseName,
