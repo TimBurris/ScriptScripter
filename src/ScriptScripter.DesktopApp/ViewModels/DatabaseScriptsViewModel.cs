@@ -130,20 +130,17 @@ namespace ScriptScripter.DesktopApp.ViewModels
             else
             {
                 var state = _scriptingService.GetDatabaseScriptState(databaseConnectionParams, _scriptContainer.ScriptContainerPath);
-                switch (state)
+                if (state.HasFlag(Processor.Services.Contracts.DatabaseScriptStates.Newer))
                 {
-                    case Processor.Services.Contracts.DatabaseScriptStates.Newer:
-                        IsDatabaseNewer = true;
-                        break;
-                    case Processor.Services.Contracts.DatabaseScriptStates.OutOfdate:
-                        IsOutOfDate = true;
-                        break;
-                    case Processor.Services.Contracts.DatabaseScriptStates.UpToDate:
-                        IsUpToDate = true;
-                        break;
-
-                    default:
-                        throw new NotSupportedException($"{state} is not supported by this view");
+                    IsDatabaseNewer = true;
+                }
+                if (state.HasFlag(Processor.Services.Contracts.DatabaseScriptStates.OutOfdate))
+                {
+                    IsOutOfDate = true;
+                }
+                if (state.HasFlag(Processor.Services.Contracts.DatabaseScriptStates.UpToDate))
+                {
+                    IsUpToDate = true;
                 }
             }
 

@@ -129,21 +129,25 @@ namespace ScriptScripter.Processor.Services
             var revisionsByScriptId = _revisionRepository.GetAll(databaseConnectionParams).ToDictionary(x => x.ScriptId);
             var scriptsById = repo.GetAllScripts().ToDictionary(x => x.ScriptId);
 
+            //Enum is flags, so it can be multiple
+            Contracts.DatabaseScriptStates result = Contracts.DatabaseScriptStates.UpToDate;
+
             //first priorty, does the database have revisions that are not in the script file?  if so, that's bad and is the highest priority
             if (revisionsByScriptId.Any(x => !scriptsById.ContainsKey(x.Key)))
             {
-                return Contracts.DatabaseScriptStates.Newer;
+                result ^= Contracts.DatabaseScriptStates.UpToDate;//unset
+                result = result | Contracts.DatabaseScriptStates.Newer;
             }
 
             //next, are there scripts that are not in the DB?  if so, the the database needs to run revisions
             if (scriptsById.Any(x => !revisionsByScriptId.ContainsKey(x.Key)))
             {
-                return Contracts.DatabaseScriptStates.OutOfdate;
+                result ^= Contracts.DatabaseScriptStates.UpToDate;//unset
+                result = result | Contracts.DatabaseScriptStates.OutOfdate;
             }
 
-            //ok, all that's left then is that they are equal, so it's up to date
 
-            return Contracts.DatabaseScriptStates.UpToDate;
+            return result;
         }
 
         public Dto.ActionResult TestScriptContainerExists(string scriptContainerPath)

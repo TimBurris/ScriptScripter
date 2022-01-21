@@ -6,11 +6,12 @@ using System.Threading.Tasks;
 
 namespace ScriptScripter.Processor.Services.Contracts
 {
+    [Flags]
     public enum DatabaseScriptStates
     {
         UpToDate = 1,
-        OutOfdate,
-        Newer,
+        OutOfdate = 2,
+        Newer = 4,
     }
 
     public interface IScriptingService
