@@ -5,7 +5,7 @@
 name: $(TeamProject)_$(SourceBranchName)_$(Date:yyyy.MM.dd)$(Rev:.r)
 
 trigger:
-- master
+- none
 
 pool:
   vmImage: 'windows-latest'
