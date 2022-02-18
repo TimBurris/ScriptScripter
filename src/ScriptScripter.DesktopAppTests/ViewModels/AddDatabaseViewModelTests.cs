@@ -19,13 +19,14 @@ namespace ScriptScripter.DesktopApp.ViewModels.Tests
     public class AddDatabaseViewModel_SelectFileTestTests
     {
         private AddDatabaseViewModel _viewModel;
+        private Mock<FileAndFolderDialog.Abstractions.IFolderDialogService> _mockFolderDialogService = new Mock<FileAndFolderDialog.Abstractions.IFolderDialogService>();
         private Mock<FileAndFolderDialog.Abstractions.IFileDialogService> _mockFileDialogService = new Mock<FileAndFolderDialog.Abstractions.IFileDialogService>();
         private FileAndFolderDialog.Abstractions.OpenFileOptions _optionsSentIn;
 
         [TestInitialize]
         public void Init()
         {
-            _viewModel = new AddDatabaseViewModel(scriptContainerRepository: null, navigator: null, fileDialogService: _mockFileDialogService.Object, databaseConnectionControlVM: null, logger:null);
+            _viewModel = new AddDatabaseViewModel(scriptContainerRepository: null, navigator: null, fileDialogService: _mockFileDialogService.Object, _mockFolderDialogService.Object, databaseConnectionControlVM: null, logger: null);
             _viewModel.DefaultFileNamePattern = "DBScripts_{DatabaseName}.xml";
 
             _mockFileDialogService.Setup(m => m.ShowSelectFileDialog(It.IsAny<FileAndFolderDialog.Abstractions.OpenFileOptions>()))
