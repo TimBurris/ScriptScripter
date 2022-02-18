@@ -5,6 +5,7 @@
                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
                  xmlns:local="clr-namespace:ScriptScripter.DesktopApp.Views"
                  xmlns:u="clr-namespace:ScriptScripter.DesktopApp"
+                 xmlns:c="clr-namespace:ScriptScripter.DesktopApp.Controls"
                  mc:Ignorable="d" 
                  xmlns:designViewModel="clr-namespace:ScriptScripter.DesktopApp.ViewModels"
                  d:DataContext ="{d:DesignInstance {x:Type designViewModel:ApplyScriptsViewModel}, IsDesignTimeCreatable=True}" 
@@ -111,10 +112,43 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-
+        
         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center">
             <Button Content="Release the Ninja" Command="{Binding ApplyScriptsCommand}" Style="{StaticResource AccentButton}"  Margin="5" Width="150"/>
             <Button Content="Close" Command="{Binding CancelCommand}" Margin="5" Width="150"/>
         </StackPanel>
+        
+        
+        <!-- a "loading" spinner so the user will know it's busy reloading the page (this can take a few seconds if you have some really large scripts (e.g. seed data over 10MB) -->
+        <Grid Grid.Row="0" Grid.RowSpan="2" Visibility="{Binding IsReloading, Converter={StaticResource BoolToVis}}">
+            <Grid Background="Gray" Opacity=".2" >
+            </Grid>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+
+                <c:ProgressRing
+                    Grid.Column="0"
+                    Width="40" 
+                    Height="40"
+                    Margin="5,0,0,0"
+                   VerticalAlignment="Center" 
+                    HorizontalAlignment="Right" 
+                />
+                <TextBlock 
+                    Grid.Column="1"
+                    Text="Checking scripts..." 
+                    Foreground="{StaticResource AccentColorBrush}"
+                    FontSize="20"
+                    Opacity=".7"
+                    FontWeight="Bold"
+                    Margin="5,0,0,0"
+                    VerticalAlignment="Center" 
+                    HorizontalAlignment="Left" 
+                   />
+            </Grid>
+        </Grid>
     </Grid>
 </u:BoundViewBase>
