@@ -15,6 +15,10 @@ namespace ScriptScripter.DesktopApp.ViewModels
         public ScriptScripterViewModelBase(ILogger logger)
         {
             _logger = logger;
+
+            //when reload is complete tell the commandmanager that all buttons should be retested for "canexecute"
+            //   this fixes and issue where we see buttons not getting enabled/disabled after the page takes a bit of time (>3 seconds) to load/reload
+            this.ReloadCompleted += (sender, e) => System.Windows.Input.CommandManager.InvalidateRequerySuggested();
         }
 
         protected override void OnReloadDataFailed()
