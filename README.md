@@ -57,13 +57,13 @@ SS uses Microsoft Sql Server SMO libraries to execute scripts, this means that y
 Currently we've only developed support for Sql Server, however, adding support for other engines would be possible, since the concept is the same.  differences would only be in the Connection Info Area and in the engine used to actually apply the scripts.
 
 # How does it work
-SS will write the T-Sql script to an Xml file ([why not Json?](#why-xml-instead-of-json)).  
-Along with the T-Sql, SS will log **_who_** created the script, record the Full Date and Time for **_when_**, and assign it a Guid.
+SS will write the T-Sql script to either a single Xml file or separate files per script, based on whether you choose to write to a file versus a folder ([why not Json?](#why-xml-instead-of-json)).  
+Along with the T-Sql, SS will log **_who_** created the script, record the Full Date and Time for **_when_**, and assign it a GUID.
 
 When you (or a deployment pipeline) applies scripts, SS will query the target database to find all the ScriptIds that have already been applied.  It will compare that list to the list of Scripts in the script Xml file to determine which scripts have not yet been applied.  SS will then execute those outstanding scripts, in order of their Script Date, and write to a table in the database everything about the script, include when it was run, the user than ran it, etc.
 
 # SCC Friendly
-Since the Xml files have a Guid Script Id and the order is based on full date time (meaning the order they appear in the file in unimportant), the file is friendly for multi-developer branching and merging.  If developer A adds 3 scripts and developer B adds a script, any modern TFVC or Git merge engine will merge them nicely, keeping the revisions from both developers.
+Using the option to write scripts to a folder (individual file per script) means this is friendly for multi-developer branching and merging.  If developer A adds 3 scripts and developer B adds a script, any modern TFVC or Git merge engine will merge them nicely, keeping the revisions from both developers.
 
 # Refrain from changing the Sql after the fact
 Once a script has been applied a database, it will never be run again against that database.  As a result, developers should refrain from changing any T-Sql in a script file that has already been committed to SCC or possibly applied to any database.  If you script T-Sql locally, run it and it doesn't work, you can change/fix it.  Just know that if you change a script that has already been successfully applied to a database, those changes will not be reapplied to the same database.
