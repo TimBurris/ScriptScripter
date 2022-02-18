@@ -138,7 +138,7 @@ namespace ScriptScripter.Command
 
             if (_connectionParams == null)
             {
-                _logger.Error("connection parameters wer now received");
+                _logger.Error("connection parameters were not received");
                 Environment.Exit(5001);
             }
             if (_scriptContainerPath == null)
