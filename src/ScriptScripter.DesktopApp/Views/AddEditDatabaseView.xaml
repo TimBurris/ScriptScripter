@@ -19,14 +19,15 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <TextBox x:Name="ScriptFileBox" 
                      Grid.Column="0"
                      VerticalAlignment="Center"
-                     Text="{Binding ScriptFile, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=True, ValidatesOnDataErrors=True}" 
+                     Text="{Binding ScriptContainerPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=True, ValidatesOnDataErrors=True}" 
                  />
             <TextBlock IsHitTestVisible="False" 
-                       Text="Type, Drag/drop or select file" 
+                       Text="Type, Drag/drop or select file/folder" 
                        VerticalAlignment="Center" 
                        HorizontalAlignment="Left" Margin="5,0,0,0" Foreground="DarkGray">
                 <TextBlock.Style>
@@ -41,15 +42,40 @@
                 </TextBlock.Style>
             </TextBlock>
 
-            <Button Grid.Column="1" Content="..." 
-                    Margin="5,0,0,0" Width="25"
+            <Button Grid.Column="1" 
+                    Margin="5,0,0,0" 
                     Command="{Binding SelectFileCommand}"
-                    />
+                    ToolTip="Select File"
+                     >
+                <Rectangle Width="20"
+                            Height="20"
+                            Fill="{Binding Path=Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}">
+                    <Rectangle.OpacityMask>
+                        <VisualBrush Stretch="Fill"
+                                         Visual="{DynamicResource appbar_page}" />
+                    </Rectangle.OpacityMask>
+                </Rectangle>
+            </Button>
+
+            <Button Grid.Column="2" 
+                    Margin="5,0,0,0" 
+                    Command="{Binding SelectFolderCommand}"
+                    ToolTip="Select Folder"
+                    >
+                <Rectangle Width="20"
+                            Height="20"
+                            Fill="{Binding Path=Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}">
+                    <Rectangle.OpacityMask>
+                        <VisualBrush Stretch="Fill"
+                                         Visual="{DynamicResource appbar_folder}" />
+                    </Rectangle.OpacityMask>
+                </Rectangle>
+            </Button>
         </Grid>
 
         <Label  Content="Tags"/>
         <controls:TextToTagControl TagListSource="{Binding Tags}"/>
-        
+
         <Label  Content="Database Connection"/>
         <CheckBox Content="Use application default" 
                   IsChecked="{Binding UseDefaultDatabaseConnection}"/>

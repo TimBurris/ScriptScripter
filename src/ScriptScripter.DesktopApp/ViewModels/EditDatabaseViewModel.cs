@@ -24,9 +24,10 @@ namespace ScriptScripter.DesktopApp.ViewModels
             NinjaMvvm.Wpf.Abstractions.INavigator navigator,
             Contracts.IViewModelFaultlessService viewModelFaultlessService,
             FileAndFolderDialog.Abstractions.IFileDialogService fileDialogService,
+            FileAndFolderDialog.Abstractions.IFolderDialogService folderDialogService,
             DatabaseConnectionControlViewModel databaseConnectionControlVM,
             NLog.ILogger logger)
-                : base(navigator, fileDialogService, databaseConnectionControlVM, logger)
+                : base(navigator, fileDialogService, folderDialogService, databaseConnectionControlVM, logger)
         {
             ViewTitle = "Edit Database";
             this._scriptContainerRepository = scriptContainerRepository;
@@ -58,7 +59,7 @@ namespace ScriptScripter.DesktopApp.ViewModels
             _scriptContainer = result.ReturnValue;
 
             this.DatabaseName = _scriptContainer.DatabaseName;
-            this.ScriptFile = _scriptContainer.ScriptContainerPath;
+            this.ScriptContainerPath = _scriptContainer.ScriptContainerPath;
 
             var connectionParams = _scriptContainer.CustomServerConnectionParameters;
 
@@ -84,7 +85,7 @@ namespace ScriptScripter.DesktopApp.ViewModels
             var connectionParams = this.UseDefaultDatabaseConnection ? null : this.DatabaseConnectionControlVM.BuildConnectionParameters();
 
             _scriptContainer.DatabaseName = this.DatabaseName;
-            _scriptContainer.ScriptContainerPath = this.ScriptFile;
+            _scriptContainer.ScriptContainerPath = this.ScriptContainerPath;
             _scriptContainer.CustomServerConnectionParameters = connectionParams;
             _scriptContainer.Tags = this.Tags.ToList();
 

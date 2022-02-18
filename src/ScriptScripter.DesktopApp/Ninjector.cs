@@ -18,6 +18,7 @@ namespace ScriptScripter.DesktopApp
             Bind<NLog.ILogger>().ToMethod(p => NLog.LogManager.GetLogger(name: p.Request.Target.Member.DeclaringType.FullName));
             Bind<Contracts.IFileNameDropHandler>().To<FileNameDropHandler>();
             Bind<FileAndFolderDialog.Abstractions.IFileDialogService>().To<FileAndFolderDialog.Wpf.FileDialogService>();
+            Bind<FileAndFolderDialog.Abstractions.IFolderDialogService>().To<FileAndFolderDialog.Wpf.FolderDialogService>();
             Bind<FaultlessExecution.Abstractions.IFaultlessExecutionService>().To<FaultlessExecution.FaultlessExecutionService>();
             Bind<Contracts.IViewModelFaultlessService>().To<ViewModelFaultlessService>();
             Bind<Contracts.IThemeService>().To<Themes.ThemeService>();

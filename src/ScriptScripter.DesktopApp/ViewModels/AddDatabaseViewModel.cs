@@ -20,9 +20,10 @@ namespace ScriptScripter.DesktopApp.ViewModels
         public AddDatabaseViewModel(Processor.Data.Contracts.IScriptContainerRepository scriptContainerRepository,
             NinjaMvvm.Wpf.Abstractions.INavigator navigator,
             FileAndFolderDialog.Abstractions.IFileDialogService fileDialogService,
+            FileAndFolderDialog.Abstractions.IFolderDialogService folderDialogService,
             DatabaseConnectionControlViewModel databaseConnectionControlVM,
             NLog.ILogger logger)
-        : base(navigator, fileDialogService, databaseConnectionControlVM, logger)
+        : base(navigator, fileDialogService, folderDialogService, databaseConnectionControlVM, logger)
         {
             ViewTitle = "Add Database";
             this._scriptContainerRepository = scriptContainerRepository;
@@ -44,7 +45,7 @@ namespace ScriptScripter.DesktopApp.ViewModels
             var connectionParams = this.UseDefaultDatabaseConnection ? null : this.DatabaseConnectionControlVM.BuildConnectionParameters();
 
             var result = _scriptContainerRepository.AddNew(databaseName: this.DatabaseName,
-                scriptContainerPath: this.ScriptFile,
+                scriptContainerPath: this.ScriptContainerPath,
                 customConnectionParameters: connectionParams,
                 tags: this.Tags);
 

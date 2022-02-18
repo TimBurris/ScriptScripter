@@ -2,6 +2,7 @@
 using FluentValidation;
 using System.Linq;
 using System.Collections.ObjectModel;
+using FileAndFolderDialog.Abstractions;
 
 namespace ScriptScripter.DesktopApp.ViewModels
 {
@@ -9,11 +10,13 @@ namespace ScriptScripter.DesktopApp.ViewModels
     {
         private readonly NinjaMvvm.Wpf.Abstractions.INavigator _navigator;
         private readonly FileAndFolderDialog.Abstractions.IFileDialogService _fileDialogService;
+        private readonly IFolderDialogService _folderDialogService;
 
         //public BaseDatabaseViewModel() { }//designer use   //removed because for somereason IoC is using this ctor instead of the correct one
 
         public BaseDatabaseViewModel(NinjaMvvm.Wpf.Abstractions.INavigator navigator,
             FileAndFolderDialog.Abstractions.IFileDialogService fileDialogService,
+            FileAndFolderDialog.Abstractions.IFolderDialogService folderDialogService,
             DatabaseConnectionControlViewModel databaseConnectionControlVM,
             NLog.ILogger logger)
             : base(logger)
@@ -22,6 +25,7 @@ namespace ScriptScripter.DesktopApp.ViewModels
             this.Tags = new ObservableCollection<string>();
             this._navigator = navigator;
             this._fileDialogService = fileDialogService;
+            _folderDialogService = folderDialogService;
             this.DatabaseConnectionControlVM = databaseConnectionControlVM;
             this.DefaultFileNamePattern = ScriptScripter.DesktopApp.Properties.Settings.Default.NewFileDefaultNameFormat;
         }
@@ -55,7 +59,7 @@ namespace ScriptScripter.DesktopApp.ViewModels
             set { SetField(value); }
         }
 
-        public string ScriptFile
+        public string ScriptContainerPath
         {
             get { return GetField<string>(); }
             set { SetField(value); }
@@ -162,7 +166,43 @@ namespace ScriptScripter.DesktopApp.ViewModels
             })
             ?.SingleOrDefault();
 
-            this.ScriptFile = result ?? this.ScriptFile;
+            this.ScriptContainerPath = result ?? this.ScriptContainerPath;
+        }
+
+        #endregion
+
+        #region SelectFolder Command
+
+        private RelayCommand _selectFolderCommand;
+
+        public RelayCommand SelectFolderCommand
+        {
+            get
+            {
+                if (_selectFolderCommand == null)
+                    _selectFolderCommand = new RelayCommand((param) => this.SelectFolder(), (param) => this.CanSelectFolder());
+                return _selectFolderCommand;
+            }
+        }
+
+        public bool CanSelectFolder()
+        {
+            return true;
+        }
+
+        /// <summary>
+        /// Executes the SelectFolder command 
+        /// </summary>
+        public void SelectFolder()
+        {
+            var result = _folderDialogService.ShowSelectFolderDialog(new SelectFolderOptions()
+            {
+                RootFolder = System.Environment.SpecialFolder.MyComputer,
+                SelectedPath = this.ScriptContainerPath,
+                ShowNewFolderButton = true,
+            });
+
+            this.ScriptContainerPath = result ?? this.ScriptContainerPath;
         }
 
         #endregion
@@ -174,7 +214,7 @@ namespace ScriptScripter.DesktopApp.ViewModels
             public BaseDatabaseViewModelValidator()
             {
                 RuleFor(obj => obj.DatabaseName).NotEmpty();
-                RuleFor(obj => obj.ScriptFile).NotEmpty();
+                RuleFor(obj => obj.ScriptContainerPath).NotEmpty();
                 RuleFor(obj => obj.DatabaseConnectionControlVM.ServerName)
                     .NotEmpty()
                     .When(obj => !obj.UseDefaultDatabaseConnection);
@@ -192,7 +232,7 @@ namespace ScriptScripter.DesktopApp.ViewModels
         protected override void OnLoadDesignData()
         {
             DatabaseName = "SampleDatabase";
-            ScriptFile = @"C:\Code\MyProject\Database\Scripts\DBScripts_SampleDatabase.xml";
+            ScriptContainerPath = @"C:\Code\MyProject\Database\Scripts\DBScripts_SampleDatabase.xml";
             UseDefaultDatabaseConnection = false;
         }
 
