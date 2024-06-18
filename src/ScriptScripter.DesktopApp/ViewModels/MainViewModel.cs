@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using NinjaMvvm;
 using NinjaMvvm.Wpf;
+using ScriptScripter.Processor.Data.Contracts;
 
 namespace ScriptScripter.DesktopApp.ViewModels
 {
@@ -13,6 +11,7 @@ namespace ScriptScripter.DesktopApp.ViewModels
     {
         private readonly NinjaMvvm.Wpf.Abstractions.INavigator _navigator;
         private readonly Processor.Services.Contracts.IScriptContainerWatcherService _scriptContainerWatcherService;
+        private readonly IScriptContainerRepository _scriptsContainerRepository;
         private readonly Processor.Data.Contracts.IConfigurationRepository _configurationRepository;
         private readonly Contracts.IViewModelFaultlessService _viewModelFaultlessService;
         private readonly Processor.Services.Contracts.IConfigurationFileUpgradeService _configurationFileUpgradeService;
@@ -24,6 +23,7 @@ namespace ScriptScripter.DesktopApp.ViewModels
         public MainViewModel(
             NinjaMvvm.Wpf.Abstractions.INavigator navigator,
             Processor.Services.Contracts.IScriptContainerWatcherService scriptContainerWatcherService,
+            Processor.Data.Contracts.IScriptContainerRepository scriptsContainerRepository,
             Processor.Data.Contracts.IConfigurationRepository configurationRepository,
             Contracts.IViewModelFaultlessService viewModelFaultlessService,
             Processor.Services.Contracts.IEventNotificationService eventNotificationService,
@@ -35,6 +35,7 @@ namespace ScriptScripter.DesktopApp.ViewModels
             ViewTitle = "ScriptScripter";
             this._navigator = navigator;
             this._scriptContainerWatcherService = scriptContainerWatcherService;
+            _scriptsContainerRepository = scriptsContainerRepository;
             this._configurationRepository = configurationRepository;
             this._viewModelFaultlessService = viewModelFaultlessService;
             this._eventNotificationService = eventNotificationService;
@@ -299,6 +300,29 @@ namespace ScriptScripter.DesktopApp.ViewModels
         }
 
         #endregion
+
+
+        //HACK: this is a hack to get the Add New Script dialog to show when the app is started with the -a param
+        internal void AddNewScriptForContainer(string addScriptContainerPath)
+        {
+            var scriptContainer = _scriptsContainerRepository.GetAll()
+                .FirstOrDefault(x => string.Equals(x.ScriptContainerPath, addScriptContainerPath));
+
+            if (scriptContainer == null)
+            {
+                return;
+            }
+            else
+            {
+                Task.Run(async () =>
+                {
+                    //the delay is really not necessary, but it looks a little better if we wait a second before showing the dialog
+                    await Task.Delay(1000);
+                    //use dispatcher because we just Ran a task which could mean we are on a different thread
+                    App.Current.Dispatcher.Invoke(() => _viewModelFaultlessService.TryExecute(() => _navigator.ShowDialog<ScriptViewModel>(vm => vm.Init(scriptContainer))));
+                });
+            }
+        }
 
         private class ConfigurationInfo
         {

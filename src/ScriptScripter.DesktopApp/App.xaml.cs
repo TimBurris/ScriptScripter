@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
+using CommandLine;
 using Ninject;
 
 namespace ScriptScripter.DesktopApp
@@ -22,11 +17,13 @@ namespace ScriptScripter.DesktopApp
             Ninjector.Container = kernel;
             ScriptScripter.Processor.Ninjector.Container = kernel;
 
-            this.InitMainWindow(Ninjector.Container);
+            var vm = this.InitMainWindow(Ninjector.Container);
+
+            this.InitFromInputParams(vm, e.Args);
         }
 
 
-        private void InitMainWindow(IKernel container)
+        private ViewModels.MainViewModel InitMainWindow(IKernel container)
         {
             var x = new MainWindow();
             x.Show();
@@ -35,6 +32,24 @@ namespace ScriptScripter.DesktopApp
             var vm = container.Get<ViewModels.MainViewModel>();
             x.DataContext = vm;
             var o = vm.ViewBound;
+
+            return vm;
+        }
+
+
+        private void InitFromInputParams(ViewModels.MainViewModel vm, string[] args)
+        {
+            string addScriptContainerPath = null;
+            var parseResult = Parser.Default.ParseArguments<IncomingOptions>(args)
+                         .WithParsed<IncomingOptions>(o =>
+                         {
+                             addScriptContainerPath = o.AddScriptContainerPath;
+                         })
+                         ;
+            if (!string.IsNullOrWhiteSpace(addScriptContainerPath))
+            {
+                vm.AddNewScriptForContainer(addScriptContainerPath);
+            }
         }
     }
 }
