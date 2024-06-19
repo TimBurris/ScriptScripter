@@ -305,11 +305,20 @@ namespace ScriptScripter.DesktopApp.ViewModels
         //HACK: this is a hack to get the Add New Script dialog to show when the app is started with the -a param
         internal void AddNewScriptForContainer(string addScriptContainerPath)
         {
-            var scriptContainer = _scriptsContainerRepository.GetAll()
-                .FirstOrDefault(x => string.Equals(x.ScriptContainerPath, addScriptContainerPath));
+            var allContainers = _scriptsContainerRepository.GetAll();
+            var scriptContainer = allContainers
+                .FirstOrDefault(x => string.Equals(x.ScriptContainerPath, addScriptContainerPath, StringComparison.OrdinalIgnoreCase));
 
             if (scriptContainer == null)
             {
+                var allContainersMessage = string.Join("\r\n", allContainers.Select(x => x.ScriptContainerPath));
+                _navigator.ShowDialog<MessageBoxViewModel>(initAction: vm =>
+                {
+                    vm.Init("Error", "The specified script container was not found", MessageBoxViewModel.MessageBoxButton.OK, MessageBoxViewModel.MessageBoxImage.Exclamation);
+                    vm.MoreDetailsMessage = $"The path specified was: '{addScriptContainerPath}' which does not match any of these:\r\n--------------------\r\n{allContainersMessage}";
+                    vm.CanShowMoreDetails = true;
+                    vm.MoreDetailsCaption = "More details";
+                });
                 return;
             }
             else
