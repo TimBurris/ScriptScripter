@@ -1,12 +1,8 @@
-﻿using FluentValidation;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using NinjaMvvm;
+﻿using FaultlessExecution.Extensions;
+using FluentValidation;
 using NinjaMvvm.Wpf;
-using FaultlessExecution.Extensions;
+using System;
+using System.Linq;
 
 namespace ScriptScripter.DesktopApp.ViewModels
 {
@@ -54,11 +50,12 @@ namespace ScriptScripter.DesktopApp.ViewModels
             }
         }
 
-        public void Init(Processor.Data.Models.ScriptContainer scriptContainer)
+        public void Init(Processor.Data.Models.ScriptContainer scriptContainer, string sqlStatement = null)
         {
             _scriptContainer = scriptContainer;
             ViewTitle = $"Create New Script - {scriptContainer.DatabaseName}";
             this.DatabaseName = scriptContainer.DatabaseName;
+            this.SqlStatement = sqlStatement;
         }
 
         public void Init(Processor.Data.Models.ScriptContainer scriptContainer, Processor.Data.Models.Script script)

@@ -1,9 +1,9 @@
-﻿using System;
+﻿using NinjaMvvm.Wpf;
+using ScriptScripter.Processor.Data.Contracts;
+using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using NinjaMvvm.Wpf;
-using ScriptScripter.Processor.Data.Contracts;
 
 namespace ScriptScripter.DesktopApp.ViewModels
 {
@@ -303,7 +303,7 @@ namespace ScriptScripter.DesktopApp.ViewModels
 
 
         //HACK: this is a hack to get the Add New Script dialog to show when the app is started with the -a param
-        internal void AddNewScriptForContainer(string addScriptContainerPath)
+        internal void AddNewScriptForContainer(string addScriptContainerPath, bool useClipboardForNewScript)
         {
             var allContainers = _scriptsContainerRepository.GetAll();
             var scriptContainer = allContainers
@@ -323,12 +323,18 @@ namespace ScriptScripter.DesktopApp.ViewModels
             }
             else
             {
+                string sqlScript = null;
+                if (useClipboardForNewScript)
+                {
+                    sqlScript = _viewModelFaultlessService.TryExecute(() => System.Windows.Clipboard.GetText())?.ReturnValue;
+                }
+
                 Task.Run(async () =>
                 {
                     //the delay is really not necessary, but it looks a little better if we wait a second before showing the dialog
                     await Task.Delay(1000);
                     //use dispatcher because we just Ran a task which could mean we are on a different thread
-                    App.Current.Dispatcher.Invoke(() => _viewModelFaultlessService.TryExecute(() => _navigator.ShowDialog<ScriptViewModel>(vm => vm.Init(scriptContainer))));
+                    App.Current.Dispatcher.Invoke(() => _viewModelFaultlessService.TryExecute(() => _navigator.ShowDialog<ScriptViewModel>(vm => vm.Init(scriptContainer, sqlScript))));
                 });
             }
         }

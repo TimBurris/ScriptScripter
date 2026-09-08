@@ -1,6 +1,6 @@
-﻿using System.Windows;
-using CommandLine;
+﻿using CommandLine;
 using Ninject;
+using System.Windows;
 
 namespace ScriptScripter.DesktopApp
 {
@@ -40,15 +40,17 @@ namespace ScriptScripter.DesktopApp
         private void InitFromInputParams(ViewModels.MainViewModel vm, string[] args)
         {
             string addScriptContainerPath = null;
+            bool useClipboardForNewScript = false;
             var parseResult = Parser.Default.ParseArguments<IncomingOptions>(args)
                          .WithParsed<IncomingOptions>(o =>
                          {
                              addScriptContainerPath = o.AddScriptContainerPath;
+                             useClipboardForNewScript = o.UseClipboardForNewScript;
                          })
                          ;
             if (!string.IsNullOrWhiteSpace(addScriptContainerPath))
             {
-                vm.AddNewScriptForContainer(addScriptContainerPath);
+                vm.AddNewScriptForContainer(addScriptContainerPath, useClipboardForNewScript);
             }
         }
     }
