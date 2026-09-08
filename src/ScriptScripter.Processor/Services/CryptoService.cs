@@ -18,45 +18,48 @@ namespace ScriptScripter.Processor.Services
 
         public string Encrypt(string plainText)
         {
+            // JAC 9/16/2025 modifying the cryptograpy provider to be FIPS compliant (Use AesCryptoServiceProvider instead of RijndaelManaged)
+
             byte[] plainTextBytes = Encoding.UTF8.GetBytes(plainText);
 
             byte[] keyBytes = new Rfc2898DeriveBytes(_passwordHash, Encoding.ASCII.GetBytes(_saltKey)).GetBytes(256 / 8);
-            var symmetricKey = new RijndaelManaged() { Mode = CipherMode.CBC, Padding = PaddingMode.Zeros };
-            var encryptor = symmetricKey.CreateEncryptor(keyBytes, Encoding.ASCII.GetBytes(_VIKey));
-
-            byte[] cipherTextBytes;
-
-            using (var memoryStream = new System.IO.MemoryStream())
+            using (var aes = new AesCryptoServiceProvider { Mode = CipherMode.CBC, Padding = PaddingMode.Zeros })
             {
-                using (var cryptoStream = new CryptoStream(memoryStream, encryptor, CryptoStreamMode.Write))
+                var encryptor = aes.CreateEncryptor(keyBytes, Encoding.ASCII.GetBytes(_VIKey));
+                byte[] cipherTextBytes;
+                using (var memoryStream = new System.IO.MemoryStream())
                 {
-                    cryptoStream.Write(plainTextBytes, 0, plainTextBytes.Length);
-                    cryptoStream.FlushFinalBlock();
-                    cipherTextBytes = memoryStream.ToArray();
-                    cryptoStream.Close();
+                    using (var cryptoStream = new CryptoStream(memoryStream, encryptor, CryptoStreamMode.Write))
+                    {
+                        cryptoStream.Write(plainTextBytes, 0, plainTextBytes.Length);
+                        cryptoStream.FlushFinalBlock();
+                        cipherTextBytes = memoryStream.ToArray();
+                    }
                 }
-                memoryStream.Close();
+                return Convert.ToBase64String(cipherTextBytes);
             }
-
-            return Convert.ToBase64String(cipherTextBytes);
         }
 
         public string Decrypt(string encryptedText)
         {
+            // JAC 9/16/2025 modifying the cryptograpy provider to be FIPS compliant (Use AesCryptoServiceProvider instead of RijndaelManaged)
+            
             byte[] cipherTextBytes = Convert.FromBase64String(encryptedText);
             byte[] keyBytes = new Rfc2898DeriveBytes(_passwordHash, Encoding.ASCII.GetBytes(_saltKey)).GetBytes(256 / 8);
-            var symmetricKey = new RijndaelManaged() { Mode = CipherMode.CBC, Padding = PaddingMode.None };
 
-            var decryptor = symmetricKey.CreateDecryptor(keyBytes, Encoding.ASCII.GetBytes(_VIKey));
-            var memoryStream = new System.IO.MemoryStream(cipherTextBytes);
-            var cryptoStream = new CryptoStream(memoryStream, decryptor, CryptoStreamMode.Read);
-            byte[] plainTextBytes = new byte[cipherTextBytes.Length];
-
-            int decryptedByteCount = cryptoStream.Read(plainTextBytes, 0, plainTextBytes.Length);
-            memoryStream.Close();
-            cryptoStream.Close();
-
-            return Encoding.UTF8.GetString(plainTextBytes, 0, decryptedByteCount).TrimEnd("\0".ToCharArray());
+            using (var aes = new AesCryptoServiceProvider { Mode = CipherMode.CBC, Padding = PaddingMode.Zeros })
+            {
+                var decryptor = aes.CreateDecryptor(keyBytes, Encoding.ASCII.GetBytes(_VIKey));
+                using (var memoryStream = new System.IO.MemoryStream(cipherTextBytes))
+                {
+                    using (var cryptoStream = new CryptoStream(memoryStream, decryptor, CryptoStreamMode.Read))
+                    {
+                        byte[] plainTextBytes = new byte[cipherTextBytes.Length];
+                        int decryptedByteCount = cryptoStream.Read(plainTextBytes, 0, plainTextBytes.Length);
+                        return Encoding.UTF8.GetString(plainTextBytes, 0, decryptedByteCount).TrimEnd('\0');
+                    }
+                }
+            }
         }
     }
 }
