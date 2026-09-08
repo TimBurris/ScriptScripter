@@ -56,6 +56,7 @@ namespace ScriptScripter.DesktopApp.ViewModels
             ViewTitle = $"Create New Script - {scriptContainer.DatabaseName}";
             this.DatabaseName = scriptContainer.DatabaseName;
             this.SqlStatement = sqlStatement;
+            this.InitialFocusToComments = !string.IsNullOrEmpty(sqlStatement);//if we have a sql statement, then we want to focus on the comments box, otherwise focus on the sql statement box
         }
 
         public void Init(Processor.Data.Models.ScriptContainer scriptContainer, Processor.Data.Models.Script script)
@@ -76,6 +77,12 @@ namespace ScriptScripter.DesktopApp.ViewModels
             base.OnUnloaded();
         }
 
+
+        public bool InitialFocusToComments
+        {
+            get { return GetField<bool>(); }
+            set { SetField(value); }
+        }
 
         public bool AllowApplyScripts
         {

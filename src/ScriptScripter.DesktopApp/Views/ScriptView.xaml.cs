@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using ScriptScripter.DesktopApp.ViewModels;
+using System.Windows;
 
 namespace ScriptScripter.DesktopApp.Views
 {
@@ -15,7 +16,14 @@ namespace ScriptScripter.DesktopApp.Views
 
         private void ScriptView_Loaded(object sender, RoutedEventArgs e)
         {
-            SqlStatementTextBox.Focus();
+            if (DataContext is ScriptViewModel vm && vm.InitialFocusToComments)
+            {
+                CommentsTextBox.Focus();
+            }
+            else
+            {
+                SqlStatementTextBox.Focus();
+            }
         }
     }
 }
