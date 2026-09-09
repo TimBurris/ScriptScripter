@@ -315,6 +315,7 @@ namespace ScriptScripter.DesktopApp.ViewModels
                 .ToList();
 
             Processor.Data.Models.ScriptContainer scriptContainer;
+            string worktreeName = null;
 
             if (exactMatches.Count == 1)
             {
@@ -328,7 +329,7 @@ namespace ScriptScripter.DesktopApp.ViewModels
             }
             else
             {
-                scriptContainer = this.ResolveWorktreeScriptContainer(addScriptContainerPath, allContainers);
+                scriptContainer = this.ResolveWorktreeScriptContainer(addScriptContainerPath, allContainers, out worktreeName);
                 if (scriptContainer == null)
                     return; //either not found (dialog already shown) or the picker was cancelled
             }
@@ -344,7 +345,7 @@ namespace ScriptScripter.DesktopApp.ViewModels
                 //the delay is really not necessary, but it looks a little better if we wait a second before showing the dialog
                 await Task.Delay(1000);
                 //use dispatcher because we just Ran a task which could mean we are on a different thread
-                App.Current.Dispatcher.Invoke(() => _viewModelFaultlessService.TryExecute(() => _navigator.ShowDialog<ScriptViewModel>(vm => vm.Init(scriptContainer, sqlScript))));
+                App.Current.Dispatcher.Invoke(() => _viewModelFaultlessService.TryExecute(() => _navigator.ShowDialog<ScriptViewModel>(vm => vm.Init(scriptContainer, sqlScript, worktreeName))));
             });
         }
 
@@ -356,8 +357,11 @@ namespace ScriptScripter.DesktopApp.ViewModels
         /// nothing is written to the configuration file. Returns null (having shown a dialog, or after the user
         /// cancelled the picker) when no container can be resolved.
         /// </summary>
-        private Processor.Data.Models.ScriptContainer ResolveWorktreeScriptContainer(string addScriptContainerPath, System.Collections.Generic.List<Processor.Data.Models.ScriptContainer> allContainers)
+        /// <param name="worktreeName">the name of the detected worktree, so the caller can make it visible on the Add New Script dialog; null when nothing was resolved</param>
+        private Processor.Data.Models.ScriptContainer ResolveWorktreeScriptContainer(string addScriptContainerPath, System.Collections.Generic.List<Processor.Data.Models.ScriptContainer> allContainers, out string worktreeName)
         {
+            worktreeName = null;
+
             var worktreeResolution = _worktreeResolverService.ResolveWorktreeCandidatePath(addScriptContainerPath);
 
             if (!worktreeResolution.IsWorktree)
@@ -387,6 +391,9 @@ namespace ScriptScripter.DesktopApp.ViewModels
                 this.ShowContainerNotFoundDialog(addScriptContainerPath, allContainers, worktreeResolution);
                 return null;
             }
+
+            //note: GetFileName is pure string work here, not filesystem access
+            worktreeName = System.IO.Path.GetFileName(worktreeResolution.WorktreeRoot);
 
             //transient, in-memory clone: same DatabaseName / connection params, but pointed at the original
             //worktree path. Nothing is written to the configuration file - no new list entry, no watcher,

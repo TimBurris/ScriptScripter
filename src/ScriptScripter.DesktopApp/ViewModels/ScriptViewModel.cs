@@ -50,13 +50,24 @@ namespace ScriptScripter.DesktopApp.ViewModels
             }
         }
 
-        public void Init(Processor.Data.Models.ScriptContainer scriptContainer, string sqlStatement = null)
+        /// <summary>
+        /// </summary>
+        /// <param name="worktreeName">when the container is a transient git worktree copy, the name of that worktree; null for a normal configured container</param>
+        public void Init(Processor.Data.Models.ScriptContainer scriptContainer, string sqlStatement = null, string worktreeName = null)
         {
             _scriptContainer = scriptContainer;
-            ViewTitle = $"Create New Script - {scriptContainer.DatabaseName}";
             this.DatabaseName = scriptContainer.DatabaseName;
             this.SqlStatement = sqlStatement;
             this.InitialFocusToComments = !string.IsNullOrEmpty(sqlStatement);//if we have a sql statement, then we want to focus on the comments box, otherwise focus on the sql statement box
+
+            this.ScriptContainerPath = scriptContainer.ScriptContainerPath;
+            this.WorktreeName = worktreeName;
+            this.IsWorktreeContainer = !string.IsNullOrEmpty(worktreeName);
+
+            if (this.IsWorktreeContainer)
+                ViewTitle = $"Create New Script - {scriptContainer.DatabaseName} (worktree: {worktreeName})";
+            else
+                ViewTitle = $"Create New Script - {scriptContainer.DatabaseName}";
         }
 
         public void Init(Processor.Data.Models.ScriptContainer scriptContainer, Processor.Data.Models.Script script)
@@ -91,6 +102,27 @@ namespace ScriptScripter.DesktopApp.ViewModels
         }
 
         public string DatabaseName
+        {
+            get { return GetField<string>(); }
+            set { SetField(value); }
+        }
+
+        /// <summary>
+        /// true when the script will be written to a git worktree copy of the scripts folder rather than the configured one
+        /// </summary>
+        public bool IsWorktreeContainer
+        {
+            get { return GetField<bool>(); }
+            set { SetField(value); }
+        }
+
+        public string WorktreeName
+        {
+            get { return GetField<string>(); }
+            set { SetField(value); }
+        }
+
+        public string ScriptContainerPath
         {
             get { return GetField<string>(); }
             set { SetField(value); }

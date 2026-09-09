@@ -47,6 +47,12 @@ found," and Tim can't add a script while reviewing a worktree.
   system prompts the user to pick which one (same picker as the exact-match
   ambiguity case above), then proceeds with the transient clone using the
   chosen container's `DatabaseName` / connection params.
+- When Add New Script is opened against a transient worktree container, the
+  dialog says so: a warning-styled banner under the database name reads
+  "git worktree copy: `<worktree folder name>`" (the full container path is
+  its tooltip), and the window title is suffixed
+  "(worktree: `<worktree folder name>`)". A normal configured container is
+  unchanged - no banner, original title.
 - Commit and Apply is allowed unchanged for a transient worktree container.
   Applying writes `AppliedRevision` rows to whatever database the inherited
   connection params point at; if the worktree/branch is later abandoned,
