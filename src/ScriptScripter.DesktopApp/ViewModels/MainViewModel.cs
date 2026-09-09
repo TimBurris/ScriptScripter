@@ -17,6 +17,7 @@ namespace ScriptScripter.DesktopApp.ViewModels
         private readonly Processor.Services.Contracts.IConfigurationFileUpgradeService _configurationFileUpgradeService;
         private readonly Contracts.IThemeService _themeService;
         private readonly Processor.Services.Contracts.IEventNotificationService _eventNotificationService;
+        private readonly Processor.Services.Contracts.IWorktreeResolverService _worktreeResolverService;
 
         //public MainViewModel() { }//designer only   //removed because for somereason IoC is using this ctor instead of the correct one
 
@@ -29,6 +30,7 @@ namespace ScriptScripter.DesktopApp.ViewModels
             Processor.Services.Contracts.IEventNotificationService eventNotificationService,
             Processor.Services.Contracts.IConfigurationFileUpgradeService configurationFileUpgradeService,
             Contracts.IThemeService themeService,
+            Processor.Services.Contracts.IWorktreeResolverService worktreeResolverService,
             NLog.ILogger logger)
             : base(logger)
         {
@@ -41,6 +43,7 @@ namespace ScriptScripter.DesktopApp.ViewModels
             this._eventNotificationService = eventNotificationService;
             this._configurationFileUpgradeService = configurationFileUpgradeService;
             this._themeService = themeService;
+            _worktreeResolverService = worktreeResolverService;
             if (_eventNotificationService != null)
                 _eventNotificationService.ServerConnectionChanged += _eventNotificationService_ServerConnectionChanged;
         }
@@ -305,38 +308,134 @@ namespace ScriptScripter.DesktopApp.ViewModels
         //HACK: this is a hack to get the Add New Script dialog to show when the app is started with the -a param
         internal void AddNewScriptForContainer(string addScriptContainerPath, bool useClipboardForNewScript)
         {
-            var allContainers = _scriptsContainerRepository.GetAll();
-            var scriptContainer = allContainers
-                .FirstOrDefault(x => string.Equals(x.ScriptContainerPath, addScriptContainerPath, StringComparison.OrdinalIgnoreCase));
+            var allContainers = _scriptsContainerRepository.GetAll().ToList();
 
-            if (scriptContainer == null)
+            var exactMatches = allContainers
+                .Where(x => PathsMatch(x.ScriptContainerPath, addScriptContainerPath))
+                .ToList();
+
+            Processor.Data.Models.ScriptContainer scriptContainer;
+
+            if (exactMatches.Count == 1)
             {
-                var allContainersMessage = string.Join("\r\n", allContainers.Select(x => x.ScriptContainerPath));
-                _navigator.ShowDialog<MessageBoxViewModel>(initAction: vm =>
-                {
-                    vm.Init("Error", "The specified script container was not found", MessageBoxViewModel.MessageBoxButton.OK, MessageBoxViewModel.MessageBoxImage.Exclamation);
-                    vm.MoreDetailsMessage = $"The path specified was: '{addScriptContainerPath}' which does not match any of these:\r\n--------------------\r\n{allContainersMessage}";
-                    vm.CanShowMoreDetails = true;
-                    vm.MoreDetailsCaption = "More details";
-                });
-                return;
+                scriptContainer = exactMatches[0];
+            }
+            else if (exactMatches.Count > 1)
+            {
+                scriptContainer = this.PickScriptContainer(exactMatches);
+                if (scriptContainer == null)
+                    return; //user cancelled the picker
             }
             else
             {
-                string sqlScript = null;
-                if (useClipboardForNewScript)
-                {
-                    sqlScript = _viewModelFaultlessService.TryExecute(() => System.Windows.Clipboard.GetText())?.ReturnValue;
-                }
-
-                Task.Run(async () =>
-                {
-                    //the delay is really not necessary, but it looks a little better if we wait a second before showing the dialog
-                    await Task.Delay(1000);
-                    //use dispatcher because we just Ran a task which could mean we are on a different thread
-                    App.Current.Dispatcher.Invoke(() => _viewModelFaultlessService.TryExecute(() => _navigator.ShowDialog<ScriptViewModel>(vm => vm.Init(scriptContainer, sqlScript))));
-                });
+                scriptContainer = this.ResolveWorktreeScriptContainer(addScriptContainerPath, allContainers);
+                if (scriptContainer == null)
+                    return; //either not found (dialog already shown) or the picker was cancelled
             }
+
+            string sqlScript = null;
+            if (useClipboardForNewScript)
+            {
+                sqlScript = _viewModelFaultlessService.TryExecute(() => System.Windows.Clipboard.GetText())?.ReturnValue;
+            }
+
+            Task.Run(async () =>
+            {
+                //the delay is really not necessary, but it looks a little better if we wait a second before showing the dialog
+                await Task.Delay(1000);
+                //use dispatcher because we just Ran a task which could mean we are on a different thread
+                App.Current.Dispatcher.Invoke(() => _viewModelFaultlessService.TryExecute(() => _navigator.ShowDialog<ScriptViewModel>(vm => vm.Init(scriptContainer, sqlScript))));
+            });
+        }
+
+        /// <summary>
+        /// Called when <paramref name="addScriptContainerPath"/> matched none of the configured containers exactly.
+        /// Checks whether it sits inside a git worktree and, if so, re-roots it under the main checkout and repeats
+        /// the exact-match lookup against the candidate path. Returns a transient, in-memory clone of the matched
+        /// container (same DatabaseName / connection params, ScriptContainerPath pointed at the worktree path) -
+        /// nothing is written to the configuration file. Returns null (having shown a dialog, or after the user
+        /// cancelled the picker) when no container can be resolved.
+        /// </summary>
+        private Processor.Data.Models.ScriptContainer ResolveWorktreeScriptContainer(string addScriptContainerPath, System.Collections.Generic.List<Processor.Data.Models.ScriptContainer> allContainers)
+        {
+            var worktreeResolution = _worktreeResolverService.ResolveWorktreeCandidatePath(addScriptContainerPath);
+
+            if (!worktreeResolution.IsWorktree)
+            {
+                this.ShowContainerNotFoundDialog(addScriptContainerPath, allContainers);
+                return null;
+            }
+
+            var candidateMatches = allContainers
+                .Where(x => PathsMatch(x.ScriptContainerPath, worktreeResolution.CandidatePath))
+                .ToList();
+
+            Processor.Data.Models.ScriptContainer matchedContainer;
+
+            if (candidateMatches.Count == 1)
+            {
+                matchedContainer = candidateMatches[0];
+            }
+            else if (candidateMatches.Count > 1)
+            {
+                matchedContainer = this.PickScriptContainer(candidateMatches);
+                if (matchedContainer == null)
+                    return null; //user cancelled the picker
+            }
+            else
+            {
+                this.ShowContainerNotFoundDialog(addScriptContainerPath, allContainers, worktreeResolution);
+                return null;
+            }
+
+            //transient, in-memory clone: same DatabaseName / connection params, but pointed at the original
+            //worktree path. Nothing is written to the configuration file - no new list entry, no watcher,
+            //no ContainerUid persisted.
+            return new Processor.Data.Models.ScriptContainer()
+            {
+                DatabaseName = matchedContainer.DatabaseName,
+                CustomServerConnectionParameters = matchedContainer.CustomServerConnectionParameters,
+                ScriptContainerPath = addScriptContainerPath,
+            };
+        }
+
+        private Processor.Data.Models.ScriptContainer PickScriptContainer(System.Collections.Generic.List<Processor.Data.Models.ScriptContainer> options)
+        {
+            var pickerViewModel = _navigator.ShowDialog<SelectScriptContainerViewModel>(vm => vm.Init(options));
+            return pickerViewModel.SelectedContainer;
+        }
+
+        private void ShowContainerNotFoundDialog(string addScriptContainerPath, System.Collections.Generic.List<Processor.Data.Models.ScriptContainer> allContainers, Processor.Dto.WorktreeResolutionResult worktreeResolution = null)
+        {
+            var allContainersMessage = string.Join("\r\n", allContainers.Select(x => x.ScriptContainerPath));
+
+            var detailsMessage = worktreeResolution == null
+                ? $"The path specified was: '{addScriptContainerPath}' which does not match any of these:\r\n--------------------\r\n{allContainersMessage}"
+                : $"The path specified was: '{addScriptContainerPath}', detected as a git worktree.\r\n"
+                    + $"Worktree root: '{worktreeResolution.WorktreeRoot}'\r\n"
+                    + $"Resolved main checkout root: '{worktreeResolution.MainCheckoutRoot}'\r\n"
+                    + $"Candidate path searched for: '{worktreeResolution.CandidatePath}', which does not match any of these:\r\n--------------------\r\n{allContainersMessage}";
+
+            _navigator.ShowDialog<MessageBoxViewModel>(initAction: vm =>
+            {
+                vm.Init("Error", "The specified script container was not found", MessageBoxViewModel.MessageBoxButton.OK, MessageBoxViewModel.MessageBoxImage.Exclamation);
+                vm.MoreDetailsMessage = detailsMessage;
+                vm.CanShowMoreDetails = true;
+                vm.MoreDetailsCaption = "More details";
+            });
+        }
+
+        /// <summary>
+        /// Case-insensitive path comparison with trailing directory separators trimmed.
+        /// </summary>
+        private static bool PathsMatch(string pathA, string pathB)
+        {
+            return string.Equals(TrimTrailingSeparators(pathA), TrimTrailingSeparators(pathB), StringComparison.OrdinalIgnoreCase);
+        }
+
+        private static string TrimTrailingSeparators(string path)
+        {
+            return path?.TrimEnd('\\', '/');
         }
 
         private class ConfigurationInfo

@@ -169,6 +169,7 @@
     <Compile Include="ViewModels\BaseDatabaseViewModel.cs" />
     <Compile Include="ViewModels\ScriptListViewModel.cs" />
     <Compile Include="ViewModels\SelectThemeViewModel.cs" />
+    <Compile Include="ViewModels\SelectScriptContainerViewModel.cs" />
     <Compile Include="ViewModels\EditDatabaseViewModel.cs" />
     <Compile Include="ViewModels\ApplyScriptsViewModel.cs" />
     <Compile Include="ViewModels\AddDatabaseViewModel.cs" />
@@ -194,6 +195,9 @@
     </Compile>
     <Compile Include="Views\SelectThemeView.xaml.cs">
       <DependentUpon>SelectThemeView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SelectScriptContainerView.xaml.cs">
+      <DependentUpon>SelectScriptContainerView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\DeveloperNameView.xaml.cs">
       <DependentUpon>DeveloperNameView.xaml</DependentUpon>
@@ -278,6 +282,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\SelectThemeView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\SelectScriptContainerView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
