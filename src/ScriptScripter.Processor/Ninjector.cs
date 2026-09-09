@@ -33,6 +33,7 @@ namespace ScriptScripter.Processor
             this.Bind<Services.Contracts.IScriptContainerWatcherService>().To<Services.ScriptContainerWatcherService>();
             this.Bind<Services.Contracts.IConfigurationFileUpgradeService>().To<Services.ConfigurationFileUpgradeService>();
             this.Bind<Services.Contracts.IScriptWarningService>().To<Services.ScriptWarningService>();
+            this.Bind<Services.Contracts.IWorktreeResolverService>().To<Services.WorktreeResolverService>();
             this.Bind<IFileSystemWatcherFactory>().To<FileSystemWatcherFactory>();
         }
     }

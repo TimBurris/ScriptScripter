@@ -130,6 +130,7 @@
     <Compile Include="Data\Repositories\ConfigurationRepository.cs" />
     <Compile Include="Data\Repositories\ScriptRepositoryFactory.cs" />
     <Compile Include="Dto\ActionResult.cs" />
+    <Compile Include="Dto\WorktreeResolutionResult.cs" />
     <Compile Include="Data\Models\Revision.cs" />
     <Compile Include="Data\Models\Script.cs" />
     <Compile Include="Data\Models\ServerConnectionParameters.cs" />
@@ -153,6 +154,7 @@
     <Compile Include="Services\Contracts\IScriptingService.cs" />
     <Compile Include="Services\Contracts\IConfigurationFileUpgradeService.cs" />
     <Compile Include="Services\Contracts\IScriptWarningService.cs" />
+    <Compile Include="Services\Contracts\IWorktreeResolverService.cs" />
     <Compile Include="Services\CryptoService.cs" />
     <Compile Include="Services\DatabaseUpdater.cs" />
     <Compile Include="Services\ExecuteFailedEventArgs.cs" />
@@ -163,6 +165,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\ConfigurationFileUpgradeService.cs" />
     <Compile Include="Services\ScriptWarningService.cs" />
+    <Compile Include="Services\WorktreeResolverService.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="NLog.xsd">

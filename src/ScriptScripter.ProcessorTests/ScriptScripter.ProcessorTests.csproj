@@ -109,6 +109,7 @@
     <Compile Include="Services\ScriptContainerWatcherServiceTests.cs" />
     <Compile Include="Services\ScriptWarningServiceTests.cs" />
     <Compile Include="Services\ScriptingServiceTests.cs" />
+    <Compile Include="Services\WorktreeResolverServiceTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ScriptScripter.Processor\ScriptScripter.Processor.csproj">

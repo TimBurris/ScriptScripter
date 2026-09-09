@@ -24,13 +24,28 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <Label
-            Grid.Row="0"
-            HorizontalAlignment="Center"
-            Content="{Binding DatabaseName}"
-            FontSize="28"
-            FontWeight="Bold"
-            Foreground="{StaticResource AccentColorBrush}" />
+        <StackPanel Grid.Row="0">
+            <Label
+                HorizontalAlignment="Center"
+                Content="{Binding DatabaseName}"
+                FontSize="28"
+                FontWeight="Bold"
+                Foreground="{StaticResource AccentColorBrush}" />
+
+            <Border
+                Margin="0,0,0,4"
+                Padding="6,3"
+                Background="{StaticResource WarningColorBrush}"
+                BorderBrush="{StaticResource WarningDarkColorBrush}"
+                BorderThickness="1"
+                ToolTip="{Binding ScriptContainerPath}"
+                Visibility="{Binding IsWorktreeContainer, Converter={StaticResource BoolToVis}}">
+                <TextBlock HorizontalAlignment="Center" TextWrapping="Wrap">
+                    <Run FontWeight="Bold" Text="git worktree copy:" />
+                    <Run Text="{Binding WorktreeName, Mode=OneWay}" />
+                </TextBlock>
+            </Border>
+        </StackPanel>
 
         <StackPanel Grid.Row="1" Orientation="Horizontal">
             <Label Content="SQL Statement(s)" />
