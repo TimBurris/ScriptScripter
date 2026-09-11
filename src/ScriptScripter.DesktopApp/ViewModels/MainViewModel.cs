@@ -308,6 +308,19 @@ namespace ScriptScripter.DesktopApp.ViewModels
         //HACK: this is a hack to get the Add New Script dialog to show when the app is started with the -a param
         internal void AddNewScriptForContainer(string addScriptContainerPath, bool useClipboardForNewScript)
         {
+            //this is called during app startup, before the main window has rendered/activated. Any dialog shown synchronously
+            //here (container picker, not-found message) ends up behind the main window once it activates, so defer ALL of it
+            Task.Run(async () =>
+            {
+                //the delay is really not necessary, but it looks a little better if we wait a second before showing the dialog
+                await Task.Delay(1000);
+                //use dispatcher because we just Ran a task which could mean we are on a different thread
+                App.Current.Dispatcher.Invoke(() => _viewModelFaultlessService.TryExecute(() => this.ShowAddNewScriptForContainer(addScriptContainerPath, useClipboardForNewScript)));
+            });
+        }
+
+        private void ShowAddNewScriptForContainer(string addScriptContainerPath, bool useClipboardForNewScript)
+        {
             var allContainers = _scriptsContainerRepository.GetAll().ToList();
 
             var exactMatches = allContainers
@@ -340,13 +353,7 @@ namespace ScriptScripter.DesktopApp.ViewModels
                 sqlScript = _viewModelFaultlessService.TryExecute(() => System.Windows.Clipboard.GetText())?.ReturnValue;
             }
 
-            Task.Run(async () =>
-            {
-                //the delay is really not necessary, but it looks a little better if we wait a second before showing the dialog
-                await Task.Delay(1000);
-                //use dispatcher because we just Ran a task which could mean we are on a different thread
-                App.Current.Dispatcher.Invoke(() => _viewModelFaultlessService.TryExecute(() => _navigator.ShowDialog<ScriptViewModel>(vm => vm.Init(scriptContainer, sqlScript, worktreeName))));
-            });
+            _navigator.ShowDialog<ScriptViewModel>(vm => vm.Init(scriptContainer, sqlScript, worktreeName));
         }
 
         /// <summary>
